@@ -1,0 +1,70 @@
+System proxima
+
+Dispatch identificationRequest : identificationRequest
+Dispatch identificationResponse : identificationResponse(I)
+
+Context ctxProxima ip[host="localhost" port=1406]
+
+QActor qpatient context ctxProxima {
+	Rules {
+		identifier(patient123456789).
+	}
+	
+	Plan init normal
+	[
+		println("[qpatient] started!");
+		[?? identifier(K)] actorOp createIdentifier(K)
+	]
+	switchTo waitForRequest
+	
+	Plan waitForRequest 
+	[
+		println("[qpatient] waiting for request")
+	]
+	transition stopAfter 10000 
+			   whenMsg identificationRequest -> handleIdentificationRequest
+			   finally repeatPlan
+	
+	Plan handleIdentificationRequest resumeLastPlan
+	[
+		println("[qpatient] handling identification request");
+		actorOp getIdentifier;
+		[?? actorOpDone(OP, R)] replyToCaller -m 
+							identificationResponse : identificationResponse(R)
+	]
+}
+
+QActor qdoctor context ctxProxima {
+	Rules {
+		identifier(doctor123456789).
+	}
+	
+	Plan init normal
+	[
+		println("[qdoctor] started!");
+		[?? identifier(K)] actorOp createIdentifier(K)
+	]
+	switchTo readIdentifier
+	
+	Plan readIdentifier
+	[
+		actorOp getIdentifier;
+		println("[qdoctor] identifier: ");
+		[?? actorOpDone(OP, R)] println(R)
+	]
+	switchTo requestPatientIdentifier
+	
+	Plan requestPatientIdentifier 
+	[
+		println("[qdoctor] sending identification request to patient");
+		forward qpatient -m identificationRequest : identificationRequest
+	]
+	transition stopAfter 2000
+			   whenMsg identificationResponse -> handleResponse
+			   
+    Plan handleResponse
+    [
+    	println("[qdoctor] patient identifier: ");
+    	onMsg identificationResponse : identificationResponse(X) -> println(X)
+    ]	
+}
