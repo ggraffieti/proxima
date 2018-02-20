@@ -1,10 +1,10 @@
 System proxima
 
 Dispatch identificationRequest : identificationRequest
-Dispatch identificationResponse : identificationResponse(I)
-Dispatch dataRequest : dataRequest(DOCTOR_ID, PATIENT_IsD)
-Dispatch dataResponse : dataResponse(PATIENT_ID, NAME, SURNAME)
-Dispatch dataNotPresent : dataNotPresent
+Dispatch identificationResponse : identificationResponse(PATIENT_ID)
+Dispatch dataRequest : dataRequest(DOCTOR_ID, PATIENT_ID)
+Dispatch dataResponse : dataResponse(DOCTOR_ID, PATIENT_ID, NAME, SURNAME)
+Dispatch unauthorized : unauthorized
 
 Context ctxDebug ip[host="localhost" port=1406]
 /*Context ctxPatient ip[host="localhost" port=1406] -g white
@@ -28,21 +28,22 @@ QActor qpatient context ctxDebug {
 		println("[qpatient] waiting for request")
 	]
 	transition stopAfter 10000
-			   whenMsg identificationRequest -> handleIdentificationRequest
-			   finally repeatPlan
+		whenMsg identificationRequest -> handleIdentificationRequest
+	    finally repeatPlan
 	
 	Plan handleIdentificationRequest resumeLastPlan
 	[
 		println("[qpatient] handling identification request");
 		actorOp getIdentifier;
-		[?? actorOpDone(OP, R)] replyToCaller -m 
-							identificationResponse : identificationResponse(R)
+		[?? actorOpDone(OP, RESULT)] 
+			replyToCaller -m identificationResponse : identificationResponse(RESULT)
 	]
 }
 
 QActor qdoctor context ctxDebug {
 	Rules {
 		identifier(doctor123456789).
+		identifiers(DOCTOR_ID, PATIENT_ID) :- identifier(DOCTOR_ID), patientid(PATIENT_ID).
 	}
 	
 	Plan init normal
@@ -55,51 +56,64 @@ QActor qdoctor context ctxDebug {
 	Plan readIdentifier
 	[
 		actorOp getIdentifier;
-		println("[qdoctor] identifier read");
-		[?? actorOpDone(OP, R)] addRule identifier(R)
+		println("[qdoctor] personal identifier read");
+		[?? actorOpDone(OP, RESULT)] addRule identifier(RESULT)
 	]
 	switchTo requestPatientIdentifier
 	
 	Plan requestPatientIdentifier 
 	[
-		println("[qdoctor] sending identification request to patient");
+		println("[qdoctor] sending identification request to qpatient");
 		forward qpatient -m identificationRequest : identificationRequest
 	]
 	transition stopAfter 2000
-			   whenMsg identificationResponse -> handlePatientIdentifierResponse
+		whenMsg identificationResponse -> handlePatientIdentifierResponse
 			   
     Plan handlePatientIdentifierResponse
     [
-    	println("[qdoctor] patient identifier read");
-    	[?? identifier(DOCTOR_ID)] 
-    		onMsg identificationResponse : identificationResponse(PATIENT_ID) -> 
-    			forward qcontrol -m dataRequest : dataRequest(DOCTOR_ID, PATIENT_ID)
-    		
+    	println("[qdoctor] qpatient identifier read");
+		onMsg identificationResponse : identificationResponse(PATIENT_ID) ->
+			addRule patientid(PATIENT_ID)	
+    ]
+    switchTo sendDataRequest
+    
+    Plan sendDataRequest
+    [
+    	println("[qdoctor] sending data request to qcontrol");
+    	[?? identifiers(DOCTOR_ID, PATIENT_ID)] 
+			forward qcontrol -m dataRequest : dataRequest(DOCTOR_ID, PATIENT_ID);
+		removeRule identifier(X); removeRule patientid(X)
     ]
     transition stopAfter 2000
-    		   whenMsg dataResponse -> handleDataResponse, 
-    		   whenMsg dataNotPresent -> handleDataNotPresent
+    	whenMsg dataResponse -> handleDataResponse,
+    	whenMsg unauthorized -> handleUnauthrorizedResponse
     
     Plan handleDataResponse
     [
     	println("[qdoctor] patient data retrieved");
-    	onMsg dataResponse : dataResponse(PATIENT_ID, NAME, SURNAME) -> 
-    		println(data(PATIENT_ID, NAME, SURNAME))
+    	onMsg dataResponse : dataResponse(DOCTOR_ID, PATIENT_ID, NAME, SURNAME) -> 
+    		println(data(DOCTOR_ID, PATIENT_ID, NAME, SURNAME))
     ]
     
-    Plan handleDataNotPresent
+    Plan handleUnauthrorizedResponse 
     [
-    	println("[qdoctor] patient data not present");
-    	onMsg dataNotPresent : dataNotPresent -> 
-    		println(dataNotPresent)
+    	println("[qdoctor] unauthorized")
     ]
 }
 
 QActor qcontrol context ctxDebug {
 	Rules {
 		data(patient234567891, jane, doe).
-		//data(patient123456789, john, doe).
-		response(ID, N, S) :- request(ID), data(ID, N, S), retract(request(ID)). 
+		data(patient123456789, john, doe).
+		
+		doctor(doctor123456789).
+		doctor(doctor234567891).
+		
+		authorized(DOCTOR_ID, PATIENT_ID) :- 
+			request(DOCTOR_ID, PATIENT_ID), doctor(DOCTOR_ID).
+		
+		response(DOCTOR_ID, PATIENT_ID, NAME, SURNAME) :- 
+			authorized(DOCTOR_ID, PATIENT_ID), data(PATIENT_ID, NAME, SURNAME).
 	}
 	
 	Plan init normal 
@@ -113,16 +127,20 @@ QActor qcontrol context ctxDebug {
 		println("[qcontrol] waiting for request")
 	]
 	transition stopAfter 10000
-			   whenMsg dataRequest -> handleRequest
-			   finally repeatPlan
+		whenMsg dataRequest -> handleRequest
+		finally repeatPlan
 			   
     Plan handleRequest resumeLastPlan 
     [
+		println("[qcontrol] handling data request");
 		onMsg dataRequest : dataRequest(DOCTOR_ID, PATIENT_ID) -> 
-			addRule request(PATIENT_ID);
-		[!? response(PATIENT_ID, NAME, SURNAME)]
-			replyToCaller -m dataResponse : dataResponse(PATIENT_ID, NAME, SURNAME)
-		else 
-			replyToCaller -m dataNotPresent : dataNotPresent
+			addRule request(DOCTOR_ID, PATIENT_ID);
+		[!? authorized(DOCTOR_ID, PATIENT_ID)]
+			println("[qcontrol] doctor authorized")
+		else
+			replyToCaller -m unauthorized : unauthorized;
+		[?? response(DOCTOR_ID, PATIENT_ID, NAME, SURNAME)]
+			replyToCaller -m dataResponse : dataResponse(DOCTOR_ID, PATIENT_ID, NAME, SURNAME);
+		removeRule request(X, Y)
     ]
 }
