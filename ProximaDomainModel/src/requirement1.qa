@@ -4,6 +4,8 @@ Dispatch identificationRequest : identificationRequest
 Dispatch identificationResponse : identificationResponse(I)
 
 Context ctxProxima ip[host="localhost" port=1406]
+//Context ctxPatient ip[host="localhost" port=1406] -g white
+//Context ctxDoctor ip[host="localhost" port=6041] -g blue
 
 QActor qpatient context ctxProxima {
 	Rules {
@@ -21,7 +23,7 @@ QActor qpatient context ctxProxima {
 	[
 		println("[qpatient] waiting for request")
 	]
-	transition stopAfter 10000 
+	transition stopAfter 10000
 			   whenMsg identificationRequest -> handleIdentificationRequest
 			   finally repeatPlan
 	
@@ -49,8 +51,8 @@ QActor qdoctor context ctxProxima {
 	Plan readIdentifier
 	[
 		actorOp getIdentifier;
-		println("[qdoctor] identifier: ");
-		[?? actorOpDone(OP, R)] println(R)
+		println("[qdoctor] identifier read");
+		[?? actorOpDone(OP, R)] println(identifier(doctor, R))
 	]
 	switchTo requestPatientIdentifier
 	
@@ -64,7 +66,7 @@ QActor qdoctor context ctxProxima {
 			   
     Plan handleResponse
     [
-    	println("[qdoctor] patient identifier: ");
-    	onMsg identificationResponse : identificationResponse(X) -> println(X)
+    	println("[qdoctor] patient identifier read");
+    	onMsg identificationResponse : identificationResponse(X) -> println(identifier(patient, X))
     ]	
 }
