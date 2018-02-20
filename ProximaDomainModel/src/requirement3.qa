@@ -4,6 +4,7 @@ Dispatch identificationRequest : identificationRequest
 Dispatch identificationResponse : identificationResponse(I)
 Dispatch dataRequest : dataRequest(DOCTOR_ID, PATIENT_ID)
 Dispatch dataResponse : dataResponse(PATIENT_ID, NAME, SURNAME)
+Dispatch dataNotPresent : dataNotPresent
 
 Context ctxDebug ip[host="localhost" port=1406]
 /*Context ctxPatient ip[host="localhost" port=1406] -g white
@@ -42,6 +43,11 @@ QActor qpatient context ctxDebug {
 QActor qdoctor context ctxDebug {
 	Rules {
 		identifier(doctor123456789).
+		connection(false).
+		connection(false).
+		connection(false).
+		connection(false).
+		connection(true).
 	}
 	
 	Plan init normal
@@ -49,7 +55,20 @@ QActor qdoctor context ctxDebug {
 		println("[qdoctor] started!");
 		[?? identifier(K)] actorOp createIdentifier(K)
 	]
-	switchTo readIdentifier
+	switchTo checkConnection
+	
+	Plan checkConnection 
+	[
+		println("[qdoctor] check connection");
+		delay 500;
+		[?? connection(STATE)] addRule currentConnection(STATE);
+		[?? currentConnection(true)] 
+			addRule connectionEstablished(true);
+		[?? currentConnection(false)] 
+			println("[qdoctor] connection absent")
+	]
+	switchTo [?? connectionEstablished(true)] readIdentifier
+	finally repeatPlan
 	
 	Plan readIdentifier
 	[
@@ -64,7 +83,7 @@ QActor qdoctor context ctxDebug {
 		println("[qdoctor] sending identification request to patient");
 		forward qpatient -m identificationRequest : identificationRequest
 	]
-	transition stopAfter 2000
+	transition stopAfter 20000
 			   whenMsg identificationResponse -> handlePatientIdentifierResponse
 			   
     Plan handlePatientIdentifierResponse
@@ -75,14 +94,22 @@ QActor qdoctor context ctxDebug {
     			forward qcontrol -m dataRequest : dataRequest(DOCTOR_ID, PATIENT_ID)
     		
     ]
-    transition stopAfter 2000
-    		   whenMsg dataResponse -> handleDataResponse
+    transition stopAfter 20000
+    		   whenMsg dataResponse -> handleDataResponse, 
+    		   whenMsg dataNotPresent -> handleDataNotPresent
     
     Plan handleDataResponse
     [
     	println("[qdoctor] patient data retrieved");
     	onMsg dataResponse : dataResponse(PATIENT_ID, NAME, SURNAME) -> 
     		println(data(PATIENT_ID, NAME, SURNAME))
+    ]
+    
+    Plan handleDataNotPresent
+    [
+    	println("[qdoctor] patient data not present");
+    	onMsg dataNotPresent : dataNotPresent -> 
+    		println(dataNotPresent)
     ]
 }
 
@@ -103,7 +130,7 @@ QActor qcontrol context ctxDebug {
 	[
 		println("[qcontrol] waiting for request")
 	]
-	transition stopAfter 10000
+	transition stopAfter 20000
 			   whenMsg dataRequest -> handleRequest
 			   finally repeatPlan
 			   
@@ -113,5 +140,7 @@ QActor qcontrol context ctxDebug {
 			addRule request(PATIENT_ID);
 		[!? response(PATIENT_ID, NAME, SURNAME)]
 			replyToCaller -m dataResponse : dataResponse(PATIENT_ID, NAME, SURNAME)
+		else 
+			replyToCaller -m dataNotPresent : dataNotPresent
     ]
 }

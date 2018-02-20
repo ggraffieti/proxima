@@ -2,8 +2,9 @@ System proxima
 
 Dispatch identificationRequest : identificationRequest
 Dispatch identificationResponse : identificationResponse(I)
-Dispatch dataRequest : dataRequest(DOCTOR_ID, PATIENT_ID)
+Dispatch dataRequest : dataRequest(DOCTOR_ID, PATIENT_IsD)
 Dispatch dataResponse : dataResponse(PATIENT_ID, NAME, SURNAME)
+Dispatch dataNotPresent : dataNotPresent
 
 Context ctxDebug ip[host="localhost" port=1406]
 /*Context ctxPatient ip[host="localhost" port=1406] -g white
@@ -76,7 +77,8 @@ QActor qdoctor context ctxDebug {
     		
     ]
     transition stopAfter 2000
-    		   whenMsg dataResponse -> handleDataResponse
+    		   whenMsg dataResponse -> handleDataResponse, 
+    		   whenMsg dataNotPresent -> handleDataNotPresent
     
     Plan handleDataResponse
     [
@@ -84,12 +86,19 @@ QActor qdoctor context ctxDebug {
     	onMsg dataResponse : dataResponse(PATIENT_ID, NAME, SURNAME) -> 
     		println(data(PATIENT_ID, NAME, SURNAME))
     ]
+    
+    Plan handleDataNotPresent
+    [
+    	println("[qdoctor] patient data not present");
+    	onMsg dataNotPresent : dataNotPresent -> 
+    		println(dataNotPresent)
+    ]
 }
 
 QActor qcontrol context ctxDebug {
 	Rules {
 		data(patient234567891, jane, doe).
-		data(patient123456789, john, doe).
+		//data(patient123456789, john, doe).
 		response(ID, N, S) :- request(ID), data(ID, N, S), retract(request(ID)). 
 	}
 	
@@ -113,5 +122,7 @@ QActor qcontrol context ctxDebug {
 			addRule request(PATIENT_ID);
 		[!? response(PATIENT_ID, NAME, SURNAME)]
 			replyToCaller -m dataResponse : dataResponse(PATIENT_ID, NAME, SURNAME)
+		else 
+			replyToCaller -m dataNotPresent : dataNotPresent
     ]
 }
