@@ -5,3 +5,6 @@
 /srcMore/
 /.gradle/
 /.settings/
+/.classpath
+/.project
+*.gradle
