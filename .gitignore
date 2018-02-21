@@ -28,3 +28,5 @@ report/*
 report/img/
 !/report/img/
 
+# qactor libs
+it.unibo.iss.libs/*

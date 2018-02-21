@@ -1,0 +1,146 @@
+System proxima
+
+Dispatch identificationRequest : identificationRequest
+Dispatch identificationResponse : identificationResponse(I)
+Dispatch dataRequest : dataRequest(DOCTOR_ID, PATIENT_ID)
+Dispatch dataResponse : dataResponse(PATIENT_ID, NAME, SURNAME)
+Dispatch dataNotPresent : dataNotPresent
+
+Context ctxDebug ip[host="localhost" port=1406]
+/*Context ctxPatient ip[host="localhost" port=1406] -g white
+Context ctxDoctor ip[host="localhost" port=6041] -g blue
+Context ctxControl ip[host="localhost" port=6042] -g yellow*/
+
+QActor qpatient context ctxDebug {
+	Rules {
+		identifier(patient123456789).
+	}
+	
+	Plan init normal
+	[
+		println("[qpatient] started!");
+		[?? identifier(K)] actorOp createIdentifier(K)
+	]
+	switchTo waitForRequest
+	
+	Plan waitForRequest 
+	[
+		println("[qpatient] waiting for request")
+	]
+	transition stopAfter 10000
+			   whenMsg identificationRequest -> handleIdentificationRequest
+			   finally repeatPlan
+	
+	Plan handleIdentificationRequest resumeLastPlan
+	[
+		println("[qpatient] handling identification request");
+		actorOp getIdentifier;
+		[?? actorOpDone(OP, R)] replyToCaller -m 
+							identificationResponse : identificationResponse(R)
+	]
+}
+
+QActor qdoctor context ctxDebug {
+	Rules {
+		identifier(doctor123456789).
+		connection(false).
+		connection(false).
+		connection(false).
+		connection(false).
+		connection(true).
+	}
+	
+	Plan init normal
+	[
+		println("[qdoctor] started!");
+		[?? identifier(K)] actorOp createIdentifier(K)
+	]
+	switchTo checkConnection
+	
+	Plan checkConnection 
+	[
+		println("[qdoctor] check connection");
+		delay 500;
+		[?? connection(STATE)] addRule currentConnection(STATE);
+		[?? currentConnection(true)] 
+			addRule connectionEstablished(true);
+		[?? currentConnection(false)] 
+			println("[qdoctor] connection absent")
+	]
+	switchTo [?? connectionEstablished(true)] readIdentifier
+	finally repeatPlan
+	
+	Plan readIdentifier
+	[
+		actorOp getIdentifier;
+		println("[qdoctor] identifier read");
+		[?? actorOpDone(OP, R)] addRule identifier(R)
+	]
+	switchTo requestPatientIdentifier
+	
+	Plan requestPatientIdentifier 
+	[
+		println("[qdoctor] sending identification request to patient");
+		forward qpatient -m identificationRequest : identificationRequest
+	]
+	transition stopAfter 20000
+			   whenMsg identificationResponse -> handlePatientIdentifierResponse
+			   
+    Plan handlePatientIdentifierResponse
+    [
+    	println("[qdoctor] patient identifier read");
+    	[?? identifier(DOCTOR_ID)] 
+    		onMsg identificationResponse : identificationResponse(PATIENT_ID) -> 
+    			forward qcontrol -m dataRequest : dataRequest(DOCTOR_ID, PATIENT_ID)
+    		
+    ]
+    transition stopAfter 20000
+    		   whenMsg dataResponse -> handleDataResponse, 
+    		   whenMsg dataNotPresent -> handleDataNotPresent
+    
+    Plan handleDataResponse
+    [
+    	println("[qdoctor] patient data retrieved");
+    	onMsg dataResponse : dataResponse(PATIENT_ID, NAME, SURNAME) -> 
+    		println(data(PATIENT_ID, NAME, SURNAME))
+    ]
+    
+    Plan handleDataNotPresent
+    [
+    	println("[qdoctor] patient data not present");
+    	onMsg dataNotPresent : dataNotPresent -> 
+    		println(dataNotPresent)
+    ]
+}
+
+QActor qcontrol context ctxDebug {
+	Rules {
+		data(patient234567891, jane, doe).
+		data(patient123456789, john, doe).
+		response(ID, N, S) :- request(ID), data(ID, N, S), retract(request(ID)). 
+	}
+	
+	Plan init normal 
+	[
+		println("[qcontrol] started!")
+	]
+	switchTo waitForRequest
+	
+	Plan waitForRequest
+	[
+		println("[qcontrol] waiting for request")
+	]
+	transition stopAfter 20000
+			   whenMsg dataRequest -> handleRequest
+			   finally repeatPlan
+			   
+    Plan handleRequest resumeLastPlan 
+    [
+		onMsg dataRequest : dataRequest(DOCTOR_ID, PATIENT_ID) -> 
+			addRule request(PATIENT_ID);
+		[!? response(PATIENT_ID, NAME, SURNAME)]
+			replyToCaller -m dataResponse : dataResponse(PATIENT_ID, NAME, SURNAME)
+		else 
+			replyToCaller -m dataNotPresent : dataNotPresent
+    ]
+}

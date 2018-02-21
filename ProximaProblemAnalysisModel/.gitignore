@@ -1,0 +1,10 @@
+/bin/
+/docker/
+/sites/
+/src-gen/
+/srcMore/
+/.gradle/
+/.settings/
+/.classpath
+/.project
+*.gradle
