@@ -131,16 +131,39 @@ Il sistema dovrà definire una politica di accesso ai dati contenuti nella banca
 \section{Glossario}
 In questa sezione verranno esplorati ed esplicati i concetti chiave usati dal committente durante la fase di raccolta dei requisiti. 
 \begin{itemize}
-	\textbf{Soccorritore}: 
+	\item \textbf{Soccorritore}: medico o infermiere che presta soccorso ai pazienti sia in ospedale, che anche all'esterno in caso di emergenze. Nella definizione di soccorritore data dal committente, non è incluso il personale che non è adibito ad un intervento invasivo diretto sul paziente (personale volontario e non senza abilitazioni mediche/infermieristiche). Ad esempio, a bordo di un'ambulanza atta a svolgere una funzione di trasporto e di primo soccorso, è consuetudine la presenza di personale (volontario e non), la cui mansione è limitata ad una prima stabilizzazione del paziente, oltre al trasporto dello stesso presso un centro ospedaliero. Tale personale non è considerato in questa categoria.
+	\item \textbf{Paziente}: Persona che necessita di cure mediche in una situazione di emergenza. Sono inclusi in questa categoria sia i soggetti che si recano in ospedale in autonomia, sia i soggetti che giungono in ospedale scortati da appositi mezzi di trasporto (come ambulanze).
+	\item \textbf{Identificativo}: codice che permette di risalire all'identità di un certo utente all'interno del sistema. Esso deve contenere la minima quantità di informazione che consente di identificare un paziente che è in possesso di un identificatore
+	\item \textbf{Lettore}: dispositivo Android (smartphone, tablet), in grado di recuperare l'identificativo del paziente dall'identificatore e dotato di una costante connessione di rete, in modo da poter comunicare con la base di dati remota fornita dal committente. Su richiesta, le funzionalità del lettore devono essere condensate all'interno di un'applicazione nativa Android.
+	\item \textbf{Dati medici}: dati relativi al paziente che risultano particolarmente utili al soccorritore nella fase di primo soccorso. Tali informazioni sono contenute all'interno della banca dati fornita dal committente. Nello specifico, esse sono relative a:
+	\begin{itemize}
+		\item Breve anagrafica del paziente (nome, cognome, codice fiscale, data di nascita).
+		\item Gruppo sanguigno.
+		\item Consenso o meno alla donazione di organi.
+		\item Malattie (ad esempio sclerosi multipla, fibrosi cistica, \dots).
+		\item Allergie ai medicinali, ai cibi (come arachidi, latte, \dots), alle punture di insetti, ai materiali e ad altre svariate sostanze.
+		\item Medicinali abitualmente assunti dal paziente.
+	\end{itemize}
+	Un sottoinsieme dei dati sopra elencati è soggetto a variazioni nel tempo (ad esempio i medicinali assunti), la banca dati conterrà sempre la versione attuale delle informazioni, e verrà quindi aggiornata periodicamente.  
+	\item{Turno del soccorritore}: fasce orarie nelle quali il soccorritore presta il suo servizio in ospedale o nei mezzi adibiti al primo soccorso e al trasporto dei pazienti. Il turno di un soccorritore è soggetto a variazioni nel tempo, comportando un conseguente aggiornamento della banca dati.
 \end{itemize}
 
 \section{Scenari}
-\subsection{Scenario I}
-In una situazione di emergenza, il soccorritore arriva sul posto, apre l'applicazione sul proprio lettore e lo avvicina al proprio identificatore, in modo da autenticarsi nel sistema. Subito dopo il soccorritore avvicina il lettore all'identificatore del paziente e riceverà i dati medici dello stesso. 
-\subsection{Scenario II}
-In una situazione di emergenza, il soccorritore arriva sul posto, apre l'applicazione sul proprio lettore e lo avvicina al proprio identificatore, in modo da autenticarsi nel sistema. Subito dopo il soccorritore avvicina il lettore all'identificatore del paziente per richiedere i dati medici dello stesso. Nel caso essi non siano presenti nel sistema, dovrà essere mostrato un messaggio di errore.
-\subsection{Scenario III} 
-In una situazione di emergenza, il soccorritore arriva sul posto e apre l'applicazione sul proprio lettore. Nel caso non sia possibile creare alcuna connessione con il server, deve essere mostrato un messaggio che avvisa il soccorritore di intervenire ``manualmente'', senza contare sul servizio.
+È possibile individuare due scenari di interesse, a seconda del luogo in cui il servizio viene utilizzato.
+\subsection{Scenario 1}
+In una situazione di emergenza, il soccorritore arriva sul posto, apre l'applicazione sul proprio lettore e si autentica nel sistema. 
+
+\subsubsection*{Scenario 1.1}
+Inizia la ricerca degli identificatori nelle vicinanze. Se uno o più identificatori sono rilevati, viene recuperato l'identificativo di quello che risulta essere più vicino. I dati medici del paziente sono poi mostrati sullo schermo del dispositivo, in modo da fornire un supporto per il soccorritore.
+
+\subsubsection*{Scenario 1.2}
+Inizia la ricerca degli identificatori nelle vicinanze. Se uno o più identificatori sono rilevati, viene recuperato l'identificativo di quello che risulta essere più vicino. Nel caso in cui il soccorritore non sia autorizzato alla lettura dei dati (in quanto non qualificato o non in un turno lavorativo), l'accesso ai dati è negato e viene mostrato un messaggio che avvisa il soccorritore di intervenire ``manualmente'', senza contare sul servizio.
+\subsubsection*{Scenario 1.3} 
+Non è possibile contattare la banca dati, viene mostrato un messaggio che avvisa il soccorritore di intervenire ``manualmente'', senza poter contare sul servizio.
+\subsubsection*{Scenario 1.4}
+Il paziente non è in possesso di un identificatore, il medico deve intervenire  ``manualmente'', senza poter contare sul servizio.
+
+\subsection{Scenario 2}
 
 
 \section{Requisiti non funzionali}
