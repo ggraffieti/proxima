@@ -14,6 +14,7 @@
 \usepackage{setspace}
 \usepackage{listings}
 \usepackage{color}
+\usepackage{eurosym}
 
 
 \usepackage[hidelinks]{hyperref}
@@ -145,12 +146,12 @@ In questa sezione verranno esplorati ed esplicati i concetti chiave usati dal co
 		\item Medicinali abitualmente assunti dal paziente.
 	\end{itemize}
 	Un sottoinsieme dei dati sopra elencati è soggetto a variazioni nel tempo (ad esempio i medicinali assunti), la banca dati conterrà sempre la versione attuale delle informazioni, e verrà quindi aggiornata periodicamente.  
-	\item{Turno del soccorritore}: fasce orarie nelle quali il soccorritore presta il suo servizio in ospedale o nei mezzi adibiti al primo soccorso e al trasporto dei pazienti. Il turno di un soccorritore è soggetto a variazioni nel tempo, comportando un conseguente aggiornamento della banca dati.
+	\item \textbf{Turno del soccorritore}: fasce orarie nelle quali il soccorritore presta il suo servizio in ospedale o nei mezzi adibiti al primo soccorso e al trasporto dei pazienti. Il turno di un soccorritore è soggetto a variazioni nel tempo, comportando un conseguente aggiornamento della banca dati.
 \end{itemize}
 
 \section{Scenari}
 È possibile individuare due scenari di interesse, a seconda del luogo in cui il servizio viene utilizzato.
-\subsection{Scenario 1}
+\subsection{Scenario 1} \label{scenario1}
 In una situazione di emergenza, il soccorritore arriva sul posto, apre l'applicazione sul proprio lettore e si autentica nel sistema. 
 
 \subsubsection*{Scenario 1.1}
@@ -164,10 +165,16 @@ Non è possibile contattare la banca dati, viene mostrato un messaggio che avvis
 Il paziente non è in possesso di un identificatore, il medico deve intervenire  ``manualmente'', senza poter contare sul servizio.
 
 \subsection{Scenario 2}
+Il paziente giunge in ospedale per richiedere assistenza medica, in una situazione di emergenza. Il soccorritore (medico o infermiere di turno in ospedale) apre l'applicazione sul proprio lettore e si autentica nel sistema. 
 
+I possibili sotto-scenari che si possono manifestare corrispondono a quelli descritti in sezione \ref{scenario1}. In questo caso, però, il luogo nel quale avviene il soccorso è un reparto di una struttura ospedaliera attrezzata, nella quale è garantita la presenza dei soli soccorritori autorizzati e una costante connettività. 
+
+Se il paziente è in possesso di un identificatore, esso viene rilevato nella fase di ricerca del lettore e i dati medici del paziente sono mostrati sullo schermo del lettore, in modo da fornire un supporto per il soccorritore. Altrimenti il medico deve intervenire "manualmente" senza poter contare sul servizio.
 
 \section{Requisiti non funzionali}
 \begin{itemize}
+	\item \textbf{Costi}: il costo dell'identificatore non deve superare i \euro 10 per unità
+	\item Privacy
 	\item Sicurezza (dei dati e delle comunicazioni), resistente ad attacchi quali \emph{man-in-the-middle}, \emph{replay attack}, \emph{sniffing}\dots 
 	\item \emph{Non-repudation} delle azioni fatte, identificazione univoca di tutti i soggetti (medico, utente). 
 	\item Availability (del server e dell'identificatore).
