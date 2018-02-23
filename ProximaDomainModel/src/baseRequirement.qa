@@ -3,16 +3,18 @@ System proxima
 Dispatch identificationRequest : identificationRequest
 Dispatch identificationResponse : identificationResponse(I)
 Dispatch dataRequest : dataRequest(DOCTOR_ID, PATIENT_ID)
-Dispatch dataResponse : dataResponse(PATIENT_ID, NAME, SURNAME)
+Dispatch dataResponse : dataResponse(PATIENT_ID, NAME, SURNAME, BLOOD_GROUP)
 
-//Context ctxDebug ip[host="localhost" port=1406]
-Context ctxPatient ip[host="localhost" port=1406] -g white
-Context ctxDoctor ip[host="localhost" port=6041] -g blue
-Context ctxControl ip[host="localhost" port=6042] -g yellow
+Event local_start : start
 
-QActor qpatient context ctxPatient {
+Context ctxDebug ip[host="localhost" port=1406]
+//Context ctxPatient ip[host="localhost" port=1406] -g white
+//Context ctxDoctor ip[host="localhost" port=6041] -g blue
+//Context ctxControl ip[host="localhost" port=6042] -g yellow
+
+QActor qpatient context ctxDebug {
 	Rules {
-		identifier(patient123456789).
+		identifier(patient1).
 	}
 	
 	Plan init normal
@@ -39,17 +41,58 @@ QActor qpatient context ctxPatient {
 	]
 }
 
-QActor qdoctor context ctxDoctor {
+QActor qpatient2 context ctxDebug {
 	Rules {
-		identifier(doctor123456789).
+		identifier(patient2).
+	}
+	
+	Plan init normal
+	[
+		println("[qpatient2] started!");
+		[?? identifier(K)] actorOp createIdentifier(K)
+	]
+	switchTo waitForRequest
+	
+	Plan waitForRequest 
+	[
+		println("[qpatient2] waiting for request")
+	]
+	transition stopAfter 10000
+			   whenMsg identificationRequest -> handleIdentificationRequest
+			   finally repeatPlan
+	
+	Plan handleIdentificationRequest resumeLastPlan
+	[
+		println("[qpatient2] handling identification request");
+		actorOp getIdentifier;
+		[?? actorOpDone(OP, R)] replyToCaller -m 
+							identificationResponse : identificationResponse(R)
+	]
+}
+
+
+QActor qdoctor context ctxDebug {
+	Rules {
+		identifier(doctor1).
+		distance(qpatient, 10).
+		distance(qpatient2, 7).
 	}
 	
 	Plan init normal
 	[
 		println("[qdoctor] started!");
+		demo consult("./src/it/unibo/qatheory/qDoctorTheory.pl");
+		actorOp buildCustomGui("doctorGui");
 		[?? identifier(K)] actorOp createIdentifier(K)
 	]
-	switchTo readIdentifier
+	switchTo idle
+	
+	Plan idle 
+	[
+		println("[qdoctor] waiting for emergency")	
+	]
+	transition stopAfter 30000
+			   whenEvent local_start -> readIdentifier
 	
 	Plan readIdentifier
 	[
@@ -62,7 +105,7 @@ QActor qdoctor context ctxDoctor {
 	Plan requestPatientIdentifier 
 	[
 		println("[qdoctor] sending identification request to patient");
-		forward qpatient -m identificationRequest : identificationRequest
+		[!? findNearest(NAME, _)] forward NAME -m identificationRequest : identificationRequest
 	]
 	transition stopAfter 2000
 			   whenMsg identificationResponse -> handlePatientIdentifierResponse
@@ -70,31 +113,43 @@ QActor qdoctor context ctxDoctor {
     Plan handlePatientIdentifierResponse
     [
     	println("[qdoctor] patient identifier read");
-    	[?? identifier(DOCTOR_ID)] 
-    		onMsg identificationResponse : identificationResponse(PATIENT_ID) -> 
-    			forward qcontrol -m dataRequest : dataRequest(DOCTOR_ID, PATIENT_ID)
-    		
+    	onMsg identificationResponse : identificationResponse(PATIENT_ID) ->
+			addRule patientid(PATIENT_ID)
+    ] 
+    switchTo sendDataRequest
+    
+    Plan sendDataRequest
+    [
+    	println("[qdoctor] sending data request to qcontrol");
+    	[!? identifiers(DOCTOR_ID, PATIENT_ID)] 
+			forward qcontrol -m dataRequest : dataRequest(DOCTOR_ID, PATIENT_ID)
     ]
     transition stopAfter 2000
-    		   whenMsg dataResponse -> handleDataResponse
+    	whenMsg dataResponse -> handleDataResponse
     
     Plan handleDataResponse
     [
     	println("[qdoctor] patient data retrieved");
-    	onMsg dataResponse : dataResponse(PATIENT_ID, NAME, SURNAME) -> 
-    		println(data(PATIENT_ID, NAME, SURNAME))
-    ]
+    	onMsg dataResponse : dataResponse(PATIENT_ID, NAME, SURNAME, BLOOD_GROUP) -> 
+    		addRule dataResponse(PATIENT_ID, NAME, SURNAME, BLOOD_GROUP)
+    ] switchTo showPatientData
+    
+    Plan showPatientData
+    [
+    	[!? dataResponse(_, NAME, SURNAME, BLOOD_GROUP)] actorOp showDataOnGUI(NAME, SURNAME, BLOOD_GROUP)
+    ] 
+    switchTo idle
 }
 
-QActor qcontrol context ctxControl {
+QActor qcontrol context ctxDebug {
 	Rules {
-		data(patient234567891, jane, doe).
-		data(patient123456789, john, doe).
-		response(ID, N, S) :- request(ID), data(ID, N, S), retract(request(ID)). 
+		data(patient2, jane, doe, a_positive).
+		data(patient1, john, doe, ab_negative).
 	}
 	
 	Plan init normal 
 	[
+		demo consult("./src/it/unibo/qatheory/qControlBaseTheory.pl");
 		println("[qcontrol] started!")
 	]
 	switchTo waitForRequest
@@ -109,9 +164,10 @@ QActor qcontrol context ctxControl {
 			   
     Plan handleRequest resumeLastPlan 
     [
+    	println("[qcontrol] handling request");
 		onMsg dataRequest : dataRequest(DOCTOR_ID, PATIENT_ID) -> 
 			addRule request(PATIENT_ID);
-		[!? response(PATIENT_ID, NAME, SURNAME)]
-			replyToCaller -m dataResponse : dataResponse(PATIENT_ID, NAME, SURNAME)
+		[!? response(PATIENT_ID, NAME, SURNAME, BLOOD_GROUP)]
+			replyToCaller -m dataResponse : dataResponse(PATIENT_ID, NAME, SURNAME, BLOOD_GROUP)
     ]
 }
