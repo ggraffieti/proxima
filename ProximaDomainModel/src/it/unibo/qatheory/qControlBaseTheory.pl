@@ -1,0 +1,1 @@
+response(ID, N, S, BG) :- request(ID), data(ID, N, S, BG), retract(request(ID)). 
