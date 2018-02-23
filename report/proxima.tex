@@ -98,6 +98,20 @@
 
 \chapter{Idea}
 \section{Visione}
+Negli ultimi anni si è assistito ad una sempre maggiore distribuzione di dispositivi di calcolo, inseriti anche nei più comuni oggetti di uso quotidiano. Ciò ha portato ad una distribuzione della computazione, che non è soltanto ad appannaggio dei dispositivi computazionali classici, ma ripartita in quasi ogni oggetto reale. 
+
+Una delle sfide nel futuro della \emph{computer science} sarà quella di gestire l'interazione tra tutti questi oggetti, che dovranno interagire sia tra loro, che con gli esseri umani. Dato il numero sempre crescente di dispositivi, e la tipica bassa potenza computazionale di cui sono dotati, non è pensabile che l'interazione sia esplicita e avvenga nel mondo fisico. La nostra vision è quella di creare uno strato virtuale sopra alla realtà fisica, dove ogni dispositivo viene mappato in un'entità virtuale. Dato che l'interazione tra due oggetti acquista senso solamente se essi sono vicini tra loro nel mondo reale, i dispositivi fisici hanno il solo scopo di cercare altri dispositivi vicini nello spazio, per poi interagire con loro nello strato virtuale, rappresentato dal nostro sistema. 
+
+Ogni componente del sistema, sia esso un dispositivo computazionale o una persona, avrà associato ad esso un identificativo, che agirà come \emph{entry point} per il sistema virtuale. I componenti, quindi, potranno ricercare altri componenti vicini nel mondo reale, ed attraverso l'identificativo poter interagire con loro nel mondo virtuale. In particolare l'interazione sarà automatica, e non richiederà alcuna azione esplicita. Sarà compito della controparte virtuale degli oggetti decidere se e come interagire, quali informazioni scambiare e con chi scambiarle.
+
+Attraverso il deployment del sistema proposto saranno aperti vari nuovi scenari, tra cui
+\begin{itemize}
+	\item  Stravolgimento dell'interazione uomo-macchina, che non sarà più guidata da espliciti comandi, ma totalmente trasparente all'utente. Ad esempio, una casa intelligente può rilevare la presenza del proprietario nelle vicinanze, ed interagendo con il suo avatar virtuale può ricevere i dati di come il proprietario vuole interagire con essa (accensione luci in alcune stanze, accensione riscaldamento, apertura porte o finestre\dots) senza che il proprietario debba fisicamente fare alcuna azione
+	\item Totale personalizzazione dell'interazione tra persona e dispositivo computazionale, che potrà essere imparata dal sistema in automatico tramite metodi di \emph{learning}.
+	\item Metodi di pagamento automatico, senza l'obbligo del possesso di carte o moneta. Il dispositivo di pagamento rileverà in automatico le merci ed il compratore, e comunicando con i rispettivi avatar virtuali procederà al pagamento della merce. L'avatar del compratore potrà richiedere la conferma della persona reale prima di procedere. Sui mezzi pubblici non sarà più necessario l'acquisto del biglietto, ma semplicemente il mezzo, interagendo con gli avatar dei passeggeri, addebiterà il prezzo del bigliett all'ingresso nel mezzo.
+	\item Scambio di dati tra persone fisiche, ad esempio dati medici o giudiziari. L'avatar di un medico contatterà l'avatar del paziente, che fornirà ad esso i dati medici, mostrati poi al medico nel mondo reale. In maniera simile un agente di polizia potrà ricevere i dati giudiziari di persone sospette, ad esempio per controlli negli aeroporti. 
+	\item Scambio di dati tra dispositivi computazionali, ad esempio nel caso di un ricovero in terapia intensiva, l'avatar virtuale del ricovero (ad esempio legato fisicamente al letto) potrà aggregare tutti i dati rilevati dai sensori vicini (ossigenazione del sangue, elettrocardiogramma, temperatura\dots) per condividerli con i medici o eseguire \emph{learning} sugli stessi, in modo da rilevare ed anticipare peggioramenti o miglioramenti del paziente.
+\end{itemize}
 
 \section{Goal}
  
@@ -131,7 +145,7 @@ Il sistema dovrà definire una politica di accesso ai dati contenuti nella banca
 \section{Glossario}
 In questa sezione verranno esplorati ed esplicati i concetti chiave usati dal committente durante la fase di raccolta dei requisiti. 
 \begin{itemize}
-	\textbf{Soccorritore}: 
+	\item \textbf{Soccorritore}:
 \end{itemize}
 
 \section{Scenari}
