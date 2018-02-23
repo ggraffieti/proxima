@@ -5,12 +5,12 @@ Dispatch identificationResponse : identificationResponse(I)
 Dispatch dataRequest : dataRequest(DOCTOR_ID, PATIENT_ID)
 Dispatch dataResponse : dataResponse(PATIENT_ID, NAME, SURNAME)
 
-//Context ctxDebug ip[host="localhost" port=1406]
-Context ctxPatient ip[host="localhost" port=1406] -g white
-Context ctxDoctor ip[host="localhost" port=6041] -g blue
-Context ctxControl ip[host="localhost" port=6042] -g yellow
+Context ctxDebug ip[host="localhost" port=1406]
+//Context ctxPatient ip[host="localhost" port=1406] -g white
+//Context ctxDoctor ip[host="localhost" port=6041] -g blue
+//Context ctxControl ip[host="localhost" port=6042] -g yellow
 
-QActor qpatient context ctxPatient {
+QActor qpatient context ctxDebug {
 	Rules {
 		identifier(patient123456789).
 	}
@@ -39,17 +39,27 @@ QActor qpatient context ctxPatient {
 	]
 }
 
-QActor qdoctor context ctxDoctor {
+QActor qdoctor context ctxDebug {
 	Rules {
 		identifier(doctor123456789).
+		distance(qpatient, 10).
+		distance(qpatient2, 8).
+		distance(qpatient3, 15).
+		numDistances(3).
 	}
 	
 	Plan init normal
 	[
 		println("[qdoctor] started!");
+		demo consult("./src/it/unibo/qatheory/qdoctortheory.pl");
 		[?? identifier(K)] actorOp createIdentifier(K)
 	]
-	switchTo readIdentifier
+	switchTo findNearestPatient
+	
+	Plan findNearestPatient 
+	[
+		[!? findNearest(ID, D)] println(D)
+	]
 	
 	Plan readIdentifier
 	[
@@ -62,7 +72,8 @@ QActor qdoctor context ctxDoctor {
 	Plan requestPatientIdentifier 
 	[
 		println("[qdoctor] sending identification request to patient");
-		forward qpatient -m identificationRequest : identificationRequest
+		[?? distance(X, 5)] forward X -m identificationRequest : identificationRequest
+		//forward qpatient -m identificationRequest : identificationRequest
 	]
 	transition stopAfter 2000
 			   whenMsg identificationResponse -> handlePatientIdentifierResponse
@@ -86,7 +97,7 @@ QActor qdoctor context ctxDoctor {
     ]
 }
 
-QActor qcontrol context ctxControl {
+QActor qcontrol context ctxDebug {
 	Rules {
 		data(patient234567891, jane, doe).
 		data(patient123456789, john, doe).
