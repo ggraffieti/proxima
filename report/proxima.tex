@@ -197,6 +197,23 @@ Se il paziente è in possesso di un identificatore, esso viene rilevato nella fa
 \end{itemize}
 
 \section{Domain model}
+La fase di raccolta dei requisiti ha permesso una comprensione delle richieste del committente, che sono state definite ed esplicate in forma testuale nelle sezioni precedenti. Una rappresentazione più efficacie dei requisiti può essere raggiunta attraverso la costruzione di un modello del dominio, in grado di catturare gli aspetti chiave del sistema. 
+
+In questa fase, la costruzione di un modello del dominio ha un duplice scopo, in quanto permette:
+\begin{itemize}
+	\item Una definizione formale dei requisiti, che costituisce un input per la successive fasi di analisi e progettazione.
+	\item Un confronto diretto con il committente, in modo da confermare o smentire la comprensione dei requisiti raccolti. 
+\end{itemize}
+
+La criticità principale di questo approccio consiste nella realizzazione di un modello comprensibile sia all'interno della \emph{software house}, sia al committente. La realizzazione di un modello eseguibile permette di evitare tale problematica, attraverso la costruzione di uno o più prototipi funzionanti in tempi brevi. Il prototipo consente di definire il comportamento generale del sistema e sarà sottoposto all'attenzione del committente. 
+
+Il modello del dominio è stato definito tramite l'utilizzo del meta-modello \emph{QActor}, sviluppato dal professore Antonio Natali. \emph{QActor} è un linguaggio \emph{custom} che consente di esprimere in maniera concisa la struttura, l'interazione ed il comportamento di un sistema software eterogeneo e distribuito.
+
+Sulla base dei requisiti, si procede in maniera incrementale alla realizzazione di due modelli:
+\begin{itemize}
+	\item \textbf{Base requirement}: si individuano nel sistema tre componenti principali, nello specifico patient, doctor e control (componente che gestisce l'accesso alla banca dati), modellati come entità attive (attori). I componenti sono considerati come delle \emph{black-boxes}, ponendo il focus sulla loro interazione. Dal modello emerge il comportamento del sistema, il cui scopo è quello di permettere al soccorritore di reperire i dati medici (in questo caso simulati) del paziente.
+	\item \textbf{Authorization requirement}: estensione del modello base attraverso l'introduzione di un vincolo che impedisce l'accesso ai dati ai soccorritori non autorizzati.
+\end{itemize}
 
 \section{Test plan}
 
