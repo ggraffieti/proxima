@@ -7,20 +7,20 @@ Dispatch dataResponse : dataResponse(PATIENT_ID, NAME, SURNAME, BLOOD_GROUP)
 
 Event local_start : start
 
-Context ctxDebug ip[host="localhost" port=1406]
+Context ctxBaseDebug ip[host="localhost" port=1406 ]
 //Context ctxPatient ip[host="localhost" port=1406] -g white
 //Context ctxDoctor ip[host="localhost" port=6041] -g blue
 //Context ctxControl ip[host="localhost" port=6042] -g yellow
 
-QActor qpatient context ctxDebug {
+QActor qpatient context ctxBaseDebug {
 	Rules {
 		identifier(patient1).
 	}
 	
 	Plan init normal
 	[
-		println("[qpatient] started!");
-		[?? identifier(K)] actorOp createIdentifier(K)
+		println("[qpatient] started!")
+		//[?? identifier(K)] actorOp createIdentifier(K)
 	]
 	switchTo waitForRequest
 	
@@ -35,21 +35,22 @@ QActor qpatient context ctxDebug {
 	Plan handleIdentificationRequest resumeLastPlan
 	[
 		println("[qpatient] handling identification request");
-		actorOp getIdentifier;
+		[!? identifier(K)] replyToCaller -m identificationResponse : identificationResponse(K)
+		/*actorOp getIdentifier;
 		[?? actorOpDone(OP, R)] replyToCaller -m 
-							identificationResponse : identificationResponse(R)
+							identificationResponse : identificationResponse(R)*/
 	]
 }
 
-QActor qpatient2 context ctxDebug {
+QActor qpatient2 context ctxBaseDebug {
 	Rules {
 		identifier(patient2).
 	}
 	
 	Plan init normal
 	[
-		println("[qpatient2] started!");
-		[?? identifier(K)] actorOp createIdentifier(K)
+		println("[qpatient2] started!")
+		//[?? identifier(K)] actorOp createIdentifier(K)
 	]
 	switchTo waitForRequest
 	
@@ -64,26 +65,27 @@ QActor qpatient2 context ctxDebug {
 	Plan handleIdentificationRequest resumeLastPlan
 	[
 		println("[qpatient2] handling identification request");
-		actorOp getIdentifier;
+		[!? identifier(K)] replyToCaller -m identificationResponse : identificationResponse(K)
+		/*actorOp getIdentifier;
 		[?? actorOpDone(OP, R)] replyToCaller -m 
-							identificationResponse : identificationResponse(R)
+							identificationResponse : identificationResponse(R)*/
 	]
 }
 
 
-QActor qdoctor context ctxDebug {
+QActor qdoctor context ctxBaseDebug {
 	Rules {
 		identifier(doctor1).
 		distance(qpatient, 10).
-		distance(qpatient2, 7).
+		distance(qpatient2, 70).
 	}
 	
 	Plan init normal
 	[
 		println("[qdoctor] started!");
 		demo consult("./src/it/unibo/qatheory/qDoctorTheory.pl");
-		actorOp buildCustomGui("doctorGui");
-		[?? identifier(K)] actorOp createIdentifier(K)
+		actorOp buildCustomGui("doctorGui")
+		//[?? identifier(K)] actorOp createIdentifier(K)
 	]
 	switchTo idle
 	
@@ -92,15 +94,15 @@ QActor qdoctor context ctxDebug {
 		println("[qdoctor] waiting for emergency")	
 	]
 	transition stopAfter 30000
-			   whenEvent local_start -> readIdentifier
+			   whenEvent local_start -> requestPatientIdentifier //readIdentifier
 	
-	Plan readIdentifier
+	/*Plan readIdentifier
 	[
 		actorOp getIdentifier;
 		println("[qdoctor] identifier read");
 		[?? actorOpDone(OP, R)] addRule identifier(R)
 	]
-	switchTo requestPatientIdentifier
+	switchTo requestPatientIdentifier*/
 	
 	Plan requestPatientIdentifier 
 	[
@@ -141,7 +143,7 @@ QActor qdoctor context ctxDebug {
     switchTo idle
 }
 
-QActor qcontrol context ctxDebug {
+QActor qcontrol context ctxBaseDebug {
 	Rules {
 		data(patient2, jane, doe, a_positive).
 		data(patient1, john, doe, ab_negative).
