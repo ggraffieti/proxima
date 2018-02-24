@@ -3,12 +3,18 @@
 This code is generated only ONCE
 */
 package it.unibo.qdoctor;
+import java.awt.Color;
+
+import it.unibo.baseEnv.basicFrame.EnvFrame;
+import it.unibo.gui.DoctorGui;
 import it.unibo.identification.Identifier;
+import it.unibo.is.interfaces.IBasicEnvAwt;
 import it.unibo.is.interfaces.IOutputEnvView;
 import it.unibo.qactors.QActorContext;
 
 public class Qdoctor extends AbstractQdoctor { 
 	private Identifier identifier;
+	private DoctorGui gui;
 	
 	public Qdoctor(String actorId, QActorContext myCtx, IOutputEnvView outEnvView )  throws Exception{
 		super(actorId, myCtx, outEnvView);
@@ -20,5 +26,21 @@ public class Qdoctor extends AbstractQdoctor {
 	
 	public String getIdentifier() {
 		return identifier.getIdentifier();
+	}
+	
+	
+	public void buildCustomGui(String logo){
+		IBasicEnvAwt env = outEnvView.getEnv();
+		if( env == null){
+			env = new EnvFrame( logo, Color.yellow, Color.black );
+			env.init();
+			((EnvFrame)env).setSize(800,430);
+		}
+		env.writeOnStatusBar(logo + " | working ... ",14);
+		this.gui = new DoctorGui( env , this);
+	}
+	
+	public void showDataOnGUI(String name, String surname, String bloodGroup) {
+		this.gui.showData(name, surname, bloodGroup);
 	}
 }
