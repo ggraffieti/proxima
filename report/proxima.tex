@@ -98,7 +98,7 @@
 \chapter{Introduzione}
 
 \chapter{Idea}
-\section{Visione}
+\section{Visione} \label{vision}
 Negli ultimi anni si è assistito ad una sempre maggiore distribuzione di dispositivi di calcolo, inseriti anche nei più comuni oggetti di uso quotidiano. Ciò ha portato ad una distribuzione della computazione, che non è soltanto ad appannaggio dei dispositivi computazionali classici, ma ripartita in quasi ogni oggetto reale. 
 
 Una delle sfide nel futuro della \emph{computer science} sarà quella di gestire l'interazione tra tutti questi oggetti, che dovranno interagire sia tra loro, che con gli esseri umani. Dato il numero sempre crescente di dispositivi, e la tipica bassa potenza computazionale di cui sono dotati, non è pensabile che l'interazione sia esplicita e avvenga nel mondo fisico. La nostra vision è quella di creare uno strato virtuale sopra alla realtà fisica, dove ogni dispositivo viene mappato in un'entità virtuale. Dato che l'interazione tra due oggetti acquista senso solamente se essi sono vicini tra loro nel mondo reale, i dispositivi fisici hanno il solo scopo di cercare altri dispositivi vicini nello spazio, per poi interagire con loro nello strato virtuale, rappresentato dal nostro sistema. 
@@ -115,7 +115,12 @@ Attraverso il deployment del sistema proposto saranno aperti vari nuovi scenari,
 \end{itemize}
 
 \section{Goal}
- 
+L'obiettivo di questo elaborato è la progettazione e l'implementazione del primo scheletro del sistema, in modo da creare l'infrastruttura generale, che sarà poi estesa in modo da implementare le funzionalità descritte in \autoref{vision}. Oltre a produrre la base del sistema ci si concentrerà su un caso concreto, in modo da mostrare fin da subito l'utilità dell'idea proposta. 
+
+Una delle maggiori problematiche nell'ambito del primo soccorso, è quella di riconoscere velocemente il paziente, e accedere quindi rapidamente ai suoi dati medici, quali allergie o farmaci assunti abitualmente. La conoscenza di tali dati da parte del medico di primo soccorso è vitale per operare in modo sicuro, ed evitare di peggiorare la situazione clinica del paziente. Spesso non è possibile avere un veloce accesso a tali dati, dato che il paziente può essere privo di conoscenza, in stato di shock o incapace di comunicare. Inoltre la consultazione delle informazioni avviene solamente una volta arrivati in ospedale: esse non sono quindi disponibili durante il primo soccorso ed il trasporto.
+
+L'obiettivo di questo elaborato è quello di risolvere il problema attraverso il sistema \emph{Proxima}: il medico rileverà la presenza di un paziente nelle vicinanze, interagirà virtualmente con lui e riceverà i dati medici nel mondo fisico, senza alcun bisogno di interazione diretta, spesso impossibile. Verrà, perciò, prima implementata la parte generale del sistema, e poi mostrata la sua potenzialità in un caso reale, come quello descritto.  
+
 \chapter{Analisi dei requisiti} 
 \section{Idea}
 Il sistema \emph{Proxima} nasce dalla necessità di fornire un supporto, in caso di emergenza, ai soccorritori accorsi sul posto. Ogni persona dovrà essere munita di un dispositivo di identificazione, che potrà essere letto dal soccorritore, tramite l'utilizzo di un apposito lettore. Tale lettore dovrà essere provvisto di schermo, sul quale saranno visualizzati i dati medici del paziente, in modo da consentire interventi mirati e con maggiore sicurezza. 
@@ -187,13 +192,12 @@ Se il paziente è in possesso di un identificatore, esso viene rilevato nella fa
 
 \section{Requisiti non funzionali}
 \begin{itemize}
-	\item \textbf{Costi}: il costo dell'identificatore non deve superare i \euro 10 per unità
-	\item Privacy
-	\item Sicurezza (dei dati e delle comunicazioni), resistente ad attacchi quali \emph{man-in-the-middle}, \emph{replay attack}, \emph{sniffing}\dots 
-	\item \emph{Non-repudation} delle azioni fatte, identificazione univoca di tutti i soggetti (medico, utente). 
-	\item Availability (del server e dell'identificatore).
-	\item Scalability del server
-	\item Fault tolerance (server, batteria scarica identificatore, mancanza di connessione internet).
+	\item \textbf{Costi}: il costo dell'identificatore non dovrà superare i 5 euro per unità. I dispositivi \emph{Android} utilizzati come lettori dovranno essere acquistati, ed il loro prezzo non dovrà superare i 200 euro per unità.
+	\item \textbf{Sicurezza e privacy}: tutte le comunicazioni tra i componenti del sistema dovranno essere sicure, e non sarà possibile l'intercettazione dei dati da parte di soggetti non autorizzati. I dati medici dei pazienti sono dati sensibili, ed il loro accesso dovrà essere garantito solamente ai soccorritori, e solamente in reali situazioni di emergenza. I dati dovranno essere conservati e trasmessi in modo sicuro, in modo da garantire la loro integrità. Per questioni legali ogni accesso ai dati dovrà essere opportunamente memorizzato, in modo che sia sempre possibile risalire a quale soccorritore ha letto i dati del dato paziente. Non dovrà essere possibile che un paziente sia scambiato con un altro, o che volontariamente assuma l'identità di un'altra persona.
+	\item \textbf{Availability}: il servizio offerto dovrà essere sempre consultabile, e dovrà fornire i dati medici corretti ad ogni interazione con i soccorritori autorizzati. Il sistema dovrà essere raggiungibile da qualunque luogo, a patto che sia possibile stabilire una connessione internet. Il ritardo di risposta del sistema (assumendo tempo zero per la trasmissione dei dati) non dovrà mai superare i 2 secondi.
+	\item \textbf{Scalability}: il sistema avrà per lo più un carico di lavoro costante, ma dovrà gestire anche picchi di richieste, dovuti ad esempio a catastrofi naturali, attacchi terroristici ecc\dots Il tempo di risposta massimo dovrà essere sempre mantenuto al di sotto del valore espresso precedentemente, indipendentemente dal numero di richieste che il sistema dovrà gestire. 
+	\item \textbf{Fault tolerance}: nel caso non sia possibile stabilire una connessione con il sistema dovrà essere mostrato un avviso al soccorritore di modo che intervenga sul paziente senza fare affidamento sul sistema. In questo modo non viene perso tempo prezioso nella ricerca e nell'identificazione del paziente. I dati medici dovranno essere in ogni caso recuperabili, anche a seguito di fallimenti del sistema. Essi, infatti, non dovranno mai venire persi. 
+	\item \textbf{User experience}: i dati medici dovranno essere mostrati al soccorritore in modo da facilitare la loro lettura e consultazione. Essi, infatti, dovranno essere letti in fasi particolarmente concitate, per cui la loro presentazione non dovrà far perdere tempo al soccorritore, oltre a quello necessario alla loro lettura. 
 \end{itemize}
 
 \section{Domain model}
