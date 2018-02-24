@@ -1,5 +1,4 @@
-identifiers(DOCTOR_ID, PATIENT_ID) :- identifier(DOCTOR_ID), patientid(PATIENT_ID), retract(identifier(DOCTOR_ID)),
-									  retract(patientid(PATIENT_ID)).
+identifiers(DOCTOR_ID, PATIENT_ID) :- identifier(DOCTOR_ID), patientid(PATIENT_ID), retract(patientid(PATIENT_ID)).
 
 
 numDistances(P, Count) :- findall(1, P, L), length(L, Count).

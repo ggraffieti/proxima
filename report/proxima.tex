@@ -151,17 +151,44 @@ Il sistema dovrà definire una politica di accesso ai dati contenuti nella banca
 \section{Glossario}
 In questa sezione verranno esplorati ed esplicati i concetti chiave usati dal committente durante la fase di raccolta dei requisiti. 
 \begin{itemize}
-	\item \textbf{Soccorritore}:
+	\item \textbf{Soccorritore}: medico o infermiere che presta soccorso ai pazienti sia in ospedale, che anche all'esterno in caso di emergenze. Nella definizione di soccorritore data dal committente, non è incluso il personale che non è adibito ad un intervento invasivo diretto sul paziente (personale volontario e non senza abilitazioni mediche/infermieristiche). Ad esempio, a bordo di un'ambulanza atta a svolgere una funzione di trasporto e di primo soccorso, è consuetudine la presenza di personale (volontario e non), la cui mansione è limitata ad una prima stabilizzazione del paziente, oltre al trasporto dello stesso presso un centro ospedaliero. Tale personale non è considerato in questa categoria.
+	\item \textbf{Paziente}: Persona che necessita di cure mediche in una situazione di emergenza. Sono inclusi in questa categoria sia i soggetti che si recano in ospedale in autonomia, sia i soggetti che giungono in ospedale scortati da appositi mezzi di trasporto (come ambulanze).
+	\item \textbf{Identificativo}: codice che permette di risalire all'identità di un certo utente all'interno del sistema. Esso deve contenere la minima quantità di informazione che consente di identificare un paziente che è in possesso di un identificatore
+	\item \textbf{Lettore}: dispositivo Android (smartphone, tablet), in grado di recuperare l'identificativo del paziente dall'identificatore e dotato di una costante connessione di rete, in modo da poter comunicare con la base di dati remota fornita dal committente. Su richiesta, le funzionalità del lettore devono essere condensate all'interno di un'applicazione nativa Android.
+	\item \textbf{Dati medici}: dati relativi al paziente che risultano particolarmente utili al soccorritore nella fase di primo soccorso. Tali informazioni sono contenute all'interno della banca dati fornita dal committente. Nello specifico, esse sono relative a:
+	\begin{itemize}
+		\item Breve anagrafica del paziente (nome, cognome, codice fiscale, data di nascita).
+		\item Gruppo sanguigno.
+		\item Consenso o meno alla donazione di organi.
+		\item Malattie (ad esempio sclerosi multipla, fibrosi cistica, \dots).
+		\item Allergie ai medicinali, ai cibi (come arachidi, latte, \dots), alle punture di insetti, ai materiali e ad altre svariate sostanze.
+		\item Medicinali abitualmente assunti dal paziente.
+	\end{itemize}
+	Un sottoinsieme dei dati sopra elencati è soggetto a variazioni nel tempo (ad esempio i medicinali assunti), la banca dati conterrà sempre la versione attuale delle informazioni, e verrà quindi aggiornata periodicamente.  
+	\item \textbf{Turno del soccorritore}: fasce orarie nelle quali il soccorritore presta il suo servizio in ospedale o nei mezzi adibiti al primo soccorso e al trasporto dei pazienti. Il turno di un soccorritore è soggetto a variazioni nel tempo, comportando un conseguente aggiornamento della banca dati.
 \end{itemize}
 
 \section{Scenari}
-\subsection{Scenario I}
-In una situazione di emergenza, il soccorritore arriva sul posto, apre l'applicazione sul proprio lettore e lo avvicina al proprio identificatore, in modo da autenticarsi nel sistema. Subito dopo il soccorritore avvicina il lettore all'identificatore del paziente e riceverà i dati medici dello stesso. 
-\subsection{Scenario II}
-In una situazione di emergenza, il soccorritore arriva sul posto, apre l'applicazione sul proprio lettore e lo avvicina al proprio identificatore, in modo da autenticarsi nel sistema. Subito dopo il soccorritore avvicina il lettore all'identificatore del paziente per richiedere i dati medici dello stesso. Nel caso essi non siano presenti nel sistema, dovrà essere mostrato un messaggio di errore.
-\subsection{Scenario III} 
-In una situazione di emergenza, il soccorritore arriva sul posto e apre l'applicazione sul proprio lettore. Nel caso non sia possibile creare alcuna connessione con il server, deve essere mostrato un messaggio che avvisa il soccorritore di intervenire ``manualmente'', senza contare sul servizio.
+È possibile individuare due scenari di interesse, a seconda del luogo in cui il servizio viene utilizzato.
+\subsection{Scenario 1} \label{scenario1}
+In una situazione di emergenza, il soccorritore arriva sul posto, apre l'applicazione sul proprio lettore e si autentica nel sistema. 
 
+\subsubsection*{Scenario 1.1}
+Inizia la ricerca degli identificatori nelle vicinanze. Se uno o più identificatori sono rilevati, viene recuperato l'identificativo di quello che risulta essere più vicino. I dati medici del paziente sono poi mostrati sullo schermo del dispositivo, in modo da fornire un supporto per il soccorritore.
+
+\subsubsection*{Scenario 1.2}
+Inizia la ricerca degli identificatori nelle vicinanze. Se uno o più identificatori sono rilevati, viene recuperato l'identificativo di quello che risulta essere più vicino. Nel caso in cui il soccorritore non sia autorizzato alla lettura dei dati (in quanto non qualificato o non in un turno lavorativo), l'accesso ai dati è negato e viene mostrato un messaggio che avvisa il soccorritore di intervenire ``manualmente'', senza contare sul servizio.
+\subsubsection*{Scenario 1.3} 
+Non è possibile contattare la banca dati, viene mostrato un messaggio che avvisa il soccorritore di intervenire ``manualmente'', senza poter contare sul servizio.
+\subsubsection*{Scenario 1.4}
+Il paziente non è in possesso di un identificatore, il medico deve intervenire  ``manualmente'', senza poter contare sul servizio.
+
+\subsection{Scenario 2}
+Il paziente giunge in ospedale per richiedere assistenza medica, in una situazione di emergenza. Il soccorritore (medico o infermiere di turno in ospedale) apre l'applicazione sul proprio lettore e si autentica nel sistema. 
+
+I possibili sotto-scenari che si possono manifestare corrispondono a quelli descritti in sezione \ref{scenario1}. In questo caso, però, il luogo nel quale avviene il soccorso è un reparto di una struttura ospedaliera attrezzata, nella quale è garantita la presenza dei soli soccorritori autorizzati e una costante connettività. 
+
+Se il paziente è in possesso di un identificatore, esso viene rilevato nella fase di ricerca del lettore e i dati medici del paziente sono mostrati sullo schermo del lettore, in modo da fornire un supporto per il soccorritore. Altrimenti il medico deve intervenire "manualmente" senza poter contare sul servizio.
 
 \section{Requisiti non funzionali}
 \begin{itemize}
@@ -174,6 +201,24 @@ In una situazione di emergenza, il soccorritore arriva sul posto e apre l'applic
 \end{itemize}
 
 \section{Domain model}
+La fase di raccolta dei requisiti ha permesso una comprensione delle richieste del committente, che sono state definite ed esplicate in forma testuale nelle sezioni precedenti. Una rappresentazione più efficacie dei requisiti può essere raggiunta attraverso la costruzione di un modello del dominio, in grado di catturare gli aspetti chiave del sistema. 
+
+In questa fase, la costruzione di un modello del dominio ha un duplice scopo, in quanto permette:
+\begin{itemize}
+	\item Una definizione formale dei requisiti, che costituisce un input per la successive fasi di analisi e progettazione.
+	\item Un confronto diretto con il committente, in modo da confermare o smentire la comprensione dei requisiti raccolti. 
+\end{itemize}
+
+La criticità principale di questo approccio consiste nella realizzazione di un modello comprensibile sia all'interno della \emph{software house}, sia al committente. La realizzazione di un modello eseguibile permette di evitare tale problematica, attraverso la costruzione di uno o più prototipi funzionanti in tempi brevi. Il prototipo consente di definire il comportamento generale del sistema e sarà sottoposto all'attenzione del committente. 
+
+Il modello del dominio è stato definito tramite l'utilizzo del meta-modello \emph{QActor}, sviluppato dal professore Antonio Natali. \emph{QActor} è un linguaggio \emph{custom} che consente di esprimere in maniera concisa la struttura, l'interazione ed il comportamento di un sistema software eterogeneo e distribuito.
+
+Sulla base dei requisiti, si procede in maniera incrementale alla realizzazione di due modelli:
+\begin{itemize}
+	\item \textbf{Base requirement}: si individuano nel sistema tre componenti principali, nello specifico patient, doctor e control (componente che gestisce l'accesso alla banca dati), modellati come entità attive (attori). I componenti sono considerati come delle \emph{black-boxes}, ponendo il focus sulla loro interazione. Dal modello emerge il comportamento del sistema, il cui scopo è quello di permettere al soccorritore di reperire i dati medici (in questo caso simulati) del paziente.
+	\item \textbf{Authorization requirement}: estensione del modello base attraverso l'introduzione di un vincolo che impedisce l'accesso ai dati ai soccorritori non autorizzati.
+\end{itemize}
+I modelli sopra illustrati sono eseguibili e costituiscono dei primi prototipi funzionanti del sistema. Questa caratteristica permette un confronto diretto con il committente, in modo da valutare la comprensione dei requisiti.
 
 \section{Test plan}
 
