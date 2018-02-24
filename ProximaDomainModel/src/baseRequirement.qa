@@ -20,7 +20,6 @@ QActor qpatient context ctxBaseDebug {
 	Plan init normal
 	[
 		println("[qpatient] started!")
-		//[?? identifier(K)] actorOp createIdentifier(K)
 	]
 	switchTo waitForRequest
 	
@@ -36,9 +35,6 @@ QActor qpatient context ctxBaseDebug {
 	[
 		println("[qpatient] handling identification request");
 		[!? identifier(K)] replyToCaller -m identificationResponse : identificationResponse(K)
-		/*actorOp getIdentifier;
-		[?? actorOpDone(OP, R)] replyToCaller -m 
-							identificationResponse : identificationResponse(R)*/
 	]
 }
 
@@ -50,7 +46,6 @@ QActor qpatient2 context ctxBaseDebug {
 	Plan init normal
 	[
 		println("[qpatient2] started!")
-		//[?? identifier(K)] actorOp createIdentifier(K)
 	]
 	switchTo waitForRequest
 	
@@ -66,9 +61,6 @@ QActor qpatient2 context ctxBaseDebug {
 	[
 		println("[qpatient2] handling identification request");
 		[!? identifier(K)] replyToCaller -m identificationResponse : identificationResponse(K)
-		/*actorOp getIdentifier;
-		[?? actorOpDone(OP, R)] replyToCaller -m 
-							identificationResponse : identificationResponse(R)*/
 	]
 }
 
@@ -76,8 +68,8 @@ QActor qpatient2 context ctxBaseDebug {
 QActor qdoctor context ctxBaseDebug {
 	Rules {
 		identifier(doctor1).
-		distance(qpatient, 10).
-		distance(qpatient2, 70).
+		distance(qpatient, 100).
+		distance(qpatient2, 150).
 	}
 	
 	Plan init normal
@@ -85,7 +77,6 @@ QActor qdoctor context ctxBaseDebug {
 		println("[qdoctor] started!");
 		demo consult("./src/it/unibo/qatheory/qDoctorTheory.pl");
 		actorOp buildCustomGui("doctorGui")
-		//[?? identifier(K)] actorOp createIdentifier(K)
 	]
 	switchTo idle
 	
@@ -94,15 +85,7 @@ QActor qdoctor context ctxBaseDebug {
 		println("[qdoctor] waiting for emergency")	
 	]
 	transition stopAfter 30000
-			   whenEvent local_start -> requestPatientIdentifier //readIdentifier
-	
-	/*Plan readIdentifier
-	[
-		actorOp getIdentifier;
-		println("[qdoctor] identifier read");
-		[?? actorOpDone(OP, R)] addRule identifier(R)
-	]
-	switchTo requestPatientIdentifier*/
+			   whenEvent local_start -> requestPatientIdentifier
 	
 	Plan requestPatientIdentifier 
 	[

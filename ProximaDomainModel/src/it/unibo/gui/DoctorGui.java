@@ -26,4 +26,8 @@ public class DoctorGui extends SituatedPlainObject{
 	public void showData(String name, String surname, String bloodGroup) {
 		println("Name: " + name + "\nSurname: " + surname + "\nBlood Group: " + bloodGroup);
 	}
+	
+	public void showUnauthorizedMessage() {
+		println("Unauthorized");
+	}
 }

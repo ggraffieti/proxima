@@ -59,7 +59,7 @@ public class BaseRequirementTest {
 	}
  	
  	@Test
-	public void seconDataTest() {  
+	public void secondDataTest() {  
  		System.out.println("[TEST] Second data test");
 		try {
 			setDistances(HIGHER_DISTANCE, LOWER_DISTANCE);

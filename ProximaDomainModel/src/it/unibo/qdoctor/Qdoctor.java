@@ -7,28 +7,18 @@ import java.awt.Color;
 
 import it.unibo.baseEnv.basicFrame.EnvFrame;
 import it.unibo.gui.DoctorGui;
-import it.unibo.identification.Identifier;
 import it.unibo.is.interfaces.IBasicEnvAwt;
 import it.unibo.is.interfaces.IOutputEnvView;
 import it.unibo.qactors.QActorContext;
 
 public class Qdoctor extends AbstractQdoctor { 
-	private Identifier identifier;
 	private DoctorGui gui;
 	
 	public Qdoctor(String actorId, QActorContext myCtx, IOutputEnvView outEnvView )  throws Exception{
 		super(actorId, myCtx, outEnvView);
 	}
-
-	public void createIdentifier(final String id) {
-		identifier = new Identifier(id);
-	}
 	
-	public String getIdentifier() {
-		return identifier.getIdentifier();
-	}
-	
-	
+	/* Added by the application designer */
 	public void buildCustomGui(String logo){
 		IBasicEnvAwt env = outEnvView.getEnv();
 		if( env == null){
@@ -42,5 +32,9 @@ public class Qdoctor extends AbstractQdoctor {
 	
 	public void showDataOnGUI(String name, String surname, String bloodGroup) {
 		this.gui.showData(name, surname, bloodGroup);
+	}
+	
+	public void showUnauthorizedMessageOnGUI() {
+		this.gui.showUnauthorizedMessage();
 	}
 }
