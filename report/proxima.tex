@@ -153,6 +153,7 @@ In questa sezione verranno esplorati ed esplicati i concetti chiave usati dal co
 \begin{itemize}
 	\item \textbf{Soccorritore}: medico o infermiere che presta soccorso ai pazienti sia in ospedale, che anche all'esterno in caso di emergenze. Nella definizione di soccorritore data dal committente, non è incluso il personale che non è adibito ad un intervento invasivo diretto sul paziente (personale volontario e non senza abilitazioni mediche/infermieristiche). Ad esempio, a bordo di un'ambulanza atta a svolgere una funzione di trasporto e di primo soccorso, è consuetudine la presenza di personale (volontario e non), la cui mansione è limitata ad una prima stabilizzazione del paziente, oltre al trasporto dello stesso presso un centro ospedaliero. Tale personale non è considerato in questa categoria.
 	\item \textbf{Paziente}: Persona che necessita di cure mediche in una situazione di emergenza. Sono inclusi in questa categoria sia i soggetti che si recano in ospedale in autonomia, sia i soggetti che giungono in ospedale scortati da appositi mezzi di trasporto (come ambulanze).
+	\item \textbf{Situazione di emergenza}: Circostanza o condizione di immediato pericolo per la salute del paziente, che necessita di un perentorio intervento di uno o più soccorritori (ad esempio traumi dovuti ad incidenti automobilistici, condizioni acute quali infarto, ictus, \dots).
 	\item \textbf{Identificativo}: codice che permette di risalire all'identità di un certo utente all'interno del sistema. Esso deve contenere la minima quantità di informazione che consente di identificare un paziente che è in possesso di un identificatore
 	\item \textbf{Lettore}: dispositivo Android (smartphone, tablet), in grado di recuperare l'identificativo del paziente dall'identificatore e dotato di una costante connessione di rete, in modo da poter comunicare con la base di dati remota fornita dal committente. Su richiesta, le funzionalità del lettore devono essere condensate all'interno di un'applicazione nativa Android.
 	\item \textbf{Dati medici}: dati relativi al paziente che risultano particolarmente utili al soccorritore nella fase di primo soccorso. Tali informazioni sono contenute all'interno della banca dati fornita dal committente. Nello specifico, esse sono relative a:
@@ -203,6 +204,41 @@ Di seguito sono elencati i requisiti non funzionali del sistema:
 \end{itemize}
 
 \section{Domain model} \label{domain-model}
+Il committente ha reso disponibile una base dati, la quale contiene le informazioni mediche dei pazienti. I dati sono memorizzati all'interno della banca dati attraverso un database \emph{MongoDB}\footnote{\url{https://www.mongodb.com}}, e strutturati in documenti \emph{JSON}\footnote{\url{https://www.json.org}}. La struttura dei dati è riportata di seguito:
+\begin{lstlisting}[style=json, caption={Esempio di una entry all'interno del database dato.}, captionpos=b]
+{
+	"_id": ObjectId("507f1f77bcf86cd799439011"),
+	"name": "John",
+	"surname": "Doe",
+	"CF": "DOEJHN70P16F205Y",
+	"birthDate": "1970-09-16T00:00:00.000Z",
+	"bloodGroup": "A+",
+	"organDonor": "YES",
+	"medicalConditions": [
+		"Heart Disease",
+		"Diabetes type 2",
+		"Pacemaker"
+	],
+	"drugAllergies": [
+		"Penicillan",
+		"Morphine"
+	],
+	"otherAllergies": [
+		"Peanuts",
+		"Bee sting",
+		"Latex",
+		"Wheat"
+	],
+	"medications": [
+		"Prozac",
+		"Refludan",
+		"Hydrochiorothiazide",
+		"Cialis",
+		"Plavix"
+	]
+}
+\end{lstlisting}
+
 La fase di raccolta dei requisiti ha permesso una comprensione delle richieste del committente, che sono state definite ed esplicate in forma testuale nelle sezioni precedenti. Una rappresentazione più efficacie dei requisiti può essere raggiunta attraverso la costruzione di un modello del dominio, in grado di catturare gli aspetti chiave del sistema. 
 
 In questa fase, la costruzione di un modello del dominio ha un duplice scopo, in quanto permette:
@@ -258,9 +294,8 @@ In questa sezione verranno esaminate le varie problematiche che scaturiscono da 
 		\item \emph{Insider threats}: problema di distinguere accessi leciti e non alla banca dati. Ad esempio, un soccorritore autorizzato può potenzialmente accedere ai dati di ogni paziente (dato il relativo identificativo), ma tale accesso risulterebbe illecito nel caso venisse svolto al di fuori di una situazione di emergenza.
 		\item \emph{Privacy}: i dati medici di un paziente acquisiti da un soccorritore autorizzato potrebbero, in un secondo momento, essere ri-consultati o divulgati dal soccorritore stesso, violando così la privacy del paziente.
 	\end{itemize} 
-	
-	Le problematiche fin qui illustrate si limitano allo specifico ambito medico. Come anticipato in sezione \ref{goal}, il caso medico è solamente un sottoinsieme del sistema generale, la cui idea è illustrata in sezione \ref{vision}. 
 \end{description}
+Le problematiche fin qui illustrate si limitano allo specifico ambito medico. Come anticipato in sezione \ref{goal}, il caso medico è solamente un sottoinsieme del sistema generale, la cui idea è illustrata in sezione \ref{vision}. 
 
 \section{Studio di fattibilità}
 
