@@ -114,29 +114,29 @@ Attraverso il deployment del sistema proposto saranno aperti vari nuovi scenari,
 	\item Scambio di dati tra dispositivi computazionali, ad esempio nel caso di un ricovero in terapia intensiva, l'avatar virtuale del ricovero (ad esempio legato fisicamente al letto) potrà aggregare tutti i dati rilevati dai sensori vicini (ossigenazione del sangue, elettrocardiogramma, temperatura\dots) per condividerli con i medici o eseguire \emph{learning} sugli stessi, in modo da rilevare ed anticipare peggioramenti o miglioramenti del paziente.
 \end{itemize}
 
-\section{Goal}
+\section{Goal} \label{goal}
 L'obiettivo di questo elaborato è la progettazione e l'implementazione del primo scheletro del sistema, in modo da creare l'infrastruttura generale, che sarà poi estesa in modo da implementare le funzionalità descritte in \autoref{vision}. Oltre a produrre la base del sistema ci si concentrerà su un caso concreto, in modo da mostrare fin da subito l'utilità dell'idea proposta. 
 
 Una delle maggiori problematiche nell'ambito del primo soccorso, è quella di riconoscere velocemente il paziente, e accedere quindi rapidamente ai suoi dati medici, quali allergie o farmaci assunti abitualmente. La conoscenza di tali dati da parte del medico di primo soccorso è vitale per operare in modo sicuro, ed evitare di peggiorare la situazione clinica del paziente. Spesso non è possibile avere un veloce accesso a tali dati, dato che il paziente può essere privo di conoscenza, in stato di shock o incapace di comunicare. Inoltre la consultazione delle informazioni avviene solamente una volta arrivati in ospedale: esse non sono quindi disponibili durante il primo soccorso ed il trasporto.
 
 L'obiettivo di questo elaborato è quello di risolvere il problema attraverso il sistema \emph{Proxima}: il medico rileverà la presenza di un paziente nelle vicinanze, interagirà virtualmente con lui e riceverà i dati medici nel mondo fisico, senza alcun bisogno di interazione diretta, spesso impossibile. Verrà, perciò, prima implementata la parte generale del sistema, e poi mostrata la sua potenzialità in un caso reale, come quello descritto.  
 
-\chapter{Analisi dei requisiti} 
+\chapter{Analisi dei requisiti} \label{requirements}
 \section{Idea}
 Il sistema \emph{Proxima} nasce dalla necessità di fornire un supporto, in caso di emergenza, ai soccorritori accorsi sul posto. Ogni persona dovrà essere munita di un dispositivo di identificazione, che potrà essere letto dal soccorritore, tramite l'utilizzo di un apposito lettore. Tale lettore dovrà essere provvisto di schermo, sul quale saranno visualizzati i dati medici del paziente, in modo da consentire interventi mirati e con maggiore sicurezza. 
 
 \section{Requisiti funzionali}
 \begin{description}
-	\item \textbf{Identificatore}: ogni utilizzatore del servizio dovrà essere costantemente in possesso di tale dispositivo, che dovrà quindi essere compatto, non ingombrante e possibilmente indossabile. Esso dovrà avere le seguenti funzionalità: 
+	\item \textbf{Identificatore}: ogni utilizzatore del servizio dovrà essere costantemente in possesso di tale dispositivo, che dovrà quindi essere compatto, non ingombrante e possibilmente indossabile. Inoltre, la sua durata media di funzionamento non dovrà essere inferiore a 3 anni. Esso sarà caratterizzato dalle seguenti funzionalità: 
 	\begin{itemize}
 		\item Identificare l'utente in maniera univoca.
-		\item La trasmissione dell'identificativo dovrà avvenire in modalità \emph{wireless}, con un raggio limitato (1-3 metri).
+		\item La trasmissione dell'identificativo dovrà avvenire in modalità \emph{wireless}, con un raggio limitato (inferiore a 3 metri).
 		\item Lo scambio dell'identificativo dovrà avvenire in maniera trasparente all'utente, senza consensi espliciti ad ogni trasmissione.
 	\end{itemize}
 
 	\item \textbf{Lettore}: dispositivo che dovrà essere in possesso del soccorritore, in modo che possa identificare e mostrare i dati degli utenti. Per fare ciò dovrà essere in grado di comunicare sia con gli identificatori, sia con la banca dati. Il dispositivo dovrà avere le seguenti funzionalità:
 	\begin{itemize}
-		\item Permettere la ricerca degli identificatori nelle vicinanze (1-3 metri). La ricerca dovrà essere esplicitamente avviata dal soccorritore, e dovrà essere possibile interromperla.
+		\item Permettere la ricerca degli identificatori nelle vicinanze (inferiore a 3 metri). La ricerca dovrà essere esplicitamente avviata dal soccorritore, e dovrà essere possibile interromperla.
 		\item Nel caso durante la fase di ricerca siano stati trovati degli identificatori, il lettore dovrà essere in grado di recuperare l'identificativo dei relativi possessori.
 		\item Contattare la banca dati remota in modo da acquisire i dati medici relativi al paziente identificato dall'identificativo recuperato in precedenza.
 		\item Attraverso il lettore dovrà essere possibile identificare in maniera univoca il soccorritore, in modo che il sistema possa decidere se il soccorritore sia autorizzato alla lettura delle informazioni mediche dell'utente.
@@ -148,7 +148,7 @@ I dati medici degli utenti sono forniti sotto forma di banca dati elettronica, a
 
 Il sistema dovrà definire una politica di accesso ai dati contenuti nella banca dati sulla base dell'identità dei soccorritori e dei turni di lavoro. 
 
-\section{Glossario}
+\section{Glossario} \label{glossary}
 In questa sezione verranno esplorati ed esplicati i concetti chiave usati dal committente durante la fase di raccolta dei requisiti. 
 \begin{itemize}
 	\item \textbf{Soccorritore}: medico o infermiere che presta soccorso ai pazienti sia in ospedale, che anche all'esterno in caso di emergenze. Nella definizione di soccorritore data dal committente, non è incluso il personale che non è adibito ad un intervento invasivo diretto sul paziente (personale volontario e non senza abilitazioni mediche/infermieristiche). Ad esempio, a bordo di un'ambulanza atta a svolgere una funzione di trasporto e di primo soccorso, è consuetudine la presenza di personale (volontario e non), la cui mansione è limitata ad una prima stabilizzazione del paziente, oltre al trasporto dello stesso presso un centro ospedaliero. Tale personale non è considerato in questa categoria.
@@ -191,6 +191,8 @@ I possibili sotto-scenari che si possono manifestare corrispondono a quelli desc
 Se il paziente è in possesso di un identificatore, esso viene rilevato nella fase di ricerca del lettore e i dati medici del paziente sono mostrati sullo schermo del lettore, in modo da fornire un supporto per il soccorritore. Altrimenti il medico deve intervenire "manualmente" senza poter contare sul servizio.
 
 \section{Requisiti non funzionali}
+Il sistema dovrà essere progettato e sviluppato in modo da fornire un servizio a livello nazionale (Italia). 
+Di seguito sono elencati i requisiti non funzionali del sistema:
 \begin{itemize}
 	\item \textbf{Costi}: il costo dell'identificatore non dovrà superare i 5 euro per unità. I dispositivi \emph{Android} utilizzati come lettori dovranno essere acquistati, ed il loro prezzo non dovrà superare i 200 euro per unità.
 	\item \textbf{Sicurezza e privacy}: tutte le comunicazioni tra i componenti del sistema dovranno essere sicure, e non sarà possibile l'intercettazione dei dati da parte di soggetti non autorizzati. I dati medici dei pazienti sono dati sensibili, ed il loro accesso dovrà essere garantito solamente ai soccorritori, e solamente in reali situazioni di emergenza. I dati dovranno essere conservati e trasmessi in modo sicuro, in modo da garantire la loro integrità. Per questioni legali ogni accesso ai dati dovrà essere opportunamente memorizzato, in modo che sia sempre possibile risalire a quale soccorritore ha letto i dati del dato paziente. Non dovrà essere possibile che un paziente sia scambiato con un altro, o che volontariamente assuma l'identità di un'altra persona.
@@ -200,7 +202,7 @@ Se il paziente è in possesso di un identificatore, esso viene rilevato nella fa
 	\item \textbf{User experience}: i dati medici dovranno essere mostrati al soccorritore in modo da facilitare la loro lettura e consultazione. Essi, infatti, dovranno essere letti in fasi particolarmente concitate, per cui la loro presentazione non dovrà far perdere tempo al soccorritore, oltre a quello necessario alla loro lettura. 
 \end{itemize}
 
-\section{Domain model}
+\section{Domain model} \label{domain-model}
 La fase di raccolta dei requisiti ha permesso una comprensione delle richieste del committente, che sono state definite ed esplicate in forma testuale nelle sezioni precedenti. Una rappresentazione più efficacie dei requisiti può essere raggiunta attraverso la costruzione di un modello del dominio, in grado di catturare gli aspetti chiave del sistema. 
 
 In questa fase, la costruzione di un modello del dominio ha un duplice scopo, in quanto permette:
@@ -215,24 +217,58 @@ Il modello del dominio è stato definito tramite l'utilizzo del meta-modello \em
 
 Sulla base dei requisiti, si procede in maniera incrementale alla realizzazione di due modelli:
 \begin{itemize}
-	\item \textbf{Base requirement}: si individuano nel sistema tre componenti principali, nello specifico patient, doctor e control (componente che gestisce l'accesso alla banca dati), modellati come entità attive (attori). I componenti sono considerati come delle \emph{black-boxes}, ponendo il focus sulla loro interazione. Dal modello emerge il comportamento del sistema, il cui scopo è quello di permettere al soccorritore di reperire i dati medici (in questo caso simulati) del paziente.
+	\item \textbf{Base requirement}: si individuano nel sistema tre componenti principali, nello specifico patient, doctor e control (componente che gestisce l'accesso alla banca dati), modellati come entità attive (attori). I componenti sono considerati come delle \emph{black-boxes}, ponendo il focus sulla loro interazione. Dal modello emerge il comportamento del sistema, il cui scopo è quello di permettere al soccorritore di reperire i dati medici (in questo caso simulati) del paziente a lui più vicino.
 	\item \textbf{Authorization requirement}: estensione del modello base attraverso l'introduzione di un vincolo che impedisce l'accesso ai dati ai soccorritori non autorizzati.
 \end{itemize}
 I modelli sopra illustrati sono eseguibili e costituiscono dei primi prototipi funzionanti del sistema. Questa caratteristica permette un confronto diretto con il committente, in modo da valutare la comprensione dei requisiti.
 
 \section{Test plan}
+I requisiti, raccolti ed analizzati in capitolo \ref{requirements}, devono guidare l'intero processo di progettazione e sviluppo del progetto. È necessario definire le modalità attraverso le quali dovrà avvenire la verifica dei requisiti, in modo da poter valutare in ogni fase del progetto la conformità del prodotto rispetto ai requisiti.
+
+Si individuano due funzionalità principali del sistema che dovranno essere soggette al processo di testing.
+\begin{description}
+	\item \textbf{Correttezza dei dati}: un soccorritore, dopo aver avviato la ricerca di identificatori nelle vicinanze, deve ricevere esclusivamente i dati medici relativi al paziente più vicino. I dati ricevuti devono essere quelli contenuti all'interno della banca dati per il paziente specifico (come stabilito in sezione \ref{glossary}).
+	\item \textbf{Gestione dell'accesso ai dati}: un soccorritore non autorizzato non deve poter ricevere alcun dato medico. Le informazioni che definiscono l'autorizzazione o meno di un certo soccorritore sono quelle contenute all'interno della banca dati (come stabilito in sezione \ref{glossary}). 
+\end{description}
 
 \chapter{Analisi del problema}
+
+\section{Problematiche}
+In questa sezione verranno esaminate le varie problematiche che scaturiscono da un'analisi del sistema.
+\begin{description}
+	\item[Identificatore]: come emerge dai requisiti, il dispositivo dovrà essere a basso consumo, in quanto la sua durata media non potrà essere inferiore a 3 anni. Questo vincolo, in combinazione con il budget limitato (5 euro per unità) e le dimensioni ridotte, crea la necessità di una ricerca sul mercato, in modo da verificare l'esistenza di dispositivi compatibili.
+	
+	Il dispositivo dovrà essere in grado di comunicare in modalità wireless con il lettore. Siccome il lettore, da requisiti, sarà un device Android (con un costo inferiore ai 200 euro per unità), le tecnologie di comunicazione utilizzabili si riducono a quelle supportate da tale device. Risulta quindi necessaria un'analisi di queste tecnologie, in modo da poter individuare il dispositivo più appropriato compatibile con almeno una di esse. 
+	
+	\item[Trasmissione dell'identificativo]: i requisiti stabiliscono la presenza di una fase di ricerca, attraverso la quale il lettore è in grado di scoprire gli identificatori all'interno di un raggio limitato (inferiore a 3 metri). Fra le tecnologie supportate da Android è necessario individuare solamente quelle che permettono di osservare questo vincolo. Inoltre, la tecnologia in oggetto deve poter permettere di stimare in maniera precisa la distanza del lettore dagli identificatori, in modo da stabilire con quale di questi effettuare l'interazione.
+	
+	Durante l'utilizzo concreto del sistema, vi è la possibilità che l'identificatore stimato come più vicino al lettore, possa non essere quello appartenente al paziente che necessita di soccorso. Immaginiamo, ad esempio, una situazione nella quale il paziente si trovi circondato da altre persone, anch'esse in possesso di un proprio identificatore. In questo caso, l'identificatore rilevato dal lettore del soccorritore, giunto sul posto, potrebbe non essere quello desiderato. Inoltre, è lecito pensare che il soccorritore stesso sia munito di un proprio identificatore, che quindi potrebbe essere confuso con quello del paziente. Una situazione come quella appena descritta è in contrasto con i requisiti, in quanto il soccorritore non è tenuto a consultare i dati medici relativi a persone che non sono coinvolte in una situazione di emergenza. 
+	
+	\item[Banca dati]: la banca dati è un archivio elettronico già esistente gestito da entità terze, che hanno il compito di mantenerla aggiornata. Non è quindi possibile assumere che un certo dato, precedentemente reperito dalla banca dati, sia consistente rispetto alla versione attuale. 
+	
+	La banca dati non fornisce alcun meccanismo per regolare l'accesso ai dati. Sarà quindi necessaria l'introduzione di un componente aggiuntivo, avente lo scopo di permettere l'accesso ai dati solamente ai soccorritori autorizzati.
+	
+	\item[Sicurezza]: il sistema è esposto a vari problemi riguardanti la sicurezza informatica, alcuni dichiarati esplicitamente dal committente e altri derivanti dall'analisi. 
+	\begin{itemize}
+		\item \emph{Tracciabilità}: dato che nei requisiti non è stato posto alcun vincolo riguardante la lettura dell'identificativo dei pazienti, ogni soggetto, tramite l'utilizzo di un lettore, è in grado di recuperare e memorizzare l'identificativo di ogni persona in possesso di un identificatore. Se l'identificativo contiene dei dati che possano permettere un'identificazione diretta del soggetto (ad esempio nome e cognome, codice fiscale, \dots), significa che un malintenzionato può risalire all'identità di tutte le persona nelle sue immediate vicinanze. Nel caso il malintenzionato sia anche un soccorritore autorizzato, egli potrebbe garantirsi un accesso continuo ai dati medici anche al di fuori delle situazioni di emergenza.
+		\item \emph{Masquerade}: un malintenzionato potrebbe acquisire l'identificativo di un soggetto e utilizzarlo come proprio. In questo modo egli potrebbe, a tutti gli effetti, spacciarsi per un'altra persona. Nello specifico dominio medico, tale comportamento non permette di conseguire dei vantaggi evidenti, ma in un ambito più ampio e generale il malintenzionato potrebbe, così facendo, ottenere dei benefici non indifferenti. 
+		\item \emph{Sniffing}: un malintenzionato potrebbe intercettare il flusso di informazioni scambiato tra il lettore di un soccorritore autorizzato e la banca dati. Così facendo, egli avrebbe un accesso diretto a tutti i dati medici di ogni paziente soccorso dal soccorritore.
+		\item \emph{Replay attack}: un malintenzionato potrebbe intercettare la richiesta di dati medici di un paziente inviata dal lettore verso la banca dati. Tale richiesta potrebbe poi essere nuovamente inviata alla banca dati, ma questa volta da parte del malintenzionato, che così facendo potrebbe recuperare i dati medici del paziente.
+		\item \emph{Identificativo compromesso}: nel caso l'identificatore di un soggetto venga perso/rubato/compromesso, egli non potrà usufruire del servizio, in quanto non sarebbe possibile una sua identificazione da parte di un soccorritore. Inoltre, chiunque venisse in possesso dell'identificatore in questione, potrebbe in ogni momento spacciarsi per il legittimo proprietario.
+		\item \emph{Insider threats}: problema di distinguere accessi leciti e non alla banca dati. Ad esempio, un soccorritore autorizzato può potenzialmente accedere ai dati di ogni paziente (dato il relativo identificativo), ma tale accesso risulterebbe illecito nel caso venisse svolto al di fuori di una situazione di emergenza.
+		\item \emph{Privacy}: i dati medici di un paziente acquisiti da un soccorritore autorizzato potrebbero, in un secondo momento, essere ri-consultati o divulgati dal soccorritore stesso, violando così la privacy del paziente.
+	\end{itemize} 
+	
+	Le problematiche fin qui illustrate si limitano allo specifico ambito medico. Come anticipato in sezione \ref{goal}, il caso medico è solamente un sottoinsieme del sistema generale, la cui idea è illustrata in sezione \ref{vision}. 
+\end{description}
 
 \section{Studio di fattibilità}
 
 \section{Abstraction gap}
 
-\section{Problematiche}
-
 \section{Analisi dei rischi}
 
-\section{Architettura logica (?)}
+\section{Architettura logica}
 Il sistema risulta essere composto dalle seguenti componenti:
 \begin{itemize}
 	\item Server
