@@ -15,7 +15,11 @@
 \usepackage{listings}
 \usepackage{color}
 \usepackage{eurosym}
-
+\usepackage{array}
+\usepackage[referable]{threeparttablex}
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
 
 \usepackage[hidelinks]{hyperref}
 
@@ -333,6 +337,77 @@ In questa sezione verranno esaminate le varie problematiche che scaturiscono da 
 Le problematiche fin qui illustrate si limitano allo specifico ambito medico. Come anticipato in sezione \ref{goal}, il caso medico è solamente un sottoinsieme del sistema generale, la cui idea è illustrata in sezione \ref{vision}. 
 
 \section{Studio di fattibilità}
+\subsection{Tecnologia di identificazione}
+Con tecnologia di identificazione si intende il protocollo di connettività che verrà utilizzato per permettere al lettore di recuperare l'identificativo, attraverso un'interazione con l'identificatore. È possibile effettuare un primo abbozzo dell'interazione fra lettore e identificatore, individuando le fasi seguenti:
+\begin{enumerate}
+	\item Il lettore ricerca tutti gli identificatori situati in prossimità (all'interno di un raggio inferiore a 3 metri).
+	\item Il lettore individua l'identificatore più vicino, fra tutti quelli rilevati nella fase di ricerca.
+	\item Il lettore contatta l'identificatore, richiedendo l'identificativo.
+	\item L'identificatore risponde al lettore con l'identificativo richiesto.
+\end{enumerate}
+La natura dei dispositivi che realizzano l'interazione (lettore e identificatore) incide sulle possibili tecnologie utilizzabili. L'utilizzo di un device Android come lettore esclude tutte le possibilità da esso non supportate, mentre l'identificatore non pone alcun vincolo sulla scelta, in quanto non è definita in maniera chiara la natura del dispositivo sul quale andrà implementato.
+
+\subsubsection{Analisi dei protocolli di connettività supportati da Android}
+Android supporta diversi protocolli (variabili da versione a versione) che permettono la connessione e l'interazione fra dispositivi \footnote{\url{https://developer.android.com/guide/topics/connectivity}}. Essi verranno di seguito analizzati, in modo da determinare l'esistenza di almeno un protocollo compatibile con i requisiti del sistema. I protocolli relativi a chiamate audio/video o a connessioni \emph{USB} non sono stati presi in considerazione, in quanto non compatibili con il problema in esame.
+
+\begin{description}
+	\item[Wi-Fi e connessione dati]: sono le tecnologie più comunemente utilizzate su smartphone/tablet per la navigazione in rete. Non sono applicabili nel sistema, in quanto non forniscono alcun meccanismo che permetta la ricerca di dispositivi nelle vicinanze. Inoltre, un ipotetico identificatore basato su queste tecnologie sarebbe soggetto ad un consumo di batteria elevato, che comprometterebbe la durata del dispositivo.
+	
+	\item[Bluetooth]: standard tecnologico per lo scambio di dati in modalità wireless, a brevi distanze, attraverso una frequenza radio a corto raggio. In campo mobile è una delle tecnologie di riferimento per il trasferimento di dati. È caratterizzato da una fase di \emph{scanning}, nella quale vengono ricercati tutti i dispositivi compatibili nelle vicinanze (fino a 100 metri di distanza), per poi aprire una connessione con uno di essi. Prevede una fase di accoppiamento, durante la quale due dispositivi vengono associati come \emph{paired} (è richiesta la conferma esplicita dell'utente). 
+	
+	La connessione può essere effettuata solamente fra dispositivi precedentemente accoppiati, escludendo un possibile utilizzo di Bluetooth all'interno del sistema, in quanto, da requisiti, la connessione fra i dispositivi deve avvenire senza alcun intervento dell'utente.
+	
+	\item[BLE (Bluetooth Low Energy)]: conosciuto anche come \emph{Bluetooth 4.0}, è uno standard tecnologico che si presenta come un'evoluzione del classico Bluetooth. Rispetto al suo predecessore, BLE garantisce un consumo di potenza minimo, cruciale per l'impiego in contesti di \emph{Internet of Things}. Con l'utilizzo esclusivo del protocollo BLE, la durata di un dispositivo, alimentato con un'apposita batteria, può raggiungere e superare i 3 anni indicati nei requisiti del sistema. BLE opera allo stesso livello di distanza di Bluetooth, basandosi su una ricerca dei dispositivi nelle immediate vicinanze. Non necessita, però, della fase di accoppiamento esplicita fra dispositivi, rendendo automatico il processo di connessione. 
+	
+	Nonostante ciò, l'utilizzo di BLE all'interno del sistema presenta una criticità evidente nell'identificazione dell'identificatore più vicino al lettore. Supponendo l'impiego di BLE, il lettore sarebbe in grado di scoprire tutti gli identificatori in un raggio che può raggiungere i 100 metri (estremamente più ampio rispetto al raggio di 3 metri espresso nei requisiti). Per limare questa problematica, una soluzione piuttosto banale consiste nel calcolo della distanza di ogni dispositivo rispetto al lettore, in modo da non considerare gli identificatori situati ad una distanza troppo ampia. Il calcolo della distanza di un dispositivo BLE si basa sulla potenza di trasmissione dei dati che può, però, essere variabile da device a device, risultando non affidabile. Questa problematica impedisce, inoltre, di determinare quale sia l'identificatore più vicino al lettore.
+	
+	\item[Wi-Fi Direct (Wi-Fi Peer-to-Peer)]\footnote{\url{https://www.wi-fi.org/discover-wi-fi/wi-fi-direct}} : è uno standard Wi-Fi che consente a due o più dispositivi di effettuare una connessione Wi-Fi diretta tra loro, anche in assenza dell'accesso ad una rete Wi-Fi. Un dispositivo Wi-Fi Direct emette un segnale continuo verso tutti i dispositivi all'interno dell'area circostante, in modo da scoprire i device disponibili e instaurare una connessione con uno di essi. Per quanto riguarda i campi di applicazione, Wi-Fi Direct si presenta come una valida alternativa a Bluetooth per lo scambio di dati diretto fra dispositivi situati in una certa zona. Rispetto a Bluetooth, opera in un'area più vasta (con un raggio che si può estendere fino a 200 metri) e offre una velocità di trasferimento nettamente superiore, a discapito, però, di un consumo elevato. 
+	
+	Il raggio di ricerca è troppo ampio per poter considerare Wi-Fi Direct come una tecnologia papabile all'interno del sistema, dato che non esistono meccanismi per determinare, con precisione, la distanza dei dispositivi scoperti nella fase di ricerca.
+	
+	\item[Wi-Fi Aware]\footnote{\url{https://www.wi-fi.org/discover-wi-fi/wi-fi-aware}} : estende le funzionalità di Wi-Fi con un'efficiente meccanismo di ricerca (anche in assenza dell'accesso ad una rete Wi-Fi), permettendo continuamente la scoperta di altri dispositivi e servizi all'interno del tipico range Wi-Fi. L'obiettivo è quello di fornire ad un utente una serie di servizi \emph{proximity-based}, lasciando ad egli scegliere quale di essi andare a sfruttare e quali dati con esso condividere. 
+	
+	La filosofia di Wi-Fi Aware risulta simile alla visione espressa in sezione \ref{vision}, con la principale differenza che consiste nel metodo di identificazione dell'utente. Infatti, Wi-Fi Aware si basa sul presupposto che un utente sia in possesso di uno smartphone, attraverso il quale può essere notificato di tutti i dispositivi e servizi nelle vicinanze. L'idea alla base di \emph{Proxima} è invece quella di slegare l'utente dallo smartphone e spostare la computazione verso i dispositivi esterni, ovvero gli erogatori di servizi. 
+	
+	Wi-Fi Aware è in stretta correlazione con Wi-Fi Direct, le due tecnologie sono complementari. Ad esempio, Wi-Fi Direct potrebbe permettere l'individuazione di un certo servizio, sfruttando poi le alte velocità di Wi-Fi Direct per effettuare la connessione ed il relativo scambio di informazioni. Le due tecnologie condividono i medesimi punti deboli, in particolare la difficoltà nella stima delle distanze fra i dispositivi ed il consumo troppo elevato.
+	
+	\item[NFC (Near Field Communication)] : è uno standard di connettività wireless che consente una comunicazione fra due dispositivi posti a breve distanza l'uno dall'altro. Idealmente la distanza massima di funzionamento è leggermente inferiore ai 20 cm, ma nella maggior parte dei dispositivi si aggira intorno ai 5 cm. Un dispositivo NFC può essere utilizzato, ad esempio, per emulare una \emph{smart card}, in modo da effettuare transazioni direttamente dal proprio smartphone, oppure in modalità \emph{peer-to-peer} per lo scambio di informazioni fra due dispositivi diversi. Una terza modalità, \emph{reader/writer}, risulta essere quella più interessante per il sistema in esame, in quanto permette ad un dispositivo NFC di leggere (e scrivere) un \emph{tag NFC}. Un tag, nella maggior parte dei casi, è un dispositivo passivo (a consumo nullo), in grado di memorizzare una quantità ridotta di informazioni. L'interazione con il reader è resa possibile da quest'ultimo device che fornisce al tag la potenza necessaria per l'attivazione. 
+	
+	L'identificatore del sistema potrebbe essere implementato come un tag NFC, contenente l'identificativo dell'utente, leggibile attraverso il lettore (device Android) dopo una fase di ricerca. Il raggio di funzionamento ristretto impone un contatto (o quasi) fra lettore e identificatore, che in alcune situazioni di emergenza potrebbe rivelarsi scomodo per il soccorritore, ma d'altro canto garantisce che l'identificatore letto sia quello desiderato.
+\end{description}
+
+\subsubsection{Considerazioni}
+Dalla fase di ricognizione sulle tecnologie attualmente disponibili sul mercato è conseguita una drastica limitazione dello spettro di quelle utilizzabili all'interno del sistema. In tabella \ref{tec-table} sono mostrati i risultati più significativi raccolti in questa fase.
+
+\begin{table}[h]
+	\centering
+	\begin{threeparttable}
+		\begin{tabular}{| >{\centering}m{.20\textwidth} | >{\centering}m{.14\textwidth} | >{\centering}m{.14\textwidth} | >{\centering}m{.14\textwidth} | >{\centering}m{.14\textwidth} | >{\centering}m{.14\textwidth} | }
+			\hline
+			\textbf{Tecnologia} & \textbf{Supporto Android} & \textbf{Fase di ricerca} & \textbf{Pairing implicito} & \textbf{Device vicino} & \textbf{Basso consumo} \tabularnewline
+			\hline
+			Wi-Fi & \cmark & \xmark & \xmark & \xmark & \xmark \tabularnewline
+			\hline
+			Bluetooth & \cmark & \cmark & \xmark & \xmark & \xmark \tabularnewline
+			\hline
+			BLE & \cmark & \cmark & \cmark & \xmark & \cmark \tabularnewline
+			\hline
+			Wi-Fi Direct & \cmark & \cmark & \cmark & \xmark & \xmark \tabularnewline
+			\hline
+			Wi-Fi Aware & \cmark & \cmark & \cmark & \xmark & \xmark \tabularnewline
+			\hline
+			NFC & \cmark & \cmark & \cmark & \cmark \tnote{*} & \cmark \tabularnewline
+			\hline
+		\end{tabular}
+		\begin{tablenotes} \footnotesize
+			\item[*] Si presume che, dato il raggio di funzionamento ristretto di NFC (circa 5 cm), sia sempre identificato un solo dispositivo, che sarà, quindi, il più vicino.
+		\end{tablenotes}
+	\end{threeparttable}
+	\caption{Riepilogo delle tecnologie considerate.}
+	\label{tec-table}
+\end{table}
+
+L'unica tecnologia che permette di soddisfare i requisiti risulta essere NFC. Adottando tale standard, è possibile utilizzare un qualsiasi dispositivo Android, dotato di un chip NFC al suo interno, come lettore, andando poi a implementare l'identificatore su un tag NFC compatibile.
 
 \section{Abstraction gap}
 
