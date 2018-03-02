@@ -21,7 +21,7 @@
 \newcommand{\cmark}{\ding{51}}
 \newcommand{\xmark}{\ding{55}}
 
-\usepackage[hidelinks]{hyperref}
+\usepackage[italian,hidelinks]{hyperref}
 
 \usepackage[italian]{babel}
 \usepackage[italian]{cleveref}
@@ -301,12 +301,14 @@ Si individuano due funzionalità principali del sistema che dovranno essere sogg
 
 \chapter{Analisi del problema}
 \section{Analisi del sistema generale}
+Come anticipato nella \autoref{goal}, lo scopo del progetto non è soltanto quello di soddisfare i requisiti esposti nel \autoref{requirements}, ma di costruire la base di tutto il sistema, sopra la quale saranno implementati i servizi, tra i quali quello di gestione delle emergenze mediche esposto in precedenza. Il sistema \emph{Proxima} dovrà quindi fornire una base, sopra la quale potranno essere costruiti servizi e componenti. Esso agirà quindi da \emph{middleware}, e dovrà fornire ai servizi ed agli utenti le seguenti funzionalità:
 \begin{itemize}
-	\item Strato di identificazione $\leftarrow$ cosa più importante.
-	\item Estensibilità a molti (moltissimissimi) servizi.
-	\item Ogni utente può decidere a chi fare vedere i propri dati (tranne nel caso di dati medici o giudiziari).
-	\item Strato di sicurezza nelle comunicazioni (tra lettore e server proxima)
-	\item availability/scalabilty
+	\item Servizio di identificazione. Esso sarà la base del sistema, attraverso cui tutte le funzionalità potranno essere implementate. L'identificazione dovrà essere univoca, e offerta come servizio a chiunque voglia interagire con il sistema. Sarà ovviamente compito del sistema stesso gestire l'accesso ai dati, che dovrà essere garantito solo a chi autorizzato. I vari servizi non dovranno essere accessibili in modo diretto, ma solamente attraverso il sistema \emph{Proxima}.
+	\item Dovrà essere possibile, in modo semplice, estendere il sistema con un nuovo servizio, senza che l'architettura generale del sistema debba essere ripensata. Ogni servizio sarà responsabile per i dati degli utenti inerenti ad esso, in modo che non esista una unica base dati centralizzata. I servizi dovranno essere implementati nel modo più semplice possibile, sfruttando ciò che il sistema generale mette a disposizione. La politica di accesso ai dati sarà gestita sia dal sistema generale sia dai servizi stessi. In pratica ogni servizio dovrà essere responsabile delle informazioni sugli utenti che contiene, ed in parte anche delle politiche di accesso ad esse.
+	\item Ogni utente potrà, a sua discrezione, decidere quali dati rendere pubblici per la lettura. Notare che solamente chi autorizzato può, in ogni caso, leggere i dati. L'utente può decidere in qualsiasi momento la politica di gestione dei dati, ad esempio decidendo di non condividere mai i dati inerenti ai suoi acquisti in un dato supermercato. Alcune categorie di dati, come quelli medici o giudiziari, dovranno essere sempre consultabili, ovviamente da personale autorizzato (in questo caso medici e pubblici ufficiali).
+	\item Il sistema generale dovrà implementare una comunicazione sicura con i lettori, in modo che nessun dato trasmesso possa essere intercettato o modificato. La sicurezza delle comunicazioni dovrà essere gestita in modo centrale, e non lasciata come compito ai singoli servizi. Inoltre anche la comunicazione tra servizi e sistema generale dovrà essere sicura ed al riparo da qualsiasi attacco. I protocolli di comunicazione tra tutti i componenti del sistema dovranno essere ben definiti, in modo che sia facile una sua estensione. 
+	\item Il sistema dovrà essere sempre consultabile, e i tempi di risposta dovranno essere brevi, indipendentemente dal numero di richieste in corso nello stesso momento. Ciò significa che il sistema generale dovrà possedere i requisiti di \emph{availability} e \emph{scalability}.
+	\item Il sistema dovrà essere resistente ad i guasti, in particolare quelli relativi a manomissioni dell'hardware, attacchi informatici al software o attacchi \emph{Denial of Service}. Esso dovrà garantire un livello di servizio accettabile anche in presenza di tali attacchi, e dovrà essere sempre possibile recuperare la piena funzionalità dello stesso, sia in caso di attacchi sia di catastrofi naturali. 
 \end{itemize}
 \section{Problematiche}
 In questa sezione verranno esaminate le varie problematiche che scaturiscono da un'analisi del sistema.
