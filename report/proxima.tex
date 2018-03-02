@@ -15,7 +15,11 @@
 \usepackage{listings}
 \usepackage{color}
 \usepackage{eurosym}
-
+\usepackage{array}
+\usepackage[referable]{threeparttablex}
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
 
 \usepackage[italian,hidelinks]{hyperref}
 
@@ -187,7 +191,7 @@ Il paziente non è in possesso di un identificatore, il medico deve intervenire 
 \subsection{Scenario 2}
 Il paziente giunge in ospedale per richiedere assistenza medica, in una situazione di emergenza. Il soccorritore (medico o infermiere di turno in ospedale) apre l'applicazione sul proprio lettore e si autentica nel sistema. 
 
-I possibili sotto-scenari che si possono manifestare corrispondono a quelli descritti in sezione \ref{scenario1}. In questo caso, però, il luogo nel quale avviene il soccorso è un reparto di una struttura ospedaliera attrezzata, nella quale è garantita la presenza dei soli soccorritori autorizzati e una costante connettività. 
+I possibili sotto-scenari che si possono manifestare corrispondono a quelli descritti in \autoref{scenario1}. In questo caso, però, il luogo nel quale avviene il soccorso è un reparto di una struttura ospedaliera attrezzata, nella quale è garantita la presenza dei soli soccorritori autorizzati e una costante connettività. 
 
 Se il paziente è in possesso di un identificatore, esso viene rilevato nella fase di ricerca del lettore e i dati medici del paziente sono mostrati sullo schermo del lettore, in modo da fornire un supporto per il soccorritore. Altrimenti il medico deve intervenire "manualmente" senza poter contare sul servizio.
 
@@ -287,12 +291,12 @@ Sulla base dei requisiti, si procede in maniera incrementale alla realizzazione 
 I modelli sopra illustrati sono eseguibili e costituiscono dei primi prototipi funzionanti del sistema. Questa caratteristica permette un confronto diretto con il committente, in modo da valutare la comprensione dei requisiti.
 
 \section{Test plan}
-I requisiti, raccolti ed analizzati in capitolo \ref{requirements}, devono guidare l'intero processo di progettazione e sviluppo del progetto. È necessario definire le modalità attraverso le quali dovrà avvenire la verifica dei requisiti, in modo da poter valutare in ogni fase del progetto la conformità del prodotto rispetto ai requisiti.
+I requisiti, raccolti ed analizzati in \autoref{requirements}, devono guidare l'intero processo di progettazione e sviluppo del progetto. È necessario definire le modalità attraverso le quali dovrà avvenire la verifica dei requisiti, in modo da poter valutare in ogni fase del progetto la conformità del prodotto rispetto ai requisiti.
 
 Si individuano due funzionalità principali del sistema che dovranno essere soggette al processo di testing.
 \begin{description}
-	\item \textbf{Correttezza dei dati}: un soccorritore, dopo aver avviato la ricerca di identificatori nelle vicinanze, deve ricevere esclusivamente i dati medici relativi al paziente più vicino. I dati ricevuti devono essere quelli contenuti all'interno della banca dati per il paziente specifico (come stabilito in sezione \ref{glossary}).
-	\item \textbf{Gestione dell'accesso ai dati}: un soccorritore non autorizzato non deve poter ricevere alcun dato medico. Le informazioni che definiscono l'autorizzazione o meno di un certo soccorritore sono quelle contenute all'interno della banca dati (come stabilito in sezione \ref{glossary}). 
+	\item \textbf{Correttezza dei dati}: un soccorritore, dopo aver avviato la ricerca di identificatori nelle vicinanze, deve ricevere esclusivamente i dati medici relativi al paziente più vicino. I dati ricevuti devono essere quelli contenuti all'interno della banca dati per il paziente specifico (come stabilito in \autoref{glossary}).
+	\item \textbf{Gestione dell'accesso ai dati}: un soccorritore non autorizzato non deve poter ricevere alcun dato medico. Le informazioni che definiscono l'autorizzazione o meno di un certo soccorritore sono quelle contenute all'interno della banca dati (come stabilito in \autoref{glossary}). 
 \end{description}
 
 \chapter{Analisi del problema}
@@ -323,7 +327,7 @@ In questa sezione verranno esaminate le varie problematiche che scaturiscono da 
 	
 	\item[Sicurezza]: il sistema è esposto a vari problemi riguardanti la sicurezza informatica, alcuni dichiarati esplicitamente dal committente e altri derivanti dall'analisi. 
 	\begin{itemize}
-		\item \emph{Tracciabilità}: dato che nei requisiti non è stato posto alcun vincolo riguardante la lettura dell'identificativo dei pazienti, ogni soggetto, tramite l'utilizzo di un lettore, è in grado di recuperare e memorizzare l'identificativo di ogni persona in possesso di un identificatore. Se l'identificativo contiene dei dati che possano permettere un'identificazione diretta del soggetto (ad esempio nome e cognome, codice fiscale, \dots), significa che un malintenzionato può risalire all'identità di tutte le persona nelle sue immediate vicinanze. Nel caso il malintenzionato sia anche un soccorritore autorizzato, egli potrebbe garantirsi un accesso continuo ai dati medici anche al di fuori delle situazioni di emergenza.
+		\item \emph{Tracciabilità}: dato che nei requisiti non è stato posto alcun vincolo riguardante la lettura dell'identificativo dei pazienti, ogni soggetto, tramite l'utilizzo di un lettore, è in grado di recuperare e memorizzare l'identificativo di ogni persona in possesso di un identificatore. Se l'identificativo contiene dei dati che possano permettere un'identificazione diretta del soggetto (ad esempio nome e cognome, codice fiscale, \dots), significa che un malintenzionato può risalire all'identità di tutte le persone nelle sue immediate vicinanze. Nel caso il malintenzionato sia anche un soccorritore autorizzato, egli potrebbe garantirsi un accesso continuo ai dati medici anche al di fuori delle situazioni di emergenza.
 		\item \emph{Masquerade}: un malintenzionato potrebbe acquisire l'identificativo di un soggetto e utilizzarlo come proprio. In questo modo egli potrebbe, a tutti gli effetti, spacciarsi per un'altra persona. Nello specifico dominio medico, tale comportamento non permette di conseguire dei vantaggi evidenti, ma in un ambito più ampio e generale il malintenzionato potrebbe, così facendo, ottenere dei benefici non indifferenti. 
 		\item \emph{Sniffing}: un malintenzionato potrebbe intercettare il flusso di informazioni scambiato tra il lettore di un soccorritore autorizzato e la banca dati. Così facendo, egli avrebbe un accesso diretto a tutti i dati medici di ogni paziente soccorso dal soccorritore.
 		\item \emph{Replay attack}: un malintenzionato potrebbe intercettare la richiesta di dati medici di un paziente inviata dal lettore verso la banca dati. Tale richiesta potrebbe poi essere nuovamente inviata alla banca dati, ma questa volta da parte del malintenzionato, che così facendo potrebbe recuperare i dati medici del paziente.
@@ -332,9 +336,138 @@ In questa sezione verranno esaminate le varie problematiche che scaturiscono da 
 		\item \emph{Privacy}: i dati medici di un paziente acquisiti da un soccorritore autorizzato potrebbero, in un secondo momento, essere ri-consultati o divulgati dal soccorritore stesso, violando così la privacy del paziente.
 	\end{itemize} 
 \end{description}
-Le problematiche fin qui illustrate si limitano allo specifico ambito medico. Come anticipato in sezione \ref{goal}, il caso medico è solamente un sottoinsieme del sistema generale, la cui idea è illustrata in sezione \ref{vision}. 
+Le problematiche fin qui illustrate si limitano allo specifico ambito medico. Come anticipato in \autoref{goal}, il caso medico è solamente un sottoinsieme del sistema generale, la cui idea è illustrata in \autoref{vision}. 
 
 \section{Studio di fattibilità}
+\subsection{Tecnologia di identificazione}
+Con tecnologia di identificazione si intende il protocollo di connettività che verrà utilizzato per permettere al lettore di recuperare l'identificativo, attraverso un'interazione con l'identificatore. È possibile effettuare un primo abbozzo dell'interazione fra lettore e identificatore, individuando le fasi seguenti:
+\begin{enumerate}
+	\item Il lettore ricerca tutti gli identificatori situati in prossimità (all'interno di un raggio inferiore a 3 metri).
+	\item Il lettore individua l'identificatore più vicino, fra tutti quelli rilevati nella fase di ricerca.
+	\item Il lettore contatta l'identificatore, richiedendo l'identificativo.
+	\item L'identificatore risponde al lettore con l'identificativo richiesto.
+\end{enumerate}
+La natura dei dispositivi che realizzano l'interazione (lettore e identificatore) incide sulle possibili tecnologie utilizzabili. L'utilizzo di un device Android come lettore esclude tutte le possibilità da esso non supportate, mentre l'identificatore non pone alcun vincolo sulla scelta, in quanto non è definita in maniera chiara la natura del dispositivo sul quale andrà implementato.
+
+\subsubsection{Analisi dei protocolli di connettività supportati da Android} \label{tec-android}
+Android supporta diversi protocolli (variabili da versione a versione) che permettono la connessione e l'interazione fra dispositivi \footnote{\url{https://developer.android.com/guide/topics/connectivity}}. Essi verranno di seguito analizzati, in modo da determinare l'esistenza di almeno un protocollo compatibile con i requisiti del sistema. I protocolli relativi a chiamate audio/video o a connessioni \emph{USB} non sono stati presi in considerazione, in quanto non compatibili con il problema in esame.
+
+\begin{description}
+	\item[Wi-Fi e connessione dati]: sono le tecnologie più comunemente utilizzate su smartphone/tablet per la navigazione in rete. 
+	
+	Una loro adozione nel sistema risulta problematica, in quanto non forniscono alcun meccanismo che permetta la ricerca di dispositivi nelle vicinanze. Inoltre, un ipotetico identificatore basato su queste tecnologie sarebbe soggetto ad un consumo di batteria elevato, che comprometterebbe la durata del dispositivo. La sicurezza relativa a tracciabilità e masquerade è garantita, in quanto è possibile utilizzare operazioni di crittografia nei messaggi della comunicazione.
+	
+	\item[Bluetooth]: standard tecnologico per lo scambio di dati in modalità wireless, a brevi distanze, attraverso una frequenza radio a corto raggio. In campo mobile è una delle tecnologie di riferimento per il trasferimento di dati. È caratterizzato da una fase di \emph{scanning}, nella quale vengono ricercati tutti i dispositivi compatibili nelle vicinanze (fino a 100 metri di distanza), per poi aprire una connessione con uno di essi. Prevede una fase di accoppiamento, durante la quale due dispositivi vengono associati come \emph{paired} (è richiesta la conferma esplicita dell'utente). 
+	
+	La connessione può essere effettuata solamente fra dispositivi precedentemente accoppiati, escludendo un possibile utilizzo di Bluetooth all'interno del sistema, in quanto, da requisiti, la connessione fra i dispositivi deve avvenire senza alcun intervento dell'utente. È possibile integrare delle operazioni di crittografia, in modo da sopperire alle problematiche di tracciabilità e masquerade.
+	
+	\item[BLE (Bluetooth Low Energy)]: conosciuto anche come \emph{Bluetooth 4.0}, è uno standard tecnologico che si presenta come un'evoluzione del classico Bluetooth. Rispetto al suo predecessore, BLE garantisce un consumo di potenza minimo, cruciale per l'impiego in contesti di \emph{Internet of Things}. Con l'utilizzo esclusivo del protocollo BLE, la durata di un dispositivo, alimentato con un'apposita batteria, può raggiungere e superare i 3 anni indicati nei requisiti del sistema. BLE opera allo stesso livello di distanza di Bluetooth, basandosi su una ricerca dei dispositivi nelle immediate vicinanze. Non necessita, però, della fase di accoppiamento esplicita fra dispositivi, rendendo automatico il processo di connessione. BLE, così come Bluetooth, può essere considerato resistente a tracciabilità e masquerade.
+	
+	Nonostante ciò, l'utilizzo di BLE all'interno del sistema presenta una criticità evidente nell'identificazione dell'identificatore più vicino al lettore. Supponendo l'impiego di BLE, il lettore sarebbe in grado di scoprire tutti gli identificatori in un raggio che può raggiungere i 100 metri (estremamente più ampio rispetto al raggio di 3 metri espresso nei requisiti). Per limare questa problematica, una soluzione piuttosto banale consiste nel calcolo della distanza di ogni dispositivo rispetto al lettore, in modo da non considerare gli identificatori situati ad una distanza troppo ampia. Il calcolo della distanza di un dispositivo BLE si basa sulla potenza di trasmissione dei dati che può, però, essere variabile da device a device, risultando non affidabile. Questa problematica impedisce, inoltre, di determinare quale sia l'identificatore più vicino al lettore.
+	
+	\item[Wi-Fi Direct (Wi-Fi Peer-to-Peer)]\footnote{\url{https://www.wi-fi.org/discover-wi-fi/wi-fi-direct}} : è uno standard Wi-Fi che consente a due o più dispositivi di effettuare una connessione Wi-Fi diretta tra loro, anche in assenza dell'accesso ad una rete Wi-Fi. Un dispositivo Wi-Fi Direct emette un segnale continuo verso tutti i dispositivi all'interno dell'area circostante, in modo da scoprire i device disponibili e instaurare una connessione con uno di essi. Per quanto riguarda i campi di applicazione, Wi-Fi Direct si presenta come una valida alternativa a Bluetooth per lo scambio di dati diretto fra dispositivi situati in una certa zona. Rispetto a Bluetooth, opera in un'area più vasta (con un raggio che si può estendere fino a 200 metri) e offre una velocità di trasferimento nettamente superiore, a discapito, però, di un consumo elevato. 
+	
+	Il raggio di ricerca è troppo ampio per poter considerare Wi-Fi Direct come una tecnologia papabile all'interno del sistema, dato che non esistono meccanismi per determinare, con precisione, la distanza dei dispositivi scoperti nella fase di ricerca. La sicurezza a tracciabilità e masquerade può essere garantita tramite opportune operazioni di crittografia.
+	
+	\item[Wi-Fi Aware]\footnote{\url{https://www.wi-fi.org/discover-wi-fi/wi-fi-aware}} : estende le funzionalità di Wi-Fi con un'efficiente meccanismo di ricerca (anche in assenza dell'accesso ad una rete Wi-Fi), permettendo continuamente la scoperta di altri dispositivi e servizi all'interno del tipico range Wi-Fi. L'obiettivo è quello di fornire ad un utente una serie di servizi \emph{proximity-based}, lasciando ad egli scegliere quale di essi andare a sfruttare e quali dati con esso condividere. 
+	
+	La filosofia di Wi-Fi Aware risulta simile alla visione espressa in \autoref{vision}, con la principale differenza che consiste nel metodo di identificazione dell'utente. Infatti, Wi-Fi Aware si basa sul presupposto che un utente sia in possesso di uno smartphone, attraverso il quale può essere notificato di tutti i dispositivi e servizi nelle vicinanze. L'idea alla base di \emph{Proxima} è invece quella di slegare l'utente dallo smartphone e spostare la computazione verso i dispositivi esterni, ovvero gli erogatori di servizi. 
+	
+	Wi-Fi Aware è in stretta correlazione con Wi-Fi Direct, le due tecnologie sono complementari. Ad esempio, Wi-Fi Direct potrebbe permettere l'individuazione di un certo servizio, sfruttando poi le alte velocità di Wi-Fi Direct per effettuare la connessione ed il relativo scambio di informazioni. Le due tecnologie condividono i medesimi punti deboli, in particolare la difficoltà nella stima delle distanze fra i dispositivi ed il consumo troppo elevato.
+	
+	\item[NFC (Near Field Communication)] : è uno standard di connettività wireless che consente una comunicazione fra due dispositivi posti a breve distanza l'uno dall'altro. Idealmente la distanza massima di funzionamento è leggermente inferiore ai 20 cm, ma nella maggior parte dei dispositivi si aggira intorno ai 5 cm. Un dispositivo NFC può essere utilizzato, ad esempio, per emulare una \emph{smart card}, in modo da effettuare transazioni direttamente dal proprio smartphone, oppure in modalità \emph{peer-to-peer} per lo scambio di informazioni fra due dispositivi diversi. Una terza modalità, \emph{reader/writer}, risulta essere quella più interessante per il sistema in esame, in quanto permette ad un dispositivo NFC di leggere (e scrivere) un \emph{tag NFC}. Un tag, nella maggior parte dei casi, è un dispositivo passivo (a consumo nullo), in grado di memorizzare una quantità ridotta di informazioni. L'interazione con il reader è resa possibile da quest'ultimo device che fornisce al tag la potenza necessaria per l'attivazione. 
+	
+	L'identificatore del sistema potrebbe essere implementato come un tag NFC, contenente l'identificativo dell'utente, leggibile attraverso il lettore (device Android) dopo una fase di ricerca. Il raggio di funzionamento ristretto impone un contatto (o quasi) fra lettore e identificatore, che in alcune situazioni di emergenza potrebbe rivelarsi scomodo per il soccorritore, ma d'altro canto garantisce che l'identificatore letto sia quello desiderato. NFC non supporta operazioni di crittografia dei messaggi, non permettendo la risoluzione delle problematiche di tracciabilità e masquerade.
+\end{description}
+
+\begin{table}[h]
+	\centering
+	\begin{threeparttable}
+		\begin{tabular}{|
+			>{\centering}m{.22\textwidth} |
+			>{\centering}m{.13\textwidth} |
+			>{\centering}m{.13\textwidth} |
+			>{\centering}m{.13\textwidth} |
+			>{\centering}m{.13\textwidth} |
+			>{\centering}m{.13\textwidth} |
+			>{\centering}m{.13\textwidth} |}
+			\hline
+			& Wi-Fi & Bluetooth & BLE & Wi-Fi Direct & Wi-Fi Aware & NFC \tabularnewline
+			\hline
+			Supporto Android & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark \tabularnewline
+			\hline
+			Fase di ricerca & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark \tabularnewline
+			\hline
+			Pairing automatico & \xmark & \xmark & \cmark & \cmark & \cmark & \cmark \tabularnewline
+			\hline
+			Range (fra 1 e 3 metri) & \xmark & \xmark & \xmark & \xmark & \xmark & \xmark \tabularnewline
+			\hline
+			Identificazione device più vicino & \xmark & \xmark & \xmark & \xmark & \xmark & \cmark \tnote{*} \tabularnewline
+			\hline
+			Sicurezza a tracciabilità & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \tabularnewline
+			\hline
+			Sicurezza a masquerade & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \tabularnewline
+			\hline
+			Basso consumo & \xmark & \xmark & \cmark & \xmark & \xmark & \cmark \tabularnewline
+			\hline
+			Costo & \xmark & \cmark & \cmark & \xmark & \xmark & \cmark \tabularnewline
+			\hline
+		\end{tabular}
+		\begin{tablenotes} \footnotesize
+			\item[*] Si presume che, dato il raggio di funzionamento ristretto di NFC (circa 5 cm), sia sempre identificato un solo dispositivo, che sarà, quindi, il più vicino.
+		\end{tablenotes}
+	\caption{Riepilogo delle tecnologie supportate da Android considerate.}
+	\label{tectable-android}
+	\end{threeparttable}
+\end{table}
+
+Dalla fase di ricognizione sulle tecnologie attualmente disponibili su Android è conseguita una drastica limitazione dello spettro di quelle utilizzabili all'interno del sistema. In \autoref{tectable-android} sono mostrati i risultati più significativi raccolti in questa fase.
+
+\subsubsection{Analisi di tecnologie alternative}
+Dall'analisi dei protocolli di connettività supportati da Android, eseguita in \autoref{tec-android}, non è emersa alcuna tecnologia in grado di soddisfare tutti i requisiti. Si procede, dunque, all'analisi di tecnologie alternative che non sono compatibili con Android.
+
+\begin{description}
+	\item[RFID (Radio-Frequency IDentification)]:
+	\item[Infrarossi]:
+	\item[Onde radio]:
+\end{description}
+
+\begin{table}[h]
+	\centering
+	\begin{threeparttable}
+		\begin{tabular}{|
+				>{\centering}m{.22\textwidth} |
+				>{\centering}m{.13\textwidth} |
+				>{\centering}m{.13\textwidth} |
+				>{\centering}m{.13\textwidth} |}
+			\hline
+			& RFID & Onde radio & Infrarossi \tabularnewline
+			\hline
+			Supporto Android & \xmark & \xmark & \xmark \tabularnewline
+			\hline
+			Fase di ricerca & \cmark & \xmark & \xmark \tabularnewline
+			\hline
+			Pairing automatico & \cmark & \xmark & \xmark \tabularnewline
+			\hline
+			Range (fra 1 e 3 metri) & \cmark & \xmark & \xmark \tabularnewline
+			\hline
+			Identificazione device più vicino & \xmark & \xmark & \xmark \tabularnewline
+			\hline
+			Sicurezza a tracciabilità & \cmark & \xmark & \xmark \tabularnewline
+			\hline
+			Sicurezza a masquerade & \cmark & \xmark & \xmark \tabularnewline
+			\hline
+			Basso consumo & \cmark & \xmark & \xmark \tabularnewline
+			\hline
+			Costo & \xmark & \xmark & \xmark \tabularnewline
+			\hline
+		\end{tabular}
+		\caption{Riepilogo delle tecnologie alternative considerate.}
+		\label{tectable-other}
+	\end{threeparttable}
+\end{table}
+
+\subsubsection{Considerazioni}
 
 \section{Abstraction gap}
 
