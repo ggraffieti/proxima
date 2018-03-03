@@ -270,6 +270,8 @@ Similmente la base dati contenente i turni dei soccorritori è fornita, e anch'e
 	
 }
 \end{lstlisting}
+
+La banca dati è accessibile attraverso la rete Internet tramite una richiesta HTTP GET all'indirizzo 
 \subsection{Modello}
 La fase di raccolta dei requisiti ha permesso una comprensione delle richieste del committente, che sono state definite ed esplicate in forma testuale nelle sezioni precedenti. Una rappresentazione più efficacie dei requisiti può essere raggiunta attraverso la costruzione di un modello del dominio, in grado di catturare gli aspetti chiave del sistema. 
 
@@ -310,7 +312,7 @@ Come anticipato nella \autoref{goal}, lo scopo del progetto non è soltanto quel
 	\item Il sistema dovrà essere sempre consultabile, e i tempi di risposta dovranno essere brevi, indipendentemente dal numero di richieste in corso nello stesso momento. Ciò significa che il sistema generale dovrà possedere i requisiti di \emph{availability} e \emph{scalability}.
 	\item Il sistema dovrà essere resistente ad i guasti, in particolare quelli relativi a manomissioni dell'hardware, attacchi informatici al software o attacchi \emph{Denial of Service}. Esso dovrà garantire un livello di servizio accettabile anche in presenza di tali attacchi, e dovrà essere sempre possibile recuperare la piena funzionalità dello stesso, sia in caso di attacchi sia di catastrofi naturali. 
 \end{itemize}
-\section{Problematiche}
+\section{Problematiche}\label{issues}
 In questa sezione verranno esaminate le varie problematiche che scaturiscono da un'analisi del sistema.
 \begin{description}
 	\item[Identificatore]: come emerge dai requisiti, il dispositivo dovrà essere a basso consumo, in quanto la sua durata media non potrà essere inferiore a 3 anni. Questo vincolo, in combinazione con il budget limitato (5 euro per unità) e le dimensioni ridotte, crea la necessità di una ricerca sul mercato, in modo da verificare l'esistenza di dispositivi compatibili.
@@ -339,6 +341,46 @@ In questa sezione verranno esaminate le varie problematiche che scaturiscono da 
 Le problematiche fin qui illustrate si limitano allo specifico ambito medico. Come anticipato in \autoref{goal}, il caso medico è solamente un sottoinsieme del sistema generale, la cui idea è illustrata in \autoref{vision}. 
 
 \section{Studio di fattibilità}
+
+\subsection{Sicurezza}
+
+Ogni problematica relativa alla sicurezza accennata in \autoref{issues} necessita di un'analisi dettagliata, atta a stabilire se e come la problematica stessa sia risolvibile nella pratica rispettando i requisiti.
+\begin{itemize}
+	\item \emph{Tracciabilità}: per fare in modo di evitare che un malintenzionato in possesso di un lettore possa ricostruire l'identità di un certo utente attraverso la sola lettura del suo identificativo, si potrebbe ricorrere all'uso di crittografia. Nel caso identificatore e banca dati condividessero una chiave segreta, allora il primo potrebbe criptare l'identificativo in modo che solo la banca dati possa effettivamente leggerlo. Inoltre, si potrebbe utilizzare crittografia a chiave pubblica, in modo da ottenere lo stesso risultato senza la necessità che la banca dati sia a conoscenza della chiave segreta di ogni identificatore. Questo approccio, tuttavia, presenta due problematiche. La prima consiste in una limitazione della scelta dell'identificatore ai soli in grado di eseguire operazioni di crittografia; la seconda consiste in un'aggiunta di overhead nelle interazioni tra i componenti del sistema e in un maggior consumo della batteria per le operazione crittografiche. In alternativa, si potrebbe decidere di strutturare gli identificativi come sequenze casuali di caratteri, in modo che non sia necessaria alcuna operazione di crittografia e che un eventuale malintenzionato non riesca a risalire all'identità di una persona con il solo identificativo. Questo approccio inoltre non vincolerebbe la scelta dell'identificatore, che potrebbe essere un semplice tag NFC.
+	
+	Nel caso si decidesse di adottare uno di questi due approcci, un eventuale malintenzionato sarebbe comunque in grado, ad esempio, di tracciare i movimenti di un certo utente. Infatti, nonostante il contenuto dell'identificativo sia indecifrabile, il malintenzionato potrebbe comunque associare, in maniera univoca, un certo identificativo al possessore, potendo così seguire i suoi movimenti quando si trova in sua prossimità. Questo problema potrebbe essere risolto facendo in modo che gli identificatori emettessero un identificativo diverso ogni volta, come descritto nel seguente punto. 
+	\item \emph{Masquerade}: per evitare che un malintenzionato, venuto in possesso di un identificativo altrui, lo usi spacciandosi per il legittimo possessore si potrebbe ricorrere all'uso di identificativi \emph{one-shot}. L'idea è che identificatore e banca dati condividano un sequenza ordinata di identificativi e che siano concordi su di un identificativo di partenza. Ad ogni richiesta, l'identificatore fornirà un identificativo diverso, seguendo progressivamente l'ordine della sequenza. La banca dati seguirà lo stesso ordine e, a fronte di una richiesta da parte di un lettore, confronterà l'identificativo ottenuto con quello aspettato per capire se la richiesta sia valida o meno. Questo approccio risolve la problematica in questione, ma introduce un ulteriore problema, ovvero quello di mantenere sincronizzate le sequenze di lettore e banca dati. Nel caso venisse a crearsi una discrepanza tra le due, allora non sarebbe più possibile recuperare i dati relativi alla persona in possesso dell'identificatore.
+	
+	In alternativa a questo approccio, si potrebbe ricorrere ad una interazione di tipo \emph{challenge-response}. Alla ricezione di ogni richiesta, la banca dati non invierà dati medici in risposta, ma bensì un certo quantitativo di informazioni (\emph{challenge}), che il lettore dovrà inoltrare all'identificatore interrogato. Questo cripterà tali informazioni con una propria chiave privata. Il contenuto criptato verrà restituito alla banca dati, sempre attraverso il lettore. A questo punto, la banca dati potrà verificare l'autenticità dell'identificatore decriptando ciò che ha ottenuto con la chiave pubblica dello stesso. Questo approccio introdurrebbe, tuttavia, un overhead nelle interazioni tra i componenti del sistema e un maggior consumo della batteria dell'identificatore, per via delle operazioni crittografiche.
+	
+	In ambito medico la problematica di \emph{masquerade} non dovrebbe avere riscontri pratici, in quanto non si avrebbero vantaggi nel fornire, ad un soccorritore, dati medici altrui al posto dei propri. In altri ambiti, come ad esempio in quello commerciale, quanto appena detto non sussiste. In un'ottica più generale infatti, qualora un utente fosse abilitato ad effettuare transazioni economiche tramite il servizio, un attacco di tipo \emph{masquerade} diverrebbe molto più sensato ed appetibile. Nel caso non si volesse ricorrere agli approcci sopra citati, questo problema si potrebbe risolvere facendo sì che per determinate azioni effettuabili tramite il servizio vi debba obbligatoriamente essere un consenso esplicito da parte dell'utente. Tale consenso potrebbe essere espresso, ad esempio, tramite un app sul proprio smartphone. 
+	
+	\item \emph{Sniffing} \& \emph{Replay Attack}: nel caso la comunicazione via Internet tra lettore e banca dati avvenisse in chiaro, nulla impedirebbe ad un eventuale malintenzionato di intercettare il traffico di rete generato dagli stessi. In questo modo esso sarebbe in grado di leggere il contenuto informativo di tutte le risposte inviate dalla banca dati verso il lettore. Inoltre, il malintenzionato potrebbe intercettare una certa richiesta creata dal lettore e inoltrarla in seguito alla banca dati per ricevere tutte le informazioni mediche relative ad un determinato paziente. Nella pratica, per risolvere questi problemi è necessario ricorrere all'uso di crittografia per le comunicazioni. Nel nostro caso si potrebbe quindi utilizzare HTTPs al posto di HTTP, in modo che la totalità del traffico di rete scambiato tra lettore del soccorritore e banca dati sia indecifrabile da parte di malintenzionati. L'utilizzo di HTTPs, tuttavia, richiede che la banca dati sia in possesso di un certificato autentico.
+	
+	\item \emph{Identificativo compromesso}: non esistono soluzioni complete per fare fronte, in maniera automatizzata, a smarrimenti o furti di identificativi. Quel che si può fare è dare agli utenti del servizio la possibilità di denunciare tali avvenimenti, in modo che l'identificativo di interesse possa venire disabilitato. In tal caso, all'utente verrà consegnato un nuovo identificativo e la banca dati verrà aggiornata di conseguenza.
+	
+	\item \emph{Insider threats}: il problema degli accessi illeciti ai dati parte di soccorritori autorizzati risulta essere tra i più delicati. Anche in questo caso, purtroppo non esiste una soluzione totalmente automatizzata che permetta di eliminare
+	completamente il problema. Tuttavia, per far fronte ad esso potrebbe venire memorizzato, nella banca dati, un file di \emph{log} contenente tutti gli accessi ai dati da parte di tutti i soccorritori, ognuno corredato da un \emph{timestamp}. Questo file potrebbe poi essere consultato per effettuare controlli sugli accessi stessi, verificando  che ognuno di questi abbia effettivamente avuto luogo in una situazione di emergenza.
+	
+	\item \emph{Privacy}: un determinato soccorritore, una volta entrato in possesso dei dati sensibili di un paziente in seguito ad una situazione di emergenza, potrebbe riutilizzarli e, ad esempio, divulgarli. Questo risulterebbe in una violazione della privacy del paziente. Purtroppo non vi è modo di impedire che ciò accada; il soccorritore potrebbe infatti, ad esempio, segnarsi i dati dopo averli visualizzati. Quel che si può fare è limitarsi a non memorizzare alcun dato sensibile all'interno del lettore e stabilire i provvedimenti da prendere nel caso si scopra vi sia stata una violazione della privacy da parte di un certo soccorritore.
+\end{itemize}
+
+\subsection{Banca Dati}
+
+Come discusso in \autoref{issues}, i dati presenti all'interno della banca dati fornita sono gestiti da entità terze, che hanno la responsabilità di mantenerli aggiornati e quindi modificarli nel tempo. Questo rende problematica la memorizzazione dei dati stessi sul lettore del soccorritore, che potrebbe essere utile per questioni di performance. Infatti, qualora alcuni dati venissero memorizzati localmente, quelli all'interno della banca potrebbero venire aggiornati in seguito, creando così inconsistenza tra le due copie. Nella pratica, è possibile affrontare questa problematica in due modi:
+\begin{enumerate}
+	\item Si potrebbe fare in modo di notificare, tramite Internet, i lettori di tutti i soccorritori ogniqualvolta un certo dato nella banca dati viene modificato. Alla ricezione di una notifica, il lettore aggiornerà, se necessario, i dati salvati in precedenza, evitando così la creazione di inconsistenze. Tuttavia, questo approccio presenta vari difetti: occorrerebbe definire una politica da attuare nel caso i lettori non fossero contattabili al momento dell'invio delle notifiche; inoltre, molto probabilmente non tutti i lettori saranno interessati alla totalità delle notifiche inviate, rendendo non necessario la maggior parte del traffico di rete generato. Per risolvere questo problema si potrebbe fare in modo di inviare notifiche relative ad un certo dato solo ai lettori interessati. Questo approccio introdurrebbe la necessità da parte dei lettori stessi di poter specificare i dati dei quali si desidera ricevere notifiche a riguardo, aggiungendo complessità alla soluzione.
+	\item Non viene effettuata alcuna memorizzazione locale dei dati sul lettore. Ogni volta che un soccorritore necessiterà delle informazioni relative ad un certo paziente dovrà recuperarle sul momento dalla banca dati. Seguendo questo approccio viene resa impossibile la creazione di inconsistenze, al costo di una riduzione delle performance e di un maggior numero di richieste verso la banca dati.
+\end{enumerate} 
+
+Oltre a questa problematica, la banca dati non fornisce alcun meccanismo di autenticazione per poter regolare l'accesso ai dati in essa contenuti. Questo significa che, per soddisfare i requisiti di sicurezza, sarà necessario implementare tale meccanismo, impedendo così la lettura dei dati da parte di soggetti non autorizzati. Nella pratica, l'unico modo di fornire una politica di accesso basata sull'identità dei soccorritori e sui loro turni è attraverso la presenza di un componente dedicato, contattabile via Internet dai lettori dei soccorritori stessi. La banca dati dovrà, di conseguenza, poter essere interrogata solo da tale componente, in modo che vi sia un controllo totale sulle richieste verso la stessa. 
+
+L'accesso alla banca dati da parte del nuovo componente potrebbe essere:
+\begin{enumerate}
+	\item Diretto: le due entità risiedono in uno stesso nodo computazionale o in una stessa rete privata. Così facendo, si potrebbe decidere di esporre sulla rete Internet solo il nuovo componente, garantendo quindi un maggior livello di sicurezza per la banca dati.
+	\item Indiretto: l'accesso avviene tramite la rete Internet. In questo caso, la banca dati deve essere configurata in modo da accettare le sole richieste provenienti dal nuovo componente. 
+\end{enumerate}
+
 \subsection{Tecnologia di identificazione}
 Con tecnologia di identificazione si intende il protocollo di connettività che verrà utilizzato per permettere al lettore di recuperare l'identificativo, attraverso un'interazione con l'identificatore. È possibile effettuare un primo abbozzo dell'interazione fra lettore e identificatore, individuando le fasi seguenti:
 \begin{enumerate}
@@ -484,6 +526,7 @@ Dall'analisi dei protocolli di connettività supportati da Android, eseguita in 
 \end{table}
 
 \subsubsection{Considerazioni}
+
 
 \section{Abstraction gap}
 
