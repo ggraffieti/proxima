@@ -379,14 +379,16 @@ Android supporta diversi protocolli (variabili da versione a versione) che perme
 	
 	L'identificatore del sistema potrebbe essere implementato come un tag NFC, contenente l'identificativo dell'utente, leggibile attraverso il lettore (device Android) dopo una fase di ricerca. Il raggio di funzionamento ristretto impone un contatto (o quasi) fra lettore e identificatore, che in alcune situazioni di emergenza potrebbe rivelarsi scomodo per il soccorritore, ma d'altro canto garantisce che l'identificatore letto sia quello desiderato. NFC non supporta operazioni di crittografia dei messaggi, non permettendo la risoluzione delle problematiche di tracciabilità e masquerade.
 	
-	La soluzione a tali problematiche di sicurezza è quella di adottare, come identificatore, una \emph{contactless smart card}. Essa è un dispositivo passivo, la quale comunica con i lettori tramite il protocollo NFC, ma al contrario dei banali tag descritti in precedenza, possiede, al suo interno, un microprocessore capace di operazioni crittografiche. La crittografia è nella maggior parte dei casi a chiave pubblica, difatti gli ambiti di maggiore utilizzo sono quelli di firma digitale o pagamento elettronico. Essa non dovrà solamente essere alimentata dal lettore, ma dovrà comunicare con esso. Lo scambio dati dal lettore alla carta avviene grazie alla modulazione dell'onda elettromagnetica che il lettore invia alla smart card per alimentarla, mentre le comunicazione in senso contrario avviene attraverso la regolazione, da parte della carta, della potenza assorbita. L'utilizzo di una contactless smart card richiede una infrastruttura ben più complessa del solo NFC, dato che dovranno essere gestite chiavi pubbliche e private a livello di singoli identificatori. Inoltre la comunicazione con esse deve seguire un rigido protocollo (ISO/IEC 14443). Esse sarebbero la soluzione a tutti i problemi di sicurezza espressi precedentemente per l'uso di semplici tag NFC, ma a costo di una più complessa infrastruttura del sistema, e di un costo maggiore per l'identificatore, rispetto a quanto espresso nei requisiti. 
+	\item[Contactless smart cart]: è un dispositivo passivo, la quale comunica con i lettori tramite il protocollo NFC, ma al contrario dei banali tag descritti in precedenza, possiede, al suo interno, un microprocessore capace di operazioni crittografiche. La crittografia è nella maggior parte dei casi a chiave pubblica, difatti gli ambiti di maggiore utilizzo sono quelli di firma digitale o pagamento elettronico. Essa non dovrà solamente essere alimentata dal lettore, ma dovrà comunicare con esso. Lo scambio dati dal lettore alla carta avviene grazie alla modulazione dell'onda elettromagnetica che il lettore invia alla smart card per alimentarla, mentre le comunicazione in senso contrario avviene attraverso la regolazione, da parte della carta, della potenza assorbita. L'utilizzo di una contactless smart card richiede una infrastruttura ben più complessa del solo NFC, dato che dovranno essere gestite chiavi pubbliche e private a livello di singoli identificatori. Inoltre la comunicazione con esse deve seguire un rigido protocollo (ISO/IEC 14443). Esse sarebbero la soluzione a tutti i problemi di sicurezza espressi precedentemente per l'uso di semplici tag NFC, ma a costo di una più complessa infrastruttura del sistema, e di un costo maggiore per l'identificatore, rispetto a quanto espresso nei requisiti. 
 \end{description}
 
 \begin{table}[h]
 	\centering
+	\hspace*{-2.4cm}
 	\begin{threeparttable}
 		\begin{tabular}{|
-			>{\centering}m{.22\textwidth} |
+			>{\centering}m{.18\textwidth} |
+			>{\centering}m{.13\textwidth} |
 			>{\centering}m{.13\textwidth} |
 			>{\centering}m{.13\textwidth} |
 			>{\centering}m{.13\textwidth} |
@@ -394,25 +396,25 @@ Android supporta diversi protocolli (variabili da versione a versione) che perme
 			>{\centering}m{.13\textwidth} |
 			>{\centering}m{.13\textwidth} |}
 			\hline
-			& Wi-Fi & Bluetooth & BLE & Wi-Fi Direct & Wi-Fi Aware & NFC \tabularnewline
+			& Wi-Fi & Bluetooth & BLE & Wi-Fi Direct & Wi-Fi Aware & NFC & Contact less smart card \tabularnewline
 			\hline
-			Supporto Android & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark \tabularnewline
+			Supporto Android & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark \tabularnewline
 			\hline
-			Fase di ricerca & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark \tabularnewline
+			Fase di ricerca & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark \tabularnewline
 			\hline
-			Pairing automatico & \xmark & \xmark & \cmark & \cmark & \cmark & \cmark \tabularnewline
+			Pairing automatico & \xmark & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark \tabularnewline
 			\hline
-			Range (fra 1 e 3 metri) & \xmark & \xmark & \xmark & \xmark & \xmark & \xmark \tabularnewline
+			Range (fra 1 e 3 metri) & \xmark & \xmark & \xmark & \xmark & \xmark & \xmark & \xmark \tabularnewline
 			\hline
-			Identificazione device più vicino & \xmark & \xmark & \xmark & \xmark & \xmark & \cmark \tnote{*} \tabularnewline
+			Identificazione device più vicino & \xmark & \xmark & \xmark & \xmark & \xmark & \cmark \tnote{*} & \cmark \tnote{*} \tabularnewline
 			\hline
-			Sicurezza a tracciabilità & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \tabularnewline
+			Sicurezza a tracciabilità & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark & \cmark \tabularnewline
 			\hline
-			Sicurezza a masquerade & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \tabularnewline
+			Sicurezza a masquerade & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark   & \cmark \tabularnewline
 			\hline
-			Basso consumo & \xmark & \xmark & \cmark & \xmark & \xmark & \cmark \tabularnewline
+			Basso consumo & \xmark & \xmark & \cmark & \xmark & \xmark & \cmark & \cmark \tabularnewline
 			\hline
-			Costo & \xmark & \cmark & \cmark & \xmark & \xmark & \cmark \tabularnewline
+			Costo & \xmark & \cmark & \cmark & \xmark & \xmark & \cmark & \xmark \tabularnewline
 			\hline
 		\end{tabular}
 		\begin{tablenotes} \footnotesize
@@ -438,7 +440,8 @@ Dall'analisi dei protocolli di connettività supportati da Android, eseguita in 
 	Come si può vedere la tecnologia UHF RFID soddisfa il requisito di distanza, ma, come per NFC, non c'è alcun tipo di sicurezza o crittografia, non risolvendo del tutto le problematiche di tracciabilità e masquerade. Ciò è vero per il protocollo base di RFID, tuttavia esistono ulteriori protocolli, come \emph{EPCGlobal v2} che per i tag UHF prevedono forme blande di crittografia all'interno dei tag, facendo sopratutto affidamento a generatori di numeri pseudo-casuali. Anche a fronte di tali passi in avanti non esistono sul mercato tag RFID in grado di garantire un livello di sicurezza allo stato dell'arte. Oltre a ciò sussiste un grave problema di privacy, dato che chiunque in possesso di un lettore può leggere i dati all'interno di un tag, anche da svariati metri di distanza.
 	
 	\item[Raggi infrarossi]: tecnologia di comunicazione basata sulla rilevazione ed invio di raggi infrarossi. Essa è stata utilizzata come tecnologia principale per lo scambio di dati tra telefoni cellulari prima dell'avvento di \emph{bluetooth}, ed ancora oggi ampiamente utilizzata nei telecomandi dei dispositivi elettronici domestici (televisioni, stereo \dots). Essa si basa sulla modulazione di onde elettromagnetiche nello spettro infrarosso, con lo scopo di trasmettere dati. Ogni dispositivo può agire sia da ricevitore che da emettitore. Il principale svantaggio di tale tecnologia è dato dalla necessità di visibilità reciproca dei due dispositivi, ad una distanza massima di 1-2 metri. La radiazione infrarossa, infatti, non è penetrante, e viene bloccata da qualsiasi corpo solido frapposto tra i due dispositivi (anche il solo vetro di una finestra potrebbe bloccare la radiazione). Ciò significa anche che non è possibile una fase di ricerca dei dispositivi nelle vicinanze, dato che solamente quelli visibili al fascio elettromagnetico saranno contattabili. Esistono vari protocolli per l'utilizzo di tale tecnologia, alcuni dei quali disponibili anche su alcuni dispositivi Andoid. Uno degli svantaggi principali, oltre all'allineamento, è dato dal fatto che l'identificatore dovrà essere alimentato, e sempre in ascolto nella ricezione di segnali. Ciò può comportare una breve vita degli identificatori, contravvenendo ad un requisito. La sicurezza può e deve essere gestita a livelli più alti, ma avendo un identificatore attivo non ci sono problemi a riguardo. 
-	\item[Onde radio]:
+	
+	\item[Onde radio]: tecnologia basata sullo scambio di informazioni attraverso onde radio, tipicamente con frequenza di 2.4GHz. Esse sono normalmente utilizzate per la comunicazione wireless tra computer e periferiche come tastiera o mouse, in contrapposizione a bluetooth. Il range massimo è tipicamente di qualche metro, ma richiede che ogni dispositivo sia dotato di un captatore di onde radio, ed un trasmettitore. Ciò significa che, similmente alla tecnologia a infrarossi, gli identificatori dovranno essere attivi e sempre in ascolto. Un altro svantaggio è che tutti i dispositivi (lettori e identificatori) sono in grado di leggere tutti i segnali inviati nel raggio di qualche metro. Ciò significa che un malintenzionato potrebbe modificare l'identificatore in modo che sia in grado di processare e leggere tutte le informazioni trasmesse nelle sue vicinanze. Al contrario dei raggi infrarossi analizzati in precedenza non ci sono vincoli sulla visibilità reciproca dei dispositivi. La sicurezza, come per la comunicazione tramite infrarossi, dovrà essere gestita a un livello più alto. Ciò è possibile grazie al fatto di lavorare con identificatori attivi. Il costo del dispositivo identificatore potrebbe risultare superiore a quanto espresso nei requisiti, in quanto si necessita di qualche potenza computazionale. 
 \end{description}
 
 \begin{table}[h]
@@ -452,25 +455,29 @@ Dall'analisi dei protocolli di connettività supportati da Android, eseguita in 
 			\hline
 			& RFID & Infrarossi & Onde radio \tabularnewline
 			\hline
-			Supporto Android & \xmark & \cmark/\xmark & \xmark \tabularnewline
+			Supporto Android & \xmark & \xmark \tnote{*} & \xmark \tabularnewline
 			\hline
-			Fase di ricerca & \cmark & \xmark & \xmark \tabularnewline
+			Fase di ricerca & \cmark & \xmark & \cmark \tabularnewline
 			\hline
-			Pairing automatico & \cmark & \cmark & \xmark \tabularnewline
+			Pairing automatico & \cmark & \cmark & \cmark \tabularnewline
 			\hline
-			Range (fra 1 e 3 metri) & \cmark & \cmark & \xmark \tabularnewline
+			Range (fra 1 e 3 metri) & \cmark & \cmark & \cmark \tabularnewline
 			\hline
 			Identificazione device più vicino & \xmark & \xmark & \xmark \tabularnewline
 			\hline
-			Sicurezza a tracciabilità & \cmark & \cmark & \xmark \tabularnewline
+			Sicurezza a tracciabilità & \xmark \tnote{\dag} & \cmark & \cmark \tabularnewline
 			\hline
-			Sicurezza a masquerade & \cmark & \cmark & \xmark \tabularnewline
+			Sicurezza a masquerade & \xmark \tnote{\dag} & \cmark & \cmark \tabularnewline
 			\hline
 			Basso consumo & \cmark & \xmark & \xmark \tabularnewline
 			\hline
 			Costo & \xmark & \xmark & \xmark \tabularnewline
 			\hline
 		\end{tabular}
+		\begin{tablenotes} \footnotesize
+			\item[*] Alcuni dispositivi Android supportano la comunicazione tramite raggi infrarossi, tuttavia non vi è supporto ufficiale da parte di Android a tale tecnologia.
+			\item[\dag] Alcuni UHF RFID di ultima generazione (\emph{EPC Global v2}) supportano blande forme di crittografia, basate su un generatore di numeri pseudocasuali all'interno del tag. Esistono varie pubblicazioni in letteratura su come ottenere sicurezza nella comunicazione tramite RFID, ma nessuna soluzione raggiunge ancora un risultato soddisfacente. 
+		\end{tablenotes}
 		\caption{Riepilogo delle tecnologie alternative considerate.}
 		\label{tectable-other}
 	\end{threeparttable}
