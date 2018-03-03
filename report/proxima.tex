@@ -134,13 +134,13 @@ Il sistema \emph{Proxima} nasce dalla necessità di fornire un supporto, in caso
 	\item \textbf{Identificatore}: ogni utilizzatore del servizio dovrà essere costantemente in possesso di tale dispositivo, che dovrà quindi essere compatto, non ingombrante e possibilmente indossabile. Inoltre, la sua durata media di funzionamento non dovrà essere inferiore a 3 anni. Esso sarà caratterizzato dalle seguenti funzionalità: 
 	\begin{itemize}
 		\item Identificare l'utente in maniera univoca.
-		\item La trasmissione dell'identificativo dovrà avvenire in modalità \emph{wireless}, con un raggio limitato (inferiore a 3 metri).
+		\item La trasmissione dell'identificativo dovrà avvenire in modalità \emph{wireless}, con un raggio massimo da 1 a 3 metri.
 		\item Lo scambio dell'identificativo dovrà avvenire in maniera trasparente all'utente, senza consensi espliciti ad ogni trasmissione.
 	\end{itemize}
 
 	\item \textbf{Lettore}: dispositivo che dovrà essere in possesso del soccorritore, in modo che possa identificare e mostrare i dati degli utenti. Per fare ciò dovrà essere in grado di comunicare sia con gli identificatori, sia con la banca dati. Il dispositivo dovrà avere le seguenti funzionalità:
 	\begin{itemize}
-		\item Permettere la ricerca degli identificatori nelle vicinanze (inferiore a 3 metri). La ricerca dovrà essere esplicitamente avviata dal soccorritore, e dovrà essere possibile interromperla.
+		\item Permettere la ricerca degli identificatori nelle vicinanze (raggio massimo da 1 a 3 metri). La ricerca dovrà essere esplicitamente avviata dal soccorritore, e dovrà essere possibile interromperla.
 		\item Nel caso durante la fase di ricerca siano stati trovati degli identificatori, il lettore dovrà essere in grado di recuperare l'identificativo dei relativi possessori.
 		\item Contattare la banca dati remota in modo da acquisire i dati medici relativi al paziente identificato dall'identificativo recuperato in precedenza.
 		\item Attraverso il lettore dovrà essere possibile identificare in maniera univoca il soccorritore, in modo che il sistema possa decidere se il soccorritore sia autorizzato alla lettura delle informazioni mediche dell'utente.
@@ -319,7 +319,7 @@ In questa sezione verranno esaminate le varie problematiche che scaturiscono da 
 	
 	Il dispositivo dovrà essere in grado di comunicare in modalità wireless con il lettore. Siccome il lettore, da requisiti, sarà un device Android (con un costo inferiore ai 200 euro per unità), le tecnologie di comunicazione utilizzabili si riducono a quelle supportate da tale device. Risulta quindi necessaria un'analisi di queste tecnologie, in modo da poter individuare il dispositivo più appropriato compatibile con almeno una di esse. 
 	
-	\item[Trasmissione dell'identificativo]: i requisiti stabiliscono la presenza di una fase di ricerca, attraverso la quale il lettore è in grado di scoprire gli identificatori all'interno di un raggio limitato (inferiore a 3 metri). Fra le tecnologie supportate da Android è necessario individuare solamente quelle che permettono di osservare questo vincolo. Inoltre, la tecnologia in oggetto deve poter permettere di stimare in maniera precisa la distanza del lettore dagli identificatori, in modo da stabilire con quale di questi effettuare l'interazione.
+	\item[Trasmissione dell'identificativo]: i requisiti stabiliscono la presenza di una fase di ricerca, attraverso la quale il lettore è in grado di scoprire gli identificatori all'interno di un raggio limitato. Fra le tecnologie supportate da Android è necessario individuare solamente quelle che permettono di osservare questo vincolo. Inoltre, la tecnologia in oggetto deve poter permettere di stimare in maniera precisa la distanza del lettore dagli identificatori, in modo da stabilire con quale di questi effettuare l'interazione.
 	
 	Durante l'utilizzo concreto del sistema, vi è la possibilità che l'identificatore stimato come più vicino al lettore, possa non essere quello appartenente al paziente che necessita di soccorso. Immaginiamo, ad esempio, una situazione nella quale il paziente si trovi circondato da altre persone, anch'esse in possesso di un proprio identificatore. In questo caso, l'identificatore rilevato dal lettore del soccorritore, giunto sul posto, potrebbe non essere quello desiderato. Inoltre, è lecito pensare che il soccorritore stesso sia munito di un proprio identificatore, che quindi potrebbe essere confuso con quello del paziente. Una situazione come quella appena descritta è in contrasto con i requisiti, in quanto il soccorritore non è tenuto a consultare i dati medici relativi a persone che non sono coinvolte in una situazione di emergenza. 
 	
@@ -384,7 +384,7 @@ L'accesso alla banca dati da parte del nuovo componente potrebbe essere:
 \subsection{Tecnologia di identificazione}
 Con tecnologia di identificazione si intende il protocollo di connettività che verrà utilizzato per permettere al lettore di recuperare l'identificativo, attraverso un'interazione con l'identificatore. È possibile effettuare un primo abbozzo dell'interazione fra lettore e identificatore, individuando le fasi seguenti:
 \begin{enumerate}
-	\item Il lettore ricerca tutti gli identificatori situati in prossimità (all'interno di un raggio inferiore a 3 metri).
+	\item Il lettore ricerca tutti gli identificatori situati in prossimità dello stesso.
 	\item Il lettore individua l'identificatore più vicino, fra tutti quelli rilevati nella fase di ricerca.
 	\item Il lettore contatta l'identificatore, richiedendo l'identificativo.
 	\item L'identificatore risponde al lettore con l'identificativo richiesto.
