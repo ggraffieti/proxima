@@ -375,9 +375,11 @@ Android supporta diversi protocolli (variabili da versione a versione) che perme
 	
 	Wi-Fi Aware è in stretta correlazione con Wi-Fi Direct, le due tecnologie sono complementari. Ad esempio, Wi-Fi Direct potrebbe permettere l'individuazione di un certo servizio, sfruttando poi le alte velocità di Wi-Fi Direct per effettuare la connessione ed il relativo scambio di informazioni. Le due tecnologie condividono i medesimi punti deboli, in particolare la difficoltà nella stima delle distanze fra i dispositivi ed il consumo troppo elevato.
 	
-	\item[NFC (Near Field Communication)] : è uno standard di connettività wireless che consente una comunicazione fra due dispositivi posti a breve distanza l'uno dall'altro. Idealmente la distanza massima di funzionamento è leggermente inferiore ai 20 cm, ma nella maggior parte dei dispositivi si aggira intorno ai 5 cm. Un dispositivo NFC può essere utilizzato, ad esempio, per emulare una \emph{smart card}, in modo da effettuare transazioni direttamente dal proprio smartphone, oppure in modalità \emph{peer-to-peer} per lo scambio di informazioni fra due dispositivi diversi. Una terza modalità, \emph{reader/writer}, risulta essere quella più interessante per il sistema in esame, in quanto permette ad un dispositivo NFC di leggere (e scrivere) un \emph{tag NFC}. Un tag, nella maggior parte dei casi, è un dispositivo passivo (a consumo nullo), in grado di memorizzare una quantità ridotta di informazioni. L'interazione con il reader è resa possibile da quest'ultimo device che fornisce al tag la potenza necessaria per l'attivazione. 
+	\item[NFC (Near Field Communication)] : è uno standard di connettività wireless che consente una comunicazione fra due dispositivi posti a breve distanza l'uno dall'altro. Idealmente la distanza massima di funzionamento è leggermente inferiore ai 20 cm, ma nella maggior parte dei dispositivi si aggira intorno ai 5 cm. Un dispositivo NFC può essere utilizzato, ad esempio, per emulare una \emph{smart card}, in modo da effettuare transazioni direttamente dal proprio smartphone, oppure in modalità \emph{peer-to-peer} per lo scambio di informazioni fra due dispositivi diversi. Una terza modalità, \emph{reader/writer}, risulta essere quella più interessante per il sistema in esame, in quanto permette ad un dispositivo NFC di leggere (e scrivere) un \emph{tag NFC}. Un tag, nella maggior parte dei casi, è un dispositivo passivo (a consumo nullo), in grado di memorizzare una quantità ridotta di informazioni. L'interazione con il reader è resa possibile da quest'ultimo device che fornisce al tag, tramite onde elettromagnetiche, la potenza necessaria per l'attivazione. 
 	
 	L'identificatore del sistema potrebbe essere implementato come un tag NFC, contenente l'identificativo dell'utente, leggibile attraverso il lettore (device Android) dopo una fase di ricerca. Il raggio di funzionamento ristretto impone un contatto (o quasi) fra lettore e identificatore, che in alcune situazioni di emergenza potrebbe rivelarsi scomodo per il soccorritore, ma d'altro canto garantisce che l'identificatore letto sia quello desiderato. NFC non supporta operazioni di crittografia dei messaggi, non permettendo la risoluzione delle problematiche di tracciabilità e masquerade.
+	
+	La soluzione a tali problematiche di sicurezza è quella di adottare, come identificatore, una \emph{contactless smart card}. Essa è un dispositivo passivo, la quale comunica con i lettori tramite il protocollo NFC, ma al contrario dei banali tag descritti in precedenza, possiede, al suo interno, un microprocessore capace di operazioni crittografiche. La crittografia è nella maggior parte dei casi a chiave pubblica, difatti gli ambiti di maggiore utilizzo sono quelli di firma digitale o pagamento elettronico. Essa non dovrà solamente essere alimentata dal lettore, ma dovrà comunicare con esso. Lo scambio dati dal lettore alla carta avviene grazie alla modulazione dell'onda elettromagnetica che il lettore invia alla smart card per alimentarla, mentre le comunicazione in senso contrario avviene attraverso la regolazione, da parte della carta, della potenza assorbita. L'utilizzo di una contactless smart card richiede una infrastruttura ben più complessa del solo NFC, dato che dovranno essere gestite chiavi pubbliche e private a livello di singoli identificatori. Inoltre la comunicazione con esse deve seguire un rigido protocollo (ISO/IEC 14443). Esse sarebbero la soluzione a tutti i problemi di sicurezza espressi precedentemente per l'uso di semplici tag NFC, ma a costo di una più complessa infrastruttura del sistema, e di un costo maggiore per l'identificatore, rispetto a quanto espresso nei requisiti. 
 \end{description}
 
 \begin{table}[h]
@@ -427,8 +429,15 @@ Dalla fase di ricognizione sulle tecnologie attualmente disponibili su Android �
 Dall'analisi dei protocolli di connettività supportati da Android, eseguita in \autoref{tec-android}, non è emersa alcuna tecnologia in grado di soddisfare tutti i requisiti. Si procede, dunque, all'analisi di tecnologie alternative che non sono compatibili con Android.
 
 \begin{description}
-	\item[RFID (Radio-Frequency IDentification)]:
-	\item[Infrarossi]:
+	\item[RFID (Radio-Frequency IDentification)]: è una tecnologia wireless di comunicazione, incentrata sull'identificazione di oggetti e lo scambio di informazioni. La tecnologia è molto simile a NFC, descritto in precedenza,  difatti quest'ultimo non è che un caso particolare di RFID. Il protocollo prevede due tipi distinti di dispositivi: lettori e tag. A differenza di NFC non è possibile la comunicazione diretta tra due lettori. I tag si dividono in due categorie: passivi ed attivi. Da qui in avanti saranno trattati solo tag passivi, dato che quelli attivi non hanno vantaggi tangibili nel caso in esame, oltre ad avere lo svantaggio di dover costantemente essere alimentati. Un tag non è altro che un antenna, un microchip ed una memoria non volatile, che può essere in sola lettura o anche scrivibile. Il lettore illumina il tag con un'onda elettromagnetica ad una data frequenza, il tag assorbe la potenza dell'onda e si attiva, trasmettendo il contenuto o una parte soltanto della memoria. Nella versione base dei tag non vi è alcun controllo dell'identità del lettore, quindi ogni dispositivo capace di generare onde alla frequenza richiesta può ricevere i dati. La differenza con NFC è data dalla distanza di comunicazione, che può essere maggiore. Esistono tre principali frequenze di funzionamento dei tag:
+	\begin{itemize}
+		\item \emph{125kHz} (LF RFID): range di qualche centimetro.
+		\item \emph{13.56MHz} (HF RFID o NFC): range massimo di 20 centimetri.
+		\item \emph{860-960MHz} (UHF RFID): range dal metro fino ai 10 metri.
+	\end{itemize}
+	Come si può vedere la tecnologia UHF RFID soddisfa il requisito di distanza, ma, come per NFC, non c'è alcun tipo di sicurezza o crittografia, non risolvendo del tutto le problematiche di tracciabilità e masquerade. Ciò è vero per il protocollo base di RFID, tuttavia esistono ulteriori protocolli, come \emph{EPCGlobal v2} che per i tag UHF prevedono forme blande di crittografia all'interno dei tag, facendo sopratutto affidamento a generatori di numeri pseudo-casuali. Anche a fronte di tali passi in avanti non esistono sul mercato tag RFID in grado di garantire un livello di sicurezza allo stato dell'arte. Oltre a ciò sussiste un grave problema di privacy, dato che chiunque in possesso di un lettore può leggere i dati all'interno di un tag, anche da svariati metri di distanza.
+	
+	\item[Raggi infrarossi]: tecnologia di comunicazione basata sulla rilevazione ed invio di raggi infrarossi. Essa è stata utilizzata come tecnologia principale per lo scambio di dati tra telefoni cellulari prima dell'avvento di \emph{bluetooth}, ed ancora oggi ampiamente utilizzata nei telecomandi dei dispositivi elettronici domestici (televisioni, stereo \dots). Essa si basa sulla modulazione di onde elettromagnetiche nello spettro infrarosso, con lo scopo di trasmettere dati. Ogni dispositivo può agire sia da ricevitore che da emettitore. Il principale svantaggio di tale tecnologia è dato dalla necessità di visibilità reciproca dei due dispositivi, ad una distanza massima di 1-2 metri. La radiazione infrarossa, infatti, non è penetrante, e viene bloccata da qualsiasi corpo solido frapposto tra i due dispositivi (anche il solo vetro di una finestra potrebbe bloccare la radiazione). Ciò significa anche che non è possibile una fase di ricerca dei dispositivi nelle vicinanze, dato che solamente quelli visibili al fascio elettromagnetico saranno contattabili. Esistono vari protocolli per l'utilizzo di tale tecnologia, alcuni dei quali disponibili anche su alcuni dispositivi Andoid. Uno degli svantaggi principali, oltre all'allineamento, è dato dal fatto che l'identificatore dovrà essere alimentato, e sempre in ascolto nella ricezione di segnali. Ciò può comportare una breve vita degli identificatori, contravvenendo ad un requisito. La sicurezza può e deve essere gestita a livelli più alti, ma avendo un identificatore attivo non ci sono problemi a riguardo. 
 	\item[Onde radio]:
 \end{description}
 
@@ -441,21 +450,21 @@ Dall'analisi dei protocolli di connettività supportati da Android, eseguita in 
 				>{\centering}m{.13\textwidth} |
 				>{\centering}m{.13\textwidth} |}
 			\hline
-			& RFID & Onde radio & Infrarossi \tabularnewline
+			& RFID & Infrarossi & Onde radio \tabularnewline
 			\hline
-			Supporto Android & \xmark & \xmark & \xmark \tabularnewline
+			Supporto Android & \xmark & \cmark/\xmark & \xmark \tabularnewline
 			\hline
 			Fase di ricerca & \cmark & \xmark & \xmark \tabularnewline
 			\hline
-			Pairing automatico & \cmark & \xmark & \xmark \tabularnewline
+			Pairing automatico & \cmark & \cmark & \xmark \tabularnewline
 			\hline
-			Range (fra 1 e 3 metri) & \cmark & \xmark & \xmark \tabularnewline
+			Range (fra 1 e 3 metri) & \cmark & \cmark & \xmark \tabularnewline
 			\hline
 			Identificazione device più vicino & \xmark & \xmark & \xmark \tabularnewline
 			\hline
-			Sicurezza a tracciabilità & \cmark & \xmark & \xmark \tabularnewline
+			Sicurezza a tracciabilità & \cmark & \cmark & \xmark \tabularnewline
 			\hline
-			Sicurezza a masquerade & \cmark & \xmark & \xmark \tabularnewline
+			Sicurezza a masquerade & \cmark & \cmark & \xmark \tabularnewline
 			\hline
 			Basso consumo & \cmark & \xmark & \xmark \tabularnewline
 			\hline
