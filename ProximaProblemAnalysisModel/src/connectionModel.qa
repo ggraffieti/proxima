@@ -64,7 +64,6 @@ QActor qpatient2 context ctxConnDebug {
 	]
 }
 
-
 QActor qrescuer context ctxConnDebug {
 	Rules {
 		identifier(rescuer1).
@@ -94,7 +93,7 @@ QActor qrescuer context ctxConnDebug {
 	Plan checkConnection 
 	[
 		println("[qrescuer] check connection");
-		delay 1000;
+		//delay 500;
 		[?? connection(STATE)] addRule currentConnection(STATE);
 		[?? currentConnection(true)] 
 			addRule connectionEstablished(true);
