@@ -92,6 +92,7 @@ QActor qrescuer context ctxBaseDebug {
 	Plan requestPatientIdentifier 
 	[
 		removeRule dataResponse(_,_,_,_);
+		removeRule unauthorized;
 		println("[qrescuer] sending identification request to patient");
 		[!? findNearest(NAME)] forward NAME -m identificationRequest : identificationRequest
 	]
