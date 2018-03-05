@@ -10,7 +10,18 @@ public class Qdatacontrol extends AbstractQdatacontrol {
 	public Qdatacontrol(String actorId, QActorContext myCtx, IOutputEnvView outEnvView )  throws Exception{
 		super(actorId, myCtx, outEnvView);
 	}
-/*
- * ADDED BY THE APPLICATION DESIGNER	
- */
+	
+	// Added by the application designer
+	public String encryptData(String data) {
+		return cipher(data, 2);
+	}
+	
+	// Caesar cipher
+	private String cipher(String msg, int shift) {
+	    String s = "";
+	    for (int x = 0; x < msg.length(); x++) {
+	        s += (char)(msg.charAt(x) + shift);
+	    }
+	    return s;
+	}
 }

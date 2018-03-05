@@ -38,4 +38,8 @@ public class RescuerGui extends SituatedPlainObject{
 	public void showConnectionError() {
 		println("Connection error");
 	}
+	
+	public void showMalformedDataMessage() {
+		println("Malformed data");
+	}
 }

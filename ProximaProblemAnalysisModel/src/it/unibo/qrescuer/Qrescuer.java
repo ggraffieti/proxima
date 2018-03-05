@@ -45,4 +45,21 @@ public class Qrescuer extends AbstractQrescuer {
 	public void showConnectionError() {
 		this.gui.showConnectionError();
 	}
+	
+	public void showMalformedDataMessage() {
+		this.gui.showMalformedDataMessage();
+	}
+	
+	public String decryptData(String data) {
+		return decipher(data, 2);
+	}
+	
+	// Caesar cipher
+	private String decipher(String msg, int shift) {
+	    String s = "";
+	    for (int x = 0; x < msg.length(); x++) {
+	    	s += (char)(msg.charAt(x) - shift);
+	    }
+	    return s;
+	}
 }
