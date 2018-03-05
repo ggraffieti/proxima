@@ -375,11 +375,7 @@ Come discusso in \autoref{issues}, i dati presenti all'interno della banca dati 
 
 Oltre a questa problematica, la banca dati non fornisce alcun meccanismo di autenticazione per poter regolare l'accesso ai dati in essa contenuti. Questo significa che, per soddisfare i requisiti di sicurezza, sarà necessario implementare tale meccanismo, impedendo così la lettura dei dati da parte di soggetti non autorizzati. Nella pratica, l'unico modo di fornire una politica di accesso basata sull'identità dei soccorritori e sui loro turni è attraverso la presenza di un componente dedicato, contattabile via Internet dai lettori dei soccorritori stessi. La banca dati dovrà, di conseguenza, poter essere interrogata solo da tale componente, in modo che vi sia un controllo totale sulle richieste verso la stessa. 
 
-L'accesso alla banca dati da parte del nuovo componente potrebbe essere:
-\begin{enumerate}
-	\item Diretto: le due entità risiedono in uno stesso nodo computazionale o in una stessa rete privata. Così facendo, si potrebbe decidere di esporre sulla rete Internet solo il nuovo componente, garantendo quindi un maggior livello di sicurezza per la banca dati.
-	\item Indiretto: l'accesso avviene tramite la rete Internet. In questo caso, la banca dati deve essere configurata in modo da accettare le sole richieste provenienti dal nuovo componente. 
-\end{enumerate}
+Il nuovo componente in questione potrebbe essere un \emph{web server}, contattabile normalmente tramite HTTP o HTTPS nel caso si volesse garantire un livello minimo di sicurezza nelle comunicazioni. Ovviamente esso dovrà poter interagire alla banca dati attraverso il protocollo   
 
 \subsection{Tecnologia di identificazione}
 Con tecnologia di identificazione si intende il protocollo di connettività che verrà utilizzato per permettere al lettore di recuperare l'identificativo, attraverso un'interazione con l'identificatore. È possibile effettuare un primo abbozzo dell'interazione fra lettore e identificatore, individuando le fasi seguenti:
