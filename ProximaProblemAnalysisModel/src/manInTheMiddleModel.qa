@@ -93,7 +93,6 @@ QActor qrescuer context ctxMITMDebug {
 	Plan checkConnection 
 	[
 		println("[qrescuer] check connection");
-		delay 1000;
 		[?? connection(STATE)] addRule currentConnection(STATE);
 		[?? currentConnection(true)] 
 			addRule connectionEstablished(true);
@@ -253,7 +252,7 @@ QActor qdatacontrol context ctxMITMDebug {
     [
 		println("[qdatacontrol] handling data request");
 		memoCurrentMessage;
-		[!? msg(dataRequest, dispatch, SENDER, _, dataRequest(RESCUER_ID, PATIENT_ID), _)] 
+		[?? msg(dataRequest, dispatch, SENDER, _, dataRequest(RESCUER_ID, PATIENT_ID), _)] 
 			addRule request(SENDER, RESCUER_ID, PATIENT_ID);
 		[!? authorized(SENDER, RESCUER_ID, PATIENT_ID)]
 			addRule senderRequestData(SENDER, PATIENT_ID)
