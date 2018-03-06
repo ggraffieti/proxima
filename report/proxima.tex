@@ -173,7 +173,7 @@ In questa sezione verranno esplorati ed esplicati i concetti chiave usati dal co
 	\item \textbf{Turno del soccorritore}: fasce orarie nelle quali il soccorritore presta il suo servizio in ospedale o nei mezzi adibiti al primo soccorso e al trasporto dei pazienti. Il turno di un soccorritore è soggetto a variazioni nel tempo, comportando un conseguente aggiornamento della banca dati.
 \end{itemize}
 
-\section{Scenari}
+\section{Scenari} \label{scenarios}
 È possibile individuare due scenari di interesse, a seconda del luogo in cui il servizio viene utilizzato.
 \subsection{Scenario 1} \label{scenario1}
 In una situazione di emergenza, il soccorritore arriva sul posto, apre l'applicazione sul proprio lettore e si autentica nel sistema. 
@@ -287,8 +287,8 @@ Il modello del dominio è stato definito tramite l'utilizzo del meta-modello \em
 
 Sulla base dei requisiti, si procede in maniera incrementale alla realizzazione di due modelli:
 \begin{itemize}
-	\item \textbf{Base requirement}: si individuano nel sistema tre componenti principali, nello specifico patient, doctor e control (componente che gestisce l'accesso alla banca dati), modellati come entità attive (attori). I componenti sono considerati come delle \emph{black-boxes}, ponendo il focus sulla loro interazione. Dal modello emerge il comportamento del sistema, il cui scopo è quello di permettere al soccorritore di reperire i dati medici (in questo caso simulati) del paziente a lui più vicino.
-	\item \textbf{Authorization requirement}: estensione del modello base attraverso l'introduzione di un vincolo che impedisce l'accesso ai dati ai soccorritori non autorizzati.
+	\item \textbf{Base model}: si individuano nel sistema tre componenti principali, nello specifico patient, doctor e control (componente che gestisce l'accesso alla banca dati), modellati come entità attive (attori). I componenti sono considerati come delle \emph{black-boxes}, ponendo il focus sulla loro interazione. Dal modello emerge il comportamento del sistema, il cui scopo è quello di permettere al soccorritore di reperire i dati medici (in questo caso simulati) del paziente a lui più vicino.
+	\item \textbf{Authorization model}: estensione del modello base attraverso l'introduzione di un vincolo che impedisce l'accesso ai dati ai soccorritori non autorizzati.
 \end{itemize}
 I modelli sopra illustrati sono eseguibili e costituiscono dei primi prototipi funzionanti del sistema. Questa caratteristica permette un confronto diretto con il committente, in modo da valutare la comprensione dei requisiti.
 
@@ -327,6 +327,8 @@ In questa sezione verranno esaminate le varie problematiche che scaturiscono da 
 	
 	La banca dati non fornisce alcun meccanismo per regolare l'accesso ai dati. Sarà quindi necessaria l'introduzione di un componente aggiuntivo, avente lo scopo di permettere l'accesso ai dati solamente ai soccorritori autorizzati.
 	
+	\item[Autenticazione del soccorritore]: l'accesso ai dati medici è consentito solamente ai soccorritori autorizzati. Una problematica che si viene a creare consiste nel determinare l'identità di un soccorritore che richiede un accesso alla banca dati. Si rende necessaria, quindi, la presenza di una fase di autenticazione di un soccorritore nel sistema, tramite la quale egli può confermare la propria identità.
+	
 	\item[Sicurezza]: il sistema è esposto a vari problemi riguardanti la sicurezza informatica, alcuni dichiarati esplicitamente dal committente e altri derivanti dall'analisi. 
 	\begin{itemize}
 		\item \emph{Tracciabilità}: dato che nei requisiti non è stato posto alcun vincolo riguardante la lettura dell'identificativo dei pazienti, ogni soggetto, tramite l'utilizzo di un lettore, è in grado di recuperare e memorizzare l'identificativo di ogni persona in possesso di un identificatore. Se l'identificativo contiene dei dati che possano permettere un'identificazione diretta del soggetto (ad esempio nome e cognome, codice fiscale, \dots), significa che un malintenzionato può risalire all'identità di tutte le persone nelle sue immediate vicinanze. Nel caso il malintenzionato sia anche un soccorritore autorizzato, egli potrebbe garantirsi un accesso continuo ai dati medici anche al di fuori delle situazioni di emergenza.
@@ -340,7 +342,7 @@ In questa sezione verranno esaminate le varie problematiche che scaturiscono da 
 \end{description}
 Le problematiche fin qui illustrate si limitano allo specifico ambito medico. Come anticipato in \autoref{goal}, il caso medico è solamente un sottoinsieme del sistema generale, la cui idea è illustrata in \autoref{vision}. 
 
-\section{Studio di fattibilità}
+\section{Studio di fattibilità} \label{feasibility}
 
 \subsection{Sicurezza}
 
@@ -381,7 +383,7 @@ L'accesso alla banca dati da parte del nuovo componente potrebbe essere:
 	\item Indiretto: l'accesso avviene tramite la rete Internet. In questo caso, la banca dati deve essere configurata in modo da accettare le sole richieste provenienti dal nuovo componente. 
 \end{enumerate}
 
-\subsection{Tecnologia di identificazione}
+\subsection{Tecnologia di identificazione} \label{tec-id}
 Con tecnologia di identificazione si intende il protocollo di connettività che verrà utilizzato per permettere al lettore di recuperare l'identificativo, attraverso un'interazione con l'identificatore. È possibile effettuare un primo abbozzo dell'interazione fra lettore e identificatore, individuando le fasi seguenti:
 \begin{enumerate}
 	\item Il lettore ricerca tutti gli identificatori situati in prossimità (all'interno di un raggio inferiore a 3 metri).
@@ -533,26 +535,50 @@ Per quanto riguarda le tecnologie non supportate da Android, analizzate in \auto
 
 In conclusione, fra le tecnologie esaminate per l'implementazione della comunicazione fra lettore ed identificatore, nessuna permette di soddisfare la totalità dei requisiti. Si decide, in accordo con il committente, di optare per l'utilizzo di NFC, preferito a contactless smart card per i costi notevolmente inferiori, non considerando i problemi di tracciabilità e masquerade che, nell'ambito del primo soccorso, possono essere trascurati.
 
+\subsection{Autenticazione del soccorritore}
+L'autenticazione del soccorritore è necessaria per l'utilizzo del servizio. In una situazione di emergenza, i tempi dedicati a questa fase devono essere minimi ed il meccanismo di autenticazione deve essere solido e non invasivo, evitando errori derivanti da un mancato riconoscimento del soccorritore. Vengono individuate varie possibilità:
+\begin{itemize}
+	\item \textbf{Username e password}: il meccanismo di autenticazione più diffuso nell'uso quotidiano. In questo caso, ad ogni soccorritore verrebbero assegnate delle credenziali di accesso al sistema. Ad ogni utilizzo dell'applicazione, il soccorritore dovrebbe inserire tali credenziali in modo da confermare la propria identità. In una situazione di emergenza, questo approccio potrebbe risultare problematico, sia per il tempo necessario per l'inserimento, sia per questioni relative alle credenziali, che il soccorritore potrebbe temporaneamente non ricordare.
+	\item \textbf{Riconoscimento biometrico}: meccanismo di autenticazione che si basa sulle caratteristiche biometriche dell'utente. Tramite il lettore sarebbe, ad esempio, possibile implementare meccanismi di riconoscimento del volto, riconoscimento dell'impronta digitale e riconoscimento della voce. Tali meccanismi di autenticazione non garantiscono, però, un grado di affidabilità adeguato per il sistema.
+	\item \textbf{Lettore}: per slegare il soccorritore dall'obbligo di autenticazione, è possibile delegare tale processo al lettore. In questo modo, sarebbe il lettore che, in automatico, si occuperebbe della fase di autenticazione, permettendo al soccorritore di concentrarsi esclusivamente sul paziente. Questo meccanismo potrebbe essere messo in atto dotando il lettore di una chiave segreta, in grado di identificare un determinato soccorritore. In questo modo, però, si presenterebbe la problematica relativa alla sicurezza della chiave.
+	\item \textbf{Identificatore}: è lecito assumere che il soccorritore sia in possesso di un proprio identificatore. Esso presenta un modo per identificare univocamente il soggetto, e potrebbe, quindi, essere utilizzato per attestare l'identità del soccorritore. Come già discusso in \autoref{tec-id}, sarebbe possibile per un malintenzionato recuperare l'identificativo di un soccorritore ed utilizzarlo per superare la fase di autenticazione, risultando così un soggetto autorizzato alla lettura dei dati medici.
+\end{itemize}
+I meccanismi di autenticazione appena citati potrebbero anche essere combinati tra loro, in modo da garantire una maggiore affidabilità nel riconoscimento, così come una robustezza più elevata a fronte di attacchi informatici.
+
+In accordo con il committente, si è deciso di optare per una soluzione che combina i vantaggi di lettore e identificatore. L'autenticazione avverrà a due livelli, il soccorritore si autenticherà nel sistema tramite il suo identificatore, mentre il lettore confermerà l'identità del soccorritore tramite la chiave segreta.  
+
 \section{Abstraction gap}
 
 \section{Analisi dei rischi}
 
 \section{Architettura logica}
-Il sistema risulta essere composto dalle seguenti componenti:
+L'analisi delle problematiche, svolta in \autoref{issues}, congiuntamente allo studio di fattibilità in \autoref{feasibility}, ha portato alla definizione di un'architettura logica, in grado di descrivere struttura, interazione e comportamento del sistema.
+
+Dallo studio di fattibilità è emersa una variazione particolarmente rilevante rispetto ai requisiti espressi in \autoref{requirements}. In accordo con il committente, si è infatti deciso di adottare il protocollo NFC per la trasmissione dell'identificativo da identificatore a lettore. Di conseguenza l'identificatore diviene un tag NFC, all'interno del quale è memorizzato l'identificativo del paziente. Il tag è passivo (non alimentato) e può essere attivato dal lettore nel momento in cui il soccorritore necessita l'identificativo del paziente.
+
+L'utilizzo di NFC provoca un impatto evidente anche sugli scenari di esecuzione del sistema, illustrati in \autoref{scenarios}. Il breve raggio di funzionamento di NFC impone una vicinanza strettissima, prossima al contatto, fra lettore e identificatore, rendendo, di fatto, altamente improbabile l'individuazione di più identificatori nella fase di ricerca di un lettore. Il soccorritore, dopo aver aperto l'applicazione, deve superare una prima fase di autenticazione, che prevede che egli avvicini il lettore al proprio identificatore. Fatto ciò, il soccorritore dovrà avvicinare il lettore all'identificatore del paziente, in modo da ricevere l'identificativo, utilizzato poi per accedere ai dati medici del paziente, contenuti all'interno della banca dati. 
+
+All'interno del sistema sono individuati quattro componenti principali:
 \begin{itemize}
-	\item Server
-	\item Lettore
-	\item Identificatore
+	\item \textbf{Patient}: entità attiva che rappresenta il paziente, per mezzo del suo identificatore. Nel sistema, infatti, un paziente è descritto dall'identificativo contenuto all'interno del suo identificatore.  
+	\item \textbf{Rescuer}: entità attiva che rappresenta il soccorritore. Nel sistema, un soccorritore è descritto dall'identificativo contenuto all'interno del suo identificatore.
+	\item \textbf{Data Control}: entità attiva preposta al controllo degli accessi alla banca dati. Si assicura che i soli medici autorizzati possano entrare in possesso dei dati medici dei pazienti.  
+	\item \textbf{Data}: entità attiva che rappresenta il database contenente i dati medici dei pazienti.
+\end{itemize}
+I componenti individuati sono entità distinte e ben distinguibili tra loro, ognuna con un proprio flusso di controllo logico. Il sistema risulta essere eterogeneo e distribuito. L'interazione tra i componenti riveste un ruolo chiave all'interno del sistema. Essa può essere descritta come segue:
+\begin{itemize}
+	\item \textbf{Rescuer e Patient}: in \autoref{tec-id} era stata formulata una prima ipotesi in grado di descrivere l'interazione fra lettore (Rescuer) e identificatore (Patient). Essa prevedeva una prima fase di ricerca di tutti i pazienti situati in una certa area. Tale approccio non è più valido, dato il nuovo requisito, che consiste nell'utilizzo di NFC. L'interazione era poi stata definita come \emph{request-response}, con il soccorritore che, effettuando una richiesta al paziente, otteneva una risposta contenente l'identificativo dello stesso. Questa soluzione sembra essere la più adatta per il problema in esame, sia perché garantisce che la trasmissione dell'identificativo avvenga solamente quando richiesto (evitando una continua propagazione dello stesso), sia perché è quella che permette di definire in maniera più corretta un'interazione tramite il protocollo NFC.
+	\item \textbf{Rescuer e Data Control}: 
+	\item \textbf{Data Control e Data}:
 \end{itemize}
 
-\subsection{Scenario I}
-In una situazione di emergenza, il soccorritore arriva sul posto, apre l'applicazione sul proprio lettore e lo avvicina al proprio identificatore, in modo da autenticarsi nel sistema. Subito dopo il soccorritore avvicina il lettore all'identificatore del paziente e riceverà i dati medici dello stesso. 
-\subsection{Scenario II}
-In una situazione di emergenza, il soccorritore arriva sul posto, apre l'applicazione sul proprio lettore e lo avvicina al proprio identificatore, in modo da autenticarsi nel sistema. Subito dopo il soccorritore avvicina il lettore all'identificatore del paziente per richiedere i dati medici dello stesso. Nel caso essi non siano presenti nel sistema, dovrà essere mostrato un messaggio di errore.
-\subsection{Scenario III} 
-In una situazione di emergenza, il soccorritore arriva sul posto e apre l'applicazione sul proprio lettore. Nel caso non sia possibile creare alcuna connessione con il server, deve essere mostrato un messaggio che avvisa il soccorritore di intervenire ``manualmente'', senza contare sul servizio.
-
-
+L'architettura logica può essere espressa in maniera formale tramite l’utilizzo del meta-modello
+QActor, sviluppato dal professore Antonio Natali. Sulla base dei requisiti e dell'analisi del problema, si procede in maniera incrementale alla realizzazione di tre modelli:
+\begin{itemize}
+	\item \textbf{Base model}:
+	\item \textbf{Connection model}:
+	\item \textbf{Man-in-the-middle model}:
+\end{itemize}
 
 \chapter{Piano di lavoro}
 
