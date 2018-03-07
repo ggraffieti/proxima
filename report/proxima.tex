@@ -568,16 +568,16 @@ All'interno del sistema sono individuati quattro componenti principali:
 I componenti individuati sono entità distinte e ben distinguibili tra loro, ognuna con un proprio flusso di controllo logico. Il sistema risulta essere eterogeneo e distribuito. L'interazione tra i componenti riveste un ruolo chiave all'interno del sistema. Essa può essere descritta come segue:
 \begin{itemize}
 	\item \textbf{Rescuer e Patient}: in \autoref{tec-id} era stata formulata una prima ipotesi in grado di descrivere l'interazione fra lettore (Rescuer) e identificatore (Patient). Essa prevedeva una prima fase di ricerca di tutti i pazienti situati in una certa area. Tale approccio non è più valido, dato il nuovo requisito, che consiste nell'utilizzo di NFC. L'interazione era poi stata definita come \emph{request-response}, con il soccorritore che, effettuando una richiesta al paziente, otteneva una risposta contenente l'identificativo dello stesso. Questa soluzione sembra essere la più adatta per il problema in esame, sia perché garantisce che la trasmissione dell'identificativo avvenga solamente quando richiesto (evitando una continua propagazione dello stesso), sia perché è quella che permette di definire in maniera più corretta un'interazione tramite il protocollo NFC.
-	\item \textbf{Rescuer e Data Control}: 
-	\item \textbf{Data Control e Data}:
+	\item \textbf{Rescuer e Data Control}: dopo aver recuperato l'identificativo del paziente, il soccorritore deve reperire i dati medici dalla banca dati, contattando il componente \emph{Data control}. Indipendentemente dal protocollo di comunicazione che si andrà ad utilizzare, dal punto di vista logico l'interazione può essere descritta come una \emph{request-response}, con il soccorritore che richiede i dati medici di un certo paziente e il \emph{Data Control} che risponde in maniera adeguata a seconda che il soccorritore sia autorizzato o meno alla visione dei dati.
+	\item \textbf{Data Control e Data}: il \emph{Data Control} non dispone di un accesso diretto ai dati medici, ma deve richiederli al componente nel quale essi sono mantenuti, ovvero \emph{Data}. Anche in questo caso l'interazione è \emph{request-response}.
 \end{itemize}
 
 L'architettura logica può essere espressa in maniera formale tramite l’utilizzo del meta-modello
 QActor, sviluppato dal professore Antonio Natali. Sulla base dei requisiti e dell'analisi del problema, si procede in maniera incrementale alla realizzazione di tre modelli:
 \begin{itemize}
-	\item \textbf{Base model}:
-	\item \textbf{Connection model}:
-	\item \textbf{Man-in-the-middle model}:
+	\item \textbf{Base model}: ogni componente del sistema viene modellato come un \emph{QActor}. I dati medici dei pazienti, contenuti nella base di conoscenza dell'attore \emph{Data}, sono simulati (si trattano solamente nome, cognome e gruppo sanguigno di ogni paziente). Il modello è eseguibile e permette di simulare uno scenario completo di utilizzo del sistema, dall'apertura dell'applicazione del soccorritore fino alla visualizzazione dei dati medici del paziente.
+	\item \textbf{Connection model}: estensione del modello di base considerando il problema della connettività. Infatti, il soccorritore necessita di connettività per poter reperire i dati medici del paziente, e nel caso essa non sia presente, il servizio \emph{Proxima} non può essere erogato. All'apertura dell'applicazione deve essere immediatamente notificata al soccorritore l'eventuale mancanza di connettività, in modo da non fargli sprecare tempo prezioso.
+	\item \textbf{Man-in-the-middle model}: estensione del \emph{Connection model} con l'introduzione delle problematiche di \emph{sniffing} e \emph{replay attack}. Se i dati medici transitassero in chiaro fra \emph{Data contro} e \emph{Rescuer}, un \emph{man-in-the-middle} potrebbe intercettarli e visualizzarli e/o modificarli a piacere. Per evitare questa problematica, nel modello si è simulato l'utilizzo di crittografia attraverso uno dei più semplici algoritmi crittografici, ovvero il \emph{cifrario di Cesare}. Per semplicità, la crittografia è stata considerata solamente nella comunicazione fra \emph{Data control} e \emph{Rescuer}, ma allo stesso modo potrebbe essere applicata anche alle altre comunicazioni.
 \end{itemize}
 
 \chapter{Piano di lavoro}
