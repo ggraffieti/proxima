@@ -271,7 +271,7 @@ Similmente la base dati contenente i turni dei soccorritori è fornita, e anch'e
 }
 \end{lstlisting}
 
-La banca dati è accessibile attraverso la rete Internet tramite una richiesta HTTP GET all'indirizzo 
+La banca dati viene messa a disposizione tramite una connessione diretta al database server di MongoDB, residente all'indirizzo di rete fornito dal committente. La comunicazione dovrà avvenire attraverso il protocollo \emph{MongoDB Wire Protocol}\footnote{\url{https://docs.mongodb.com/manual/reference/mongodb-wire-protocol}}, che si basa su TCP/IP. L'accesso dato è direttamente al database, e non passerà da API, in questo modo sarà possibile lavorare sulla banca dati come se essa fosse in locale. 
 \subsection{Modello}
 La fase di raccolta dei requisiti ha permesso una comprensione delle richieste del committente, che sono state definite ed esplicate in forma testuale nelle sezioni precedenti. Una rappresentazione più efficacie dei requisiti può essere raggiunta attraverso la costruzione di un modello del dominio, in grado di catturare gli aspetti chiave del sistema. 
 
@@ -486,7 +486,7 @@ Dall'analisi dei protocolli di connettività supportati da Android, eseguita in 
 	\item[Onde radio]: tecnologia basata sullo scambio di informazioni attraverso onde radio, tipicamente con frequenza di 2.4GHz. Esse sono normalmente utilizzate per la comunicazione wireless tra computer e periferiche come tastiera o mouse, in contrapposizione a bluetooth. Il range massimo è tipicamente di qualche metro, ma richiede che ogni dispositivo sia dotato di un captatore di onde radio, ed un trasmettitore. Ciò significa che, similmente alla tecnologia a infrarossi, gli identificatori dovranno essere attivi e sempre in ascolto. Un altro svantaggio è che tutti i dispositivi (lettori e identificatori) sono in grado di leggere tutti i segnali inviati nel raggio di qualche metro. Ciò significa che un malintenzionato potrebbe modificare l'identificatore in modo che sia in grado di processare e leggere tutte le informazioni trasmesse nelle sue vicinanze. Al contrario dei raggi infrarossi analizzati in precedenza non ci sono vincoli sulla visibilità reciproca dei dispositivi. La sicurezza, come per la comunicazione tramite infrarossi, dovrà essere gestita a un livello più alto. Ciò è possibile grazie al fatto di lavorare con identificatori attivi. Il costo del dispositivo identificatore potrebbe risultare superiore a quanto espresso nei requisiti, in quanto si necessita di qualche potenza computazionale. 
 \end{description}
 
-\begin{table}[h]
+\begin{table}[H]
 	\centering
 	\begin{threeparttable}
 		\begin{tabular}{|
@@ -531,6 +531,17 @@ Dall'analisi dei protocolli di connettività supportati da Android, eseguita in 
 \section{Abstraction gap}
 
 \section{Analisi dei rischi}
+In questa sezione verranno analizzati i rischi principali del progetto, ovvero le parti più complesse dello stesse, per le quali non ci sono soluzioni banali o standardizzate. In modo particolare si farà riferimento al rischio di una consegna del sistema ritardata, che non rispetta quindi i tempi prefissati. 
+
+I principali componenti del sistema che presentano rischi per una sua consegna nei tempi prestabiliti sono elencati di seguito: 
+\begin{itemize}
+	\item \textbf{Interazione con NFC}: l'interazione con l'identificatore dovrà avvenire tramite NFC. Ciò presenta un rischio per il sistema, poiché ciò significa dover intervenire a basso livello, manipolando in modo diretto la memoria ed i sensori all'interno del dispositivo Android. Se non si volesse perseguire questa strada, un possibilità è quella di utilizzare librerie \emph{ad hoc} per l'interazione tramite NFC. Il rischio di tale software è dato dalla sua non controllabilità, ovvero il modello dell'interazione potrebbe essere diverso da quello analizzato e progettato. Ciò porterebbe ad un ripensamento della parte progettuale del sistema, dovendo operare in modo \emph{bottom-up}.
+	\item \textbf{Sicurezza delle comunicazioni}: la sicurezza è una feature fondamentale del sistema, ed una sua corretta implementazione è un forte requisito per la sua riuscita. La sicurezza, data la vastità dell'argomento anche se limitato alle sole comunicazioni, non è un concetto semplice da trattare. Essa, infatti, non può essere aggiunta come una \emph{patch} una volta implementato il sistema, ma la sicurezza dovrà essere una parte fondamentale del progetto del sistema (\emph{secure by design}\footnote{\url{https://en.wikipedia.org/wiki/Secure_by_design}}). In particolar modo l'implementazione di comunicazioni sicure, allo stato dell'arte, si basa sulla generazione di chiavi crittografiche e certificati. In fase prototipale ciò aumenta la complessità sia dell'implementazione che del deployment del sistema. Inoltre gli attacchi possibili alla sicurezza della comunicazione sono molteplici, e testare la sicurezza del sistema a fronte anche solo di una parte consistente di essi richiederà ulteriore tempo e lavoro.
+	\item \textbf{Scalabilità e availability}: esse sono due proprietà sia del sistema \emph{Proxima} generale, sia del servizio di aiuto in caso di emergenza descritto in \autoref{requirements}. Non esiste alcuna metodologia automatica per progettare e implementare sistemi scalabili e sempre disponibili. Esistono, in letteratura, metodologie generiche, ed alcune soluzioni pratiche al problema (come la replicazione), ma esse non sono valide per ogni sistema. Il rischio principale è quello di sottostimare o sovrastimare la problematica, rendendo il sistema troppo scalabile o troppo poco scalabile. Mentre quest'ultima problematica è comprensibile da tutti, la prima è molto più sottile. Rendere un sistema più scalabile di quanto in realtà sia necessario è un problema, poiché per raggiungere tali risultati non richiesti si è speso tempo (di progettazione, di implementazione\dots) e denaro (deployment di infrastrutture più complesse, replicazione\dots). \`{E} dunque un rischio da non sottovalutare quello di sotto o sovra stimare il livello di scalabilità del sistema, in modo da non allungare i tempi di consegna per funzionalità non richieste. 
+	\item \textbf{Nuovi requisiti, o modifica di quelli esistenti}: esso è uno dei maggiori rischi che ogni progetto pone. I requisiti variano, e anche a distanza di tempo possono esserne aggiunti di nuovi o modificati quelli preesistenti. Un sistema \emph{rigido} è senz'altro un grosso rischio per una consegna nei tempi prestabiliti. La costruzione di un \emph{modello} del sistema mitiga il problema, a patto che il modello sia corretto, e accettato dal cliente stesso. Esso dovrà essere facilmente estensibile e modificabile, anche in corso d'opera, e ciò non dovrà pesantemente influire sul tempo richiesto per l'implementazione del sistema finito. Esso dovrà inoltre servire come base per ulteriori estensioni future, in modo che anche a distanza di tempo sia possibile analizzare i nuovi problemi, progettare la modifica al sistema ed implementarla in un lasso di tempo ragionevole. 
+	\item Librerie deprecate?
+	\item 
+\end{itemize}
 
 \section{Architettura logica}
 Il sistema risulta essere composto dalle seguenti componenti:
