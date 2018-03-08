@@ -27,7 +27,7 @@ QActor qpatient context ctxBaseDebug {
 	[
 		println("[qpatient] waiting for request")
 	]
-	transition stopAfter 20000
+	transition stopAfter 30000
 			   whenMsg identificationRequest -> handleIdentificationRequest
 			   finally repeatPlan
 	
@@ -53,7 +53,7 @@ QActor qpatient2 context ctxBaseDebug {
 	[
 		println("[qpatient2] waiting for request")
 	]
-	transition stopAfter 20000
+	transition stopAfter 30000
 			   whenMsg identificationRequest -> handleIdentificationRequest
 			   finally repeatPlan
 	
@@ -63,7 +63,6 @@ QActor qpatient2 context ctxBaseDebug {
 		[!? identifier(ID)] replyToCaller -m identificationResponse : identificationResponse(ID)
 	]
 }
-
 
 QActor qrescuer context ctxBaseDebug {
 	Rules {
@@ -86,7 +85,7 @@ QActor qrescuer context ctxBaseDebug {
 	[
 		println("[qrescuer] waiting for emergency")	
 	]
-	transition stopAfter 20000
+	transition stopAfter 30000
 			   whenEvent local_start -> requestPatientIdentifier
 	
 	Plan requestPatientIdentifier 
@@ -163,7 +162,7 @@ QActor qdatacontrol context ctxBaseDebug {
 	[
 		println("[qdatacontrol] waiting for request")
 	]
-	transition stopAfter 20000
+	transition stopAfter 30000
 			   whenMsg dataRequest -> handleRequest
 			   finally repeatPlan
 			   
@@ -173,15 +172,10 @@ QActor qdatacontrol context ctxBaseDebug {
 		memoCurrentMessage;
 		[!? msg(dataRequest, dispatch, SENDER, _, dataRequest(RESCUER_ID, PATIENT_ID), _)] 
 			addRule request(SENDER, RESCUER_ID, PATIENT_ID);
-		/*onMsg dataRequest : dataRequest(RESCUER_ID, PATIENT_ID) -> 
-			addRule request(RESCUER_ID, PATIENT_ID);*/
 		[!? authorized(SENDER, RESCUER_ID, PATIENT_ID)]
 			addRule senderRequestData(SENDER, PATIENT_ID)
 		else
 			replyToCaller -m unauthorized: unauthorized;
-			//println("[qdatacontrol] rescuer authorized");
-		//[!? response(RESCUER_ID, PATIENT_ID, NAME, SURNAME, BLOOD_GROUP)]
-			//replyToCaller -m dataResponse : dataResponse(RESCUER_ID, PATIENT_ID, NAME, SURNAME, BLOOD_GROUP);
 		removeRule request(_, _, _)
     ]
     switchTo [!? senderRequestData(_, _)] sendDataRequest
@@ -197,7 +191,7 @@ QActor qdatacontrol context ctxBaseDebug {
     [
     	println("[qdatacontrol] waiting for qdata response")
     ]
-    transition stopAfter 20000
+    transition stopAfter 2000
     		   whenMsg data -> handleResponse
     		   
     Plan handleResponse
@@ -212,7 +206,6 @@ QActor qdatacontrol context ctxBaseDebug {
     ]
     switchTo waitForRequest
 }
-
 
 QActor qdata context ctxBaseDebug {
 	Rules {
@@ -231,7 +224,7 @@ QActor qdata context ctxBaseDebug {
 	[
 		println("[qdata] waiting for request")
 	]
-	transition stopAfter 20000
+	transition stopAfter 30000
 			   whenMsg getData -> handleRequest
 	finally repeatPlan
 			   

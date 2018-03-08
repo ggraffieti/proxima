@@ -27,7 +27,7 @@ QActor qpatient context ctxMITMDebug {
 	[
 		println("[qpatient] waiting for request")
 	]
-	transition stopAfter 20000
+	transition stopAfter 30000
 			   whenMsg identificationRequest -> handleIdentificationRequest
 			   finally repeatPlan
 	
@@ -53,7 +53,7 @@ QActor qpatient2 context ctxMITMDebug {
 	[
 		println("[qpatient2] waiting for request")
 	]
-	transition stopAfter 20000
+	transition stopAfter 30000
 			   whenMsg identificationRequest -> handleIdentificationRequest
 			   finally repeatPlan
 	
@@ -75,6 +75,7 @@ QActor qrescuer context ctxMITMDebug {
 		connection(false).
 		connection(true).
 		connection(true).
+		connection(true).
 		
 		nearest(qpatient).
 		nearest(qpatient2).
@@ -93,6 +94,7 @@ QActor qrescuer context ctxMITMDebug {
 	Plan checkConnection 
 	[
 		println("[qrescuer] check connection");
+		delay 500;
 		[?? connection(STATE)] addRule currentConnection(STATE);
 		[?? currentConnection(true)] 
 			addRule connectionEstablished(true);
@@ -107,7 +109,7 @@ QActor qrescuer context ctxMITMDebug {
 		actorOp showConnectionEstablished;
 		println("[qrescuer] waiting for emergency")
 	]
-	transition stopAfter 20000
+	transition stopAfter 30000
 			   whenEvent local_start -> requestPatientIdentifier
 	
 	Plan requestPatientIdentifier 
@@ -191,7 +193,7 @@ QActor qmaninthemiddle context ctxMITMDebug -g gray {
 	[
 		println("[qmaninthemiddle] eavesdropping request")
 	]
-	transition stopAfter 20000 
+	transition stopAfter 30000 
 		whenMsg dataRequest -> forwardDataRequest
 		
 	Plan forwardDataRequest
@@ -209,8 +211,9 @@ QActor qmaninthemiddle context ctxMITMDebug -g gray {
 	[
 		println("[qmaninthemiddle] eavesdropping response")
 	]
-	transition stopAfter 20000
-		whenMsg dataResponse -> falsifyResponse
+	transition stopAfter 2000
+		whenMsg dataResponse -> falsifyResponse,
+		whenMsg unauthorized -> handleUnauthorizedResponse
 		
 	Plan falsifyResponse
 	[
@@ -223,6 +226,13 @@ QActor qmaninthemiddle context ctxMITMDebug -g gray {
 		println("[qmaninthemiddle] changing response");
 		[!? falsifiedData(SENDER, DATA)]
 			forward SENDER -m dataResponse : encrypted(DATA)
+	]
+	switchTo eavesdropRequest
+	
+	Plan handleUnauthorizedResponse
+	[
+		[?? rescuerSender(SENDER)]
+			forward SENDER -m unauthorized : unauthorized
 	]
 	switchTo eavesdropRequest
 }
@@ -244,7 +254,7 @@ QActor qdatacontrol context ctxMITMDebug {
 	[
 		println("[qdatacontrol] waiting for request")
 	]
-	transition stopAfter 20000
+	transition stopAfter 30000
 			   whenMsg dataRequest -> handleRequest
 			   finally repeatPlan
 			   
@@ -273,7 +283,7 @@ QActor qdatacontrol context ctxMITMDebug {
     [
     	println("[qdatacontrol] waiting for qdata response")
     ]
-    transition stopAfter 20000
+    transition stopAfter 2000
     		   whenMsg data -> handleResponse
     		   
     Plan handleResponse
@@ -305,7 +315,7 @@ QActor qdata context ctxMITMDebug {
 	[
 		println("[qdata] waiting for request")
 	]
-	transition stopAfter 20000
+	transition stopAfter 30000
 			   whenMsg getData -> handleRequest
 	finally repeatPlan
 			   

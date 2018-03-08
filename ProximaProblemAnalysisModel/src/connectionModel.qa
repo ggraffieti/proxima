@@ -27,7 +27,7 @@ QActor qpatient context ctxConnDebug {
 	[
 		println("[qpatient] waiting for request")
 	]
-	transition stopAfter 20000
+	transition stopAfter 30000
 			   whenMsg identificationRequest -> handleIdentificationRequest
 			   finally repeatPlan
 	
@@ -53,7 +53,7 @@ QActor qpatient2 context ctxConnDebug {
 	[
 		println("[qpatient2] waiting for request")
 	]
-	transition stopAfter 20000
+	transition stopAfter 30000
 			   whenMsg identificationRequest -> handleIdentificationRequest
 			   finally repeatPlan
 	
@@ -75,6 +75,7 @@ QActor qrescuer context ctxConnDebug {
 		connection(false).
 		connection(true).
 		connection(true).
+		connection(true).
 		
 		nearest(qpatient).
 		nearest(qpatient2).
@@ -93,7 +94,7 @@ QActor qrescuer context ctxConnDebug {
 	Plan checkConnection 
 	[
 		println("[qrescuer] check connection");
-		//delay 500;
+		delay 500;
 		[?? connection(STATE)] addRule currentConnection(STATE);
 		[?? currentConnection(true)] 
 			addRule connectionEstablished(true);
@@ -108,7 +109,7 @@ QActor qrescuer context ctxConnDebug {
 		actorOp showConnectionEstablished;
 		println("[qrescuer] waiting for emergency")
 	]
-	transition stopAfter 20000
+	transition stopAfter 30000
 			   whenEvent local_start -> requestPatientIdentifier
 	
 	Plan requestPatientIdentifier 
@@ -185,7 +186,7 @@ QActor qdatacontrol context ctxConnDebug {
 	[
 		println("[qdatacontrol] waiting for request")
 	]
-	transition stopAfter 20000
+	transition stopAfter 30000
 			   whenMsg dataRequest -> handleRequest
 			   finally repeatPlan
 			   
@@ -195,15 +196,10 @@ QActor qdatacontrol context ctxConnDebug {
 		memoCurrentMessage;
 		[!? msg(dataRequest, dispatch, SENDER, _, dataRequest(RESCUER_ID, PATIENT_ID), _)] 
 			addRule request(SENDER, RESCUER_ID, PATIENT_ID);
-		/*onMsg dataRequest : dataRequest(RESCUER_ID, PATIENT_ID) -> 
-			addRule request(RESCUER_ID, PATIENT_ID);*/
 		[!? authorized(SENDER, RESCUER_ID, PATIENT_ID)]
 			addRule senderRequestData(SENDER, PATIENT_ID)
 		else
 			replyToCaller -m unauthorized: unauthorized;
-			//println("[qdatacontrol] rescuer authorized");
-		//[!? response(RESCUER_ID, PATIENT_ID, NAME, SURNAME, BLOOD_GROUP)]
-			//replyToCaller -m dataResponse : dataResponse(RESCUER_ID, PATIENT_ID, NAME, SURNAME, BLOOD_GROUP);
 		removeRule request(_, _, _)
     ]
     switchTo [!? senderRequestData(_, _)] sendDataRequest
@@ -219,7 +215,7 @@ QActor qdatacontrol context ctxConnDebug {
     [
     	println("[qdatacontrol] waiting for qdata response")
     ]
-    transition stopAfter 20000
+    transition stopAfter 2000
     		   whenMsg data -> handleResponse
     		   
     Plan handleResponse
@@ -253,7 +249,7 @@ QActor qdata context ctxConnDebug {
 	[
 		println("[qdata] waiting for request")
 	]
-	transition stopAfter 20000
+	transition stopAfter 30000
 			   whenMsg getData -> handleRequest
 	finally repeatPlan
 			   
