@@ -134,13 +134,13 @@ Il sistema \emph{Proxima} nasce dalla necessità di fornire un supporto, in caso
 	\item \textbf{Identificatore}: ogni utilizzatore del servizio dovrà essere costantemente in possesso di tale dispositivo, che dovrà quindi essere compatto, non ingombrante e possibilmente indossabile. Inoltre, la sua durata media di funzionamento non dovrà essere inferiore a 3 anni. Esso sarà caratterizzato dalle seguenti funzionalità: 
 	\begin{itemize}
 		\item Identificare l'utente in maniera univoca.
-		\item La trasmissione dell'identificativo dovrà avvenire in modalità \emph{wireless}, con un raggio limitato (inferiore a 3 metri).
+		\item La trasmissione dell'identificativo dovrà avvenire in modalità \emph{wireless}, con un raggio massimo da 1 a 3 metri.
 		\item Lo scambio dell'identificativo dovrà avvenire in maniera trasparente all'utente, senza consensi espliciti ad ogni trasmissione.
 	\end{itemize}
 
 	\item \textbf{Lettore}: dispositivo che dovrà essere in possesso del soccorritore, in modo che possa identificare e mostrare i dati degli utenti. Per fare ciò dovrà essere in grado di comunicare sia con gli identificatori, sia con la banca dati. Il dispositivo dovrà avere le seguenti funzionalità:
 	\begin{itemize}
-		\item Permettere la ricerca degli identificatori nelle vicinanze (inferiore a 3 metri). La ricerca dovrà essere esplicitamente avviata dal soccorritore, e dovrà essere possibile interromperla.
+		\item Permettere la ricerca degli identificatori nelle vicinanze (raggio massimo da 1 a 3 metri). La ricerca dovrà essere esplicitamente avviata dal soccorritore, e dovrà essere possibile interromperla.
 		\item Nel caso durante la fase di ricerca siano stati trovati degli identificatori, il lettore dovrà essere in grado di recuperare l'identificativo dei relativi possessori.
 		\item Contattare la banca dati remota in modo da acquisire i dati medici relativi al paziente identificato dall'identificativo recuperato in precedenza.
 		\item Attraverso il lettore dovrà essere possibile identificare in maniera univoca il soccorritore, in modo che il sistema possa decidere se il soccorritore sia autorizzato alla lettura delle informazioni mediche dell'utente.
@@ -271,7 +271,7 @@ Similmente la base dati contenente i turni dei soccorritori è fornita, e anch'e
 }
 \end{lstlisting}
 
-La banca dati è accessibile attraverso la rete Internet tramite una richiesta HTTP GET all'indirizzo 
+La banca dati viene messa a disposizione tramite una connessione diretta al database server di MongoDB, residente all'indirizzo di rete fornito dal committente. La comunicazione dovrà avvenire attraverso il protocollo \emph{MongoDB Wire Protocol}\footnote{\url{https://docs.mongodb.com/manual/reference/mongodb-wire-protocol}}, che si basa su TCP/IP. L'accesso dato è direttamente al database, e non passerà da API, in questo modo sarà possibile lavorare sulla banca dati come se essa fosse in locale. 
 \subsection{Modello}
 La fase di raccolta dei requisiti ha permesso una comprensione delle richieste del committente, che sono state definite ed esplicate in forma testuale nelle sezioni precedenti. Una rappresentazione più efficacie dei requisiti può essere raggiunta attraverso la costruzione di un modello del dominio, in grado di catturare gli aspetti chiave del sistema. 
 
@@ -319,7 +319,7 @@ In questa sezione verranno esaminate le varie problematiche che scaturiscono da 
 	
 	Il dispositivo dovrà essere in grado di comunicare in modalità wireless con il lettore. Siccome il lettore, da requisiti, sarà un device Android (con un costo inferiore ai 200 euro per unità), le tecnologie di comunicazione utilizzabili si riducono a quelle supportate da tale device. Risulta quindi necessaria un'analisi di queste tecnologie, in modo da poter individuare il dispositivo più appropriato compatibile con almeno una di esse. 
 	
-	\item[Trasmissione dell'identificativo]: i requisiti stabiliscono la presenza di una fase di ricerca, attraverso la quale il lettore è in grado di scoprire gli identificatori all'interno di un raggio limitato (inferiore a 3 metri). Fra le tecnologie supportate da Android è necessario individuare solamente quelle che permettono di osservare questo vincolo. Inoltre, la tecnologia in oggetto deve poter permettere di stimare in maniera precisa la distanza del lettore dagli identificatori, in modo da stabilire con quale di questi effettuare l'interazione.
+	\item[Trasmissione dell'identificativo]: i requisiti stabiliscono la presenza di una fase di ricerca, attraverso la quale il lettore è in grado di scoprire gli identificatori all'interno di un raggio limitato. Fra le tecnologie supportate da Android è necessario individuare solamente quelle che permettono di osservare questo vincolo. Inoltre, la tecnologia in oggetto deve poter permettere di stimare in maniera precisa la distanza del lettore dagli identificatori, in modo da stabilire con quale di questi effettuare l'interazione.
 	
 	Durante l'utilizzo concreto del sistema, vi è la possibilità che l'identificatore stimato come più vicino al lettore, possa non essere quello appartenente al paziente che necessita di soccorso. Immaginiamo, ad esempio, una situazione nella quale il paziente si trovi circondato da altre persone, anch'esse in possesso di un proprio identificatore. In questo caso, l'identificatore rilevato dal lettore del soccorritore, giunto sul posto, potrebbe non essere quello desiderato. Inoltre, è lecito pensare che il soccorritore stesso sia munito di un proprio identificatore, che quindi potrebbe essere confuso con quello del paziente. Una situazione come quella appena descritta è in contrasto con i requisiti, in quanto il soccorritore non è tenuto a consultare i dati medici relativi a persone che non sono coinvolte in una situazione di emergenza. 
 	
@@ -386,7 +386,7 @@ L'accesso alla banca dati da parte del nuovo componente potrebbe essere:
 \subsection{Tecnologia di identificazione} \label{tec-id}
 Con tecnologia di identificazione si intende il protocollo di connettività che verrà utilizzato per permettere al lettore di recuperare l'identificativo, attraverso un'interazione con l'identificatore. È possibile effettuare un primo abbozzo dell'interazione fra lettore e identificatore, individuando le fasi seguenti:
 \begin{enumerate}
-	\item Il lettore ricerca tutti gli identificatori situati in prossimità (all'interno di un raggio inferiore a 3 metri).
+	\item Il lettore ricerca tutti gli identificatori situati in prossimità dello stesso.
 	\item Il lettore individua l'identificatore più vicino, fra tutti quelli rilevati nella fase di ricerca.
 	\item Il lettore contatta l'identificatore, richiedendo l'identificativo.
 	\item L'identificatore risponde al lettore con l'identificativo richiesto.
@@ -474,7 +474,7 @@ Dalla fase di ricognizione sulle tecnologie attualmente disponibili su Android �
 \subsubsection{Analisi di tecnologie alternative} \label{tec-other}
 Dall'analisi dei protocolli di connettività supportati da Android, eseguita in \autoref{tec-android}, non è emersa alcuna tecnologia in grado di soddisfare tutti i requisiti. Si procede, dunque, all'analisi di tecnologie alternative che non sono compatibili con Android.
 
-\begin{table}[h]
+\begin{table}[H]
 	\centering
 	\begin{threeparttable}
 		\begin{tabular}{|
@@ -547,10 +547,6 @@ I meccanismi di autenticazione appena citati potrebbero anche essere combinati t
 
 In accordo con il committente, si è deciso di optare per una soluzione che combina i vantaggi di lettore e identificatore. L'autenticazione avverrà a due livelli, il soccorritore si autenticherà nel sistema tramite il suo identificatore, mentre il lettore confermerà l'identità del soccorritore tramite la chiave segreta.  
 
-\section{Abstraction gap}
-
-\section{Analisi dei rischi}
-
 \section{Architettura logica}
 L'analisi delle problematiche, svolta in \autoref{issues}, congiuntamente allo studio di fattibilità in \autoref{feasibility}, ha portato alla definizione di un'architettura logica, in grado di descrivere struttura, interazione e comportamento del sistema.
 
@@ -581,6 +577,19 @@ QActor, sviluppato dal professore Antonio Natali. Sulla base dei requisiti e del
 \end{itemize}
 
 I modelli realizzati costituiscono una linea guida per la fase di progettazione, racchiudendo l'architettura logica emersa dall'analisi del problema. I modelli sono stati opportunamente testati, in modo da garantire una corretta rappresentazione dei requisiti analizzati. I test implementati in questo stadio dovranno essere verificati anche nelle successive fasi di progettazione e implementazione.
+
+\section{Analisi dei rischi}
+In questa sezione verranno analizzati i rischi principali del progetto, ovvero le parti più complesse dello stesse, per le quali non ci sono soluzioni banali o standardizzate. In modo particolare si farà riferimento al rischio di una consegna del sistema ritardata, che non rispetta quindi i tempi prefissati. 
+
+I principali componenti del sistema che presentano rischi per una sua consegna nei tempi prestabiliti sono elencati di seguito: 
+\begin{itemize}
+	\item \textbf{Interazione con NFC}: l'interazione con l'identificatore dovrà avvenire tramite NFC. Ciò presenta un rischio per il sistema, poiché ciò significa dover intervenire a basso livello, manipolando in modo diretto la memoria ed i sensori all'interno del dispositivo Android. Se non si volesse perseguire questa strada, un possibilità è quella di utilizzare librerie \emph{ad hoc} per l'interazione tramite NFC. Il rischio di tale software è dato dalla sua non controllabilità, ovvero il modello dell'interazione potrebbe essere diverso da quello analizzato e progettato. Ciò porterebbe ad un ripensamento della parte progettuale del sistema, dovendo operare in modo \emph{bottom-up}.
+	\item \textbf{Sicurezza delle comunicazioni}: la sicurezza è una feature fondamentale del sistema, ed una sua corretta implementazione è un forte requisito per la sua riuscita. La sicurezza, data la vastità dell'argomento anche se limitato alle sole comunicazioni, non è un concetto semplice da trattare. Essa, infatti, non può essere aggiunta come una \emph{patch} una volta implementato il sistema, ma la sicurezza dovrà essere una parte fondamentale del progetto del sistema (\emph{secure by design}\footnote{\url{https://en.wikipedia.org/wiki/Secure_by_design}}). In particolar modo l'implementazione di comunicazioni sicure, allo stato dell'arte, si basa sulla generazione di chiavi crittografiche e certificati. In fase prototipale ciò aumenta la complessità sia dell'implementazione che del deployment del sistema. Inoltre gli attacchi possibili alla sicurezza della comunicazione sono molteplici, e testare la sicurezza del sistema a fronte anche solo di una parte consistente di essi richiederà ulteriore tempo e lavoro.
+	\item \textbf{Scalabilità e availability}: esse sono due proprietà sia del sistema \emph{Proxima} generale, sia del servizio di aiuto in caso di emergenza descritto in \autoref{requirements}. Non esiste alcuna metodologia automatica per progettare e implementare sistemi scalabili e sempre disponibili. Esistono, in letteratura, metodologie generiche, ed alcune soluzioni pratiche al problema (come la replicazione), ma esse non sono valide per ogni sistema. Il rischio principale è quello di sottostimare o sovrastimare la problematica, rendendo il sistema troppo scalabile o troppo poco scalabile. Mentre quest'ultima problematica è comprensibile da tutti, la prima è molto più sottile. Rendere un sistema più scalabile di quanto in realtà sia necessario è un problema, poiché per raggiungere tali risultati non richiesti si è speso tempo (di progettazione, di implementazione\dots) e denaro (deployment di infrastrutture più complesse, replicazione\dots). \`{E} dunque un rischio da non sottovalutare quello di sotto o sovra stimare il livello di scalabilità del sistema, in modo da non allungare i tempi di consegna per funzionalità non richieste. 
+	\item \textbf{Nuovi requisiti, o modifica di quelli esistenti}: esso è uno dei maggiori rischi che ogni progetto pone. I requisiti variano, e anche a distanza di tempo possono esserne aggiunti di nuovi o modificati quelli preesistenti. Un sistema \emph{rigido} è senz'altro un grosso rischio per una consegna nei tempi prestabiliti. La costruzione di un \emph{modello} del sistema mitiga il problema, a patto che il modello sia corretto, e accettato dal cliente stesso. Esso dovrà essere facilmente estensibile e modificabile, anche in corso d'opera, e ciò non dovrà pesantemente influire sul tempo richiesto per l'implementazione del sistema finito. Esso dovrà inoltre servire come base per ulteriori estensioni future, in modo che anche a distanza di tempo sia possibile analizzare i nuovi problemi, progettare la modifica al sistema ed implementarla in un lasso di tempo ragionevole. 
+	\item Librerie deprecate?
+	\item 
+\end{itemize}
 
 \chapter{Piano di lavoro}
 
