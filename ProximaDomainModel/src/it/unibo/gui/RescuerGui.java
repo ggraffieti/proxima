@@ -5,11 +5,11 @@ import it.unibo.is.interfaces.IBasicEnvAwt;
 import it.unibo.qactors.akka.QActor;
 import it.unibo.system.SituatedPlainObject;
 
-public class DoctorGui extends SituatedPlainObject{
+public class RescuerGui extends SituatedPlainObject{
 	private IActivityBase cmdHandler;
 	private IBasicEnvAwt envAwt;
 	
-	public DoctorGui(IBasicEnvAwt env, QActor qa) {
+	public RescuerGui(IBasicEnvAwt env, QActor qa) {
 		super(env);
 		//env is declared of type IBasicUniboEnv in SituatedPlainObject
 		//that does not provide any addPanel method. Thus, we memorize it

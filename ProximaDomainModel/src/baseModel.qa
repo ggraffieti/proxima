@@ -2,17 +2,14 @@ System proxima
 
 Dispatch identificationRequest : identificationRequest
 Dispatch identificationResponse : identificationResponse(I)
-Dispatch dataRequest : dataRequest(DOCTOR_ID, PATIENT_ID)
+Dispatch dataRequest : dataRequest(RESCUER_ID, PATIENT_ID)
 Dispatch dataResponse : dataResponse(PATIENT_ID, NAME, SURNAME, BLOOD_GROUP)
 
 Event local_start : start
 
 Context ctxBaseDebug ip[host="localhost" port=1406 ]
-//Context ctxPatient ip[host="localhost" port=1406] -g white
-//Context ctxDoctor ip[host="localhost" port=6041] -g blue
-//Context ctxControl ip[host="localhost" port=6042] -g yellow
 
-QActor qpatient context ctxBaseDebug {
+QActor qpatient context ctxBaseDebug  {
 	Rules {
 		identifier(patient1).
 	}
@@ -65,31 +62,31 @@ QActor qpatient2 context ctxBaseDebug {
 }
 
 
-QActor qdoctor context ctxBaseDebug {
+QActor qrescuer context ctxBaseDebug {
 	Rules {
-		identifier(doctor1).
+		identifier(rescuer1).
 		distance(qpatient, 100).
 		distance(qpatient2, 150).
 	}
 	
 	Plan init normal
 	[
-		println("[qdoctor] started!");
-		demo consult("./src/it/unibo/qatheory/qDoctorTheory.pl");
-		actorOp buildCustomGui("doctorGui")
+		println("[rescuer] started!");
+		demo consult("./src/it/unibo/qatheory/qRescuerTheory.pl");
+		actorOp buildCustomGui("rescuerGui")
 	]
 	switchTo idle
 	
 	Plan idle 
 	[
-		println("[qdoctor] waiting for emergency")	
+		println("[qrescuer] waiting for emergency")	
 	]
 	transition stopAfter 30000
 			   whenEvent local_start -> requestPatientIdentifier
 	
 	Plan requestPatientIdentifier 
 	[
-		println("[qdoctor] sending identification request to patient");
+		println("[qrescuer] sending identification request to patient");
 		[!? findNearest(NAME, _)] forward NAME -m identificationRequest : identificationRequest
 	]
 	transition stopAfter 2000
@@ -97,7 +94,7 @@ QActor qdoctor context ctxBaseDebug {
 			   
     Plan handlePatientIdentifierResponse
     [
-    	println("[qdoctor] patient identifier read");
+    	println("[qrescuer] patient identifier read");
     	onMsg identificationResponse : identificationResponse(PATIENT_ID) ->
 			addRule patientid(PATIENT_ID)
     ] 
@@ -105,16 +102,16 @@ QActor qdoctor context ctxBaseDebug {
     
     Plan sendDataRequest
     [
-    	println("[qdoctor] sending data request to qcontrol");
-    	[!? identifiers(DOCTOR_ID, PATIENT_ID)] 
-			forward qcontrol -m dataRequest : dataRequest(DOCTOR_ID, PATIENT_ID)
+    	println("[qrescuer] sending data request to qcontrol");
+    	[!? identifiers(RESCUER_ID, PATIENT_ID)] 
+			forward qdatacontrol -m dataRequest : dataRequest(RESCUER_ID, PATIENT_ID)
     ]
     transition stopAfter 2000
     	whenMsg dataResponse -> handleDataResponse
     
     Plan handleDataResponse
     [
-    	println("[qdoctor] patient data retrieved");
+    	println("[qrescuer] patient data retrieved");
     	onMsg dataResponse : dataResponse(PATIENT_ID, NAME, SURNAME, BLOOD_GROUP) -> 
     		addRule dataResponse(PATIENT_ID, NAME, SURNAME, BLOOD_GROUP)
     ] switchTo showPatientData
@@ -126,7 +123,7 @@ QActor qdoctor context ctxBaseDebug {
     switchTo idle
 }
 
-QActor qcontrol context ctxBaseDebug {
+QActor qdatacontrol context ctxBaseDebug {
 	Rules {
 		data(patient2, jane, doe, a_positive).
 		data(patient1, john, doe, ab_negative).
@@ -134,14 +131,14 @@ QActor qcontrol context ctxBaseDebug {
 	
 	Plan init normal 
 	[
-		demo consult("./src/it/unibo/qatheory/qControlBaseTheory.pl");
-		println("[qcontrol] started!")
+		demo consult("./src/it/unibo/qatheory/qDataControlBaseTheory.pl");
+		println("[qdatacontrol] started!")
 	]
 	switchTo waitForRequest
 	
 	Plan waitForRequest
 	[
-		println("[qcontrol] waiting for request")
+		println("[qdatacontrol] waiting for request")
 	]
 	transition stopAfter 10000
 			   whenMsg dataRequest -> handleRequest
@@ -149,8 +146,8 @@ QActor qcontrol context ctxBaseDebug {
 			   
     Plan handleRequest resumeLastPlan 
     [
-    	println("[qcontrol] handling request");
-		onMsg dataRequest : dataRequest(DOCTOR_ID, PATIENT_ID) -> 
+    	println("[qdatacontrol] handling request");
+		onMsg dataRequest : dataRequest(RESCUER_ID, PATIENT_ID) -> 
 			addRule request(PATIENT_ID);
 		[!? response(PATIENT_ID, NAME, SURNAME, BLOOD_GROUP)]
 			replyToCaller -m dataResponse : dataResponse(PATIENT_ID, NAME, SURNAME, BLOOD_GROUP)

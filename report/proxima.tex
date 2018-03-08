@@ -134,13 +134,13 @@ Il sistema \emph{Proxima} nasce dalla necessità di fornire un supporto, in caso
 	\item \textbf{Identificatore}: ogni utilizzatore del servizio dovrà essere costantemente in possesso di tale dispositivo, che dovrà quindi essere compatto, non ingombrante e possibilmente indossabile. Inoltre, la sua durata media di funzionamento non dovrà essere inferiore a 3 anni. Esso sarà caratterizzato dalle seguenti funzionalità: 
 	\begin{itemize}
 		\item Identificare l'utente in maniera univoca.
-		\item La trasmissione dell'identificativo dovrà avvenire in modalità \emph{wireless}, con un raggio limitato (inferiore a 3 metri).
+		\item La trasmissione dell'identificativo dovrà avvenire in modalità \emph{wireless}, con un raggio massimo da 1 a 3 metri.
 		\item Lo scambio dell'identificativo dovrà avvenire in maniera trasparente all'utente, senza consensi espliciti ad ogni trasmissione.
 	\end{itemize}
 
 	\item \textbf{Lettore}: dispositivo che dovrà essere in possesso del soccorritore, in modo che possa identificare e mostrare i dati degli utenti. Per fare ciò dovrà essere in grado di comunicare sia con gli identificatori, sia con la banca dati. Il dispositivo dovrà avere le seguenti funzionalità:
 	\begin{itemize}
-		\item Permettere la ricerca degli identificatori nelle vicinanze (inferiore a 3 metri). La ricerca dovrà essere esplicitamente avviata dal soccorritore, e dovrà essere possibile interromperla.
+		\item Permettere la ricerca degli identificatori nelle vicinanze (raggio massimo da 1 a 3 metri). La ricerca dovrà essere esplicitamente avviata dal soccorritore, e dovrà essere possibile interromperla.
 		\item Nel caso durante la fase di ricerca siano stati trovati degli identificatori, il lettore dovrà essere in grado di recuperare l'identificativo dei relativi possessori.
 		\item Contattare la banca dati remota in modo da acquisire i dati medici relativi al paziente identificato dall'identificativo recuperato in precedenza.
 		\item Attraverso il lettore dovrà essere possibile identificare in maniera univoca il soccorritore, in modo che il sistema possa decidere se il soccorritore sia autorizzato alla lettura delle informazioni mediche dell'utente.
@@ -173,7 +173,7 @@ In questa sezione verranno esplorati ed esplicati i concetti chiave usati dal co
 	\item \textbf{Turno del soccorritore}: fasce orarie nelle quali il soccorritore presta il suo servizio in ospedale o nei mezzi adibiti al primo soccorso e al trasporto dei pazienti. Il turno di un soccorritore è soggetto a variazioni nel tempo, comportando un conseguente aggiornamento della banca dati.
 \end{itemize}
 
-\section{Scenari}
+\section{Scenari} \label{scenarios}
 È possibile individuare due scenari di interesse, a seconda del luogo in cui il servizio viene utilizzato.
 \subsection{Scenario 1} \label{scenario1}
 In una situazione di emergenza, il soccorritore arriva sul posto, apre l'applicazione sul proprio lettore e si autentica nel sistema. 
@@ -271,7 +271,7 @@ Similmente la base dati contenente i turni dei soccorritori è fornita, e anch'e
 }
 \end{lstlisting}
 
-La banca dati è accessibile attraverso la rete Internet tramite una richiesta HTTP GET all'indirizzo 
+La banca dati viene messa a disposizione tramite una connessione diretta al database server di MongoDB, residente all'indirizzo di rete fornito dal committente. La comunicazione dovrà avvenire attraverso il protocollo \emph{MongoDB Wire Protocol}\footnote{\url{https://docs.mongodb.com/manual/reference/mongodb-wire-protocol}}, che si basa su TCP/IP. L'accesso dato è direttamente al database, e non passerà da API, in questo modo sarà possibile lavorare sulla banca dati come se essa fosse in locale. 
 \subsection{Modello}
 La fase di raccolta dei requisiti ha permesso una comprensione delle richieste del committente, che sono state definite ed esplicate in forma testuale nelle sezioni precedenti. Una rappresentazione più efficacie dei requisiti può essere raggiunta attraverso la costruzione di un modello del dominio, in grado di catturare gli aspetti chiave del sistema. 
 
@@ -287,8 +287,8 @@ Il modello del dominio è stato definito tramite l'utilizzo del meta-modello \em
 
 Sulla base dei requisiti, si procede in maniera incrementale alla realizzazione di due modelli:
 \begin{itemize}
-	\item \textbf{Base requirement}: si individuano nel sistema tre componenti principali, nello specifico patient, doctor e control (componente che gestisce l'accesso alla banca dati), modellati come entità attive (attori). I componenti sono considerati come delle \emph{black-boxes}, ponendo il focus sulla loro interazione. Dal modello emerge il comportamento del sistema, il cui scopo è quello di permettere al soccorritore di reperire i dati medici (in questo caso simulati) del paziente a lui più vicino.
-	\item \textbf{Authorization requirement}: estensione del modello base attraverso l'introduzione di un vincolo che impedisce l'accesso ai dati ai soccorritori non autorizzati.
+	\item \textbf{Base model}: si individuano nel sistema tre componenti principali, nello specifico patient, doctor e control (componente che gestisce l'accesso alla banca dati), modellati come entità attive (attori). I componenti sono considerati come delle \emph{black-boxes}, ponendo il focus sulla loro interazione. Dal modello emerge il comportamento del sistema, il cui scopo è quello di permettere al soccorritore di reperire i dati medici (in questo caso simulati) del paziente a lui più vicino.
+	\item \textbf{Authorization model}: estensione del modello base attraverso l'introduzione di un vincolo che impedisce l'accesso ai dati ai soccorritori non autorizzati.
 \end{itemize}
 I modelli sopra illustrati sono eseguibili e costituiscono dei primi prototipi funzionanti del sistema. Questa caratteristica permette un confronto diretto con il committente, in modo da valutare la comprensione dei requisiti.
 
@@ -319,13 +319,15 @@ In questa sezione verranno esaminate le varie problematiche che scaturiscono da 
 	
 	Il dispositivo dovrà essere in grado di comunicare in modalità wireless con il lettore. Siccome il lettore, da requisiti, sarà un device Android (con un costo inferiore ai 200 euro per unità), le tecnologie di comunicazione utilizzabili si riducono a quelle supportate da tale device. Risulta quindi necessaria un'analisi di queste tecnologie, in modo da poter individuare il dispositivo più appropriato compatibile con almeno una di esse. 
 	
-	\item[Trasmissione dell'identificativo]: i requisiti stabiliscono la presenza di una fase di ricerca, attraverso la quale il lettore è in grado di scoprire gli identificatori all'interno di un raggio limitato (inferiore a 3 metri). Fra le tecnologie supportate da Android è necessario individuare solamente quelle che permettono di osservare questo vincolo. Inoltre, la tecnologia in oggetto deve poter permettere di stimare in maniera precisa la distanza del lettore dagli identificatori, in modo da stabilire con quale di questi effettuare l'interazione.
+	\item[Trasmissione dell'identificativo]: i requisiti stabiliscono la presenza di una fase di ricerca, attraverso la quale il lettore è in grado di scoprire gli identificatori all'interno di un raggio limitato. Fra le tecnologie supportate da Android è necessario individuare solamente quelle che permettono di osservare questo vincolo. Inoltre, la tecnologia in oggetto deve poter permettere di stimare in maniera precisa la distanza del lettore dagli identificatori, in modo da stabilire con quale di questi effettuare l'interazione.
 	
 	Durante l'utilizzo concreto del sistema, vi è la possibilità che l'identificatore stimato come più vicino al lettore, possa non essere quello appartenente al paziente che necessita di soccorso. Immaginiamo, ad esempio, una situazione nella quale il paziente si trovi circondato da altre persone, anch'esse in possesso di un proprio identificatore. In questo caso, l'identificatore rilevato dal lettore del soccorritore, giunto sul posto, potrebbe non essere quello desiderato. Inoltre, è lecito pensare che il soccorritore stesso sia munito di un proprio identificatore, che quindi potrebbe essere confuso con quello del paziente. Una situazione come quella appena descritta è in contrasto con i requisiti, in quanto il soccorritore non è tenuto a consultare i dati medici relativi a persone che non sono coinvolte in una situazione di emergenza. 
 	
 	\item[Banca dati]: la banca dati è un archivio elettronico già esistente gestito da entità terze, che hanno il compito di mantenerla aggiornata. Non è quindi possibile assumere che un certo dato, precedentemente reperito dalla banca dati, sia consistente rispetto alla versione attuale. 
 	
 	La banca dati non fornisce alcun meccanismo per regolare l'accesso ai dati. Sarà quindi necessaria l'introduzione di un componente aggiuntivo, avente lo scopo di permettere l'accesso ai dati solamente ai soccorritori autorizzati.
+	
+	\item[Autenticazione del soccorritore]: l'accesso ai dati medici è consentito solamente ai soccorritori autorizzati. Una problematica che si viene a creare consiste nel determinare l'identità di un soccorritore che richiede un accesso alla banca dati. Si rende necessaria, quindi, la presenza di una fase di autenticazione di un soccorritore nel sistema, tramite la quale egli può confermare la propria identità.
 	
 	\item[Sicurezza]: il sistema è esposto a vari problemi riguardanti la sicurezza informatica, alcuni dichiarati esplicitamente dal committente e altri derivanti dall'analisi. 
 	\begin{itemize}
@@ -340,7 +342,7 @@ In questa sezione verranno esaminate le varie problematiche che scaturiscono da 
 \end{description}
 Le problematiche fin qui illustrate si limitano allo specifico ambito medico. Come anticipato in \autoref{goal}, il caso medico è solamente un sottoinsieme del sistema generale, la cui idea è illustrata in \autoref{vision}. 
 
-\section{Studio di fattibilità}
+\section{Studio di fattibilità} \label{feasibility}
 
 \subsection{Sicurezza}\label{security_issues}
 
@@ -377,10 +379,10 @@ Oltre a questa problematica, la banca dati non fornisce alcun meccanismo di aute
 
 Il nuovo componente in questione potrebbe essere un \emph{web server}, contattabile dai lettori tramite HTTPS per ovviare alle problematiche di \emph{Sniffing} e \emph{Replay Attack}, descritte precedente in \autoref{security_issues}. Per garantire lo stesso livello di sicurezza nelle comunicazioni con la banca dati, il \emph{web server} dovrà interagire con la stessa utilizzando il protocollo \emph{MongoDB Wire Protocol}, come da requisito, con un supporto a SSL/TLS. 
 
-\subsection{Tecnologia di identificazione}
+\subsection{Tecnologia di identificazione} \label{tec-id}
 Con tecnologia di identificazione si intende il protocollo di connettività che verrà utilizzato per permettere al lettore di recuperare l'identificativo, attraverso un'interazione con l'identificatore. È possibile effettuare un primo abbozzo dell'interazione fra lettore e identificatore, individuando le fasi seguenti:
 \begin{enumerate}
-	\item Il lettore ricerca tutti gli identificatori situati in prossimità (all'interno di un raggio inferiore a 3 metri).
+	\item Il lettore ricerca tutti gli identificatori situati in prossimità dello stesso.
 	\item Il lettore individua l'identificatore più vicino, fra tutti quelli rilevati nella fase di ricerca.
 	\item Il lettore contatta l'identificatore, richiedendo l'identificativo.
 	\item L'identificatore risponde al lettore con l'identificativo richiesto.
@@ -389,6 +391,49 @@ La natura dei dispositivi che realizzano l'interazione (lettore e identificatore
 
 \subsubsection{Analisi dei protocolli di connettività supportati da Android} \label{tec-android}
 Android supporta diversi protocolli (variabili da versione a versione) che permettono la connessione e l'interazione fra dispositivi \footnote{\url{https://developer.android.com/guide/topics/connectivity}}. Essi verranno di seguito analizzati, in modo da determinare l'esistenza di almeno un protocollo compatibile con i requisiti del sistema. I protocolli relativi a chiamate audio/video o a connessioni \emph{USB} non sono stati presi in considerazione, in quanto non compatibili con il problema in esame.
+
+\begin{table}[h]
+	\centering
+	\hspace*{-2.4cm}
+	\begin{threeparttable}
+		\begin{tabular}{|
+				>{\centering}m{.18\textwidth} |
+				>{\centering}m{.13\textwidth} |
+				>{\centering}m{.13\textwidth} |
+				>{\centering}m{.13\textwidth} |
+				>{\centering}m{.13\textwidth} |
+				>{\centering}m{.13\textwidth} |
+				>{\centering}m{.13\textwidth} |
+				>{\centering}m{.13\textwidth} |}
+			\hline
+			& Wi-Fi & Bluetooth & BLE & Wi-Fi Direct & Wi-Fi Aware & NFC & Contact less smart card \tabularnewline
+			\hline
+			Supporto Android & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark \tabularnewline
+			\hline
+			Fase di ricerca & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark \tabularnewline
+			\hline
+			Pairing automatico & \xmark & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark \tabularnewline
+			\hline
+			Range (fra 1 e 3 metri) & \xmark & \xmark & \xmark & \xmark & \xmark & \xmark & \xmark \tabularnewline
+			\hline
+			Identificazione device più vicino & \xmark & \xmark & \xmark & \xmark & \xmark & \cmark \tnote{*} & \cmark \tnote{*} \tabularnewline
+			\hline
+			Sicurezza a tracciabilità & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark & \cmark \tabularnewline
+			\hline
+			Sicurezza a masquerade & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark   & \cmark \tabularnewline
+			\hline
+			Basso consumo & \xmark & \xmark & \cmark & \xmark & \xmark & \cmark & \cmark \tabularnewline
+			\hline
+			Costo & \xmark & \cmark & \cmark & \xmark & \xmark & \cmark & \xmark \tabularnewline
+			\hline
+		\end{tabular}
+		\begin{tablenotes} \footnotesize
+			\item[*] Si presume che, dato il raggio di funzionamento ristretto di NFC (circa 5 cm), sia sempre identificato un solo dispositivo, che sarà, quindi, il più vicino.
+		\end{tablenotes}
+		\caption{Riepilogo delle tecnologie supportate da Android considerate.}
+		\label{tectable-android}
+	\end{threeparttable}
+\end{table}
 
 \begin{description}
 	\item[Wi-Fi e connessione dati]: sono le tecnologie più comunemente utilizzate su smartphone/tablet per la navigazione in rete. 
@@ -420,69 +465,12 @@ Android supporta diversi protocolli (variabili da versione a versione) che perme
 	\item[Contactless smart cart]: è un dispositivo passivo, la quale comunica con i lettori tramite il protocollo NFC, ma al contrario dei banali tag descritti in precedenza, possiede, al suo interno, un microprocessore capace di operazioni crittografiche. La crittografia è nella maggior parte dei casi a chiave pubblica, difatti gli ambiti di maggiore utilizzo sono quelli di firma digitale o pagamento elettronico. Essa non dovrà solamente essere alimentata dal lettore, ma dovrà comunicare con esso. Lo scambio dati dal lettore alla carta avviene grazie alla modulazione dell'onda elettromagnetica che il lettore invia alla smart card per alimentarla, mentre le comunicazione in senso contrario avviene attraverso la regolazione, da parte della carta, della potenza assorbita. L'utilizzo di una contactless smart card richiede una infrastruttura ben più complessa del solo NFC, dato che dovranno essere gestite chiavi pubbliche e private a livello di singoli identificatori. Inoltre la comunicazione con esse deve seguire un rigido protocollo (ISO/IEC 14443). Esse sarebbero la soluzione a tutti i problemi di sicurezza espressi precedentemente per l'uso di semplici tag NFC, ma a costo di una più complessa infrastruttura del sistema, e di un costo maggiore per l'identificatore, rispetto a quanto espresso nei requisiti. 
 \end{description}
 
-\begin{table}[h]
-	\centering
-	\hspace*{-2.4cm}
-	\begin{threeparttable}
-		\begin{tabular}{|
-			>{\centering}m{.18\textwidth} |
-			>{\centering}m{.13\textwidth} |
-			>{\centering}m{.13\textwidth} |
-			>{\centering}m{.13\textwidth} |
-			>{\centering}m{.13\textwidth} |
-			>{\centering}m{.13\textwidth} |
-			>{\centering}m{.13\textwidth} |
-			>{\centering}m{.13\textwidth} |}
-			\hline
-			& Wi-Fi & Bluetooth & BLE & Wi-Fi Direct & Wi-Fi Aware & NFC & Contact less smart card \tabularnewline
-			\hline
-			Supporto Android & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark \tabularnewline
-			\hline
-			Fase di ricerca & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark \tabularnewline
-			\hline
-			Pairing automatico & \xmark & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark \tabularnewline
-			\hline
-			Range (fra 1 e 3 metri) & \xmark & \xmark & \xmark & \xmark & \xmark & \xmark & \xmark \tabularnewline
-			\hline
-			Identificazione device più vicino & \xmark & \xmark & \xmark & \xmark & \xmark & \cmark \tnote{*} & \cmark \tnote{*} \tabularnewline
-			\hline
-			Sicurezza a tracciabilità & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark & \cmark \tabularnewline
-			\hline
-			Sicurezza a masquerade & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark   & \cmark \tabularnewline
-			\hline
-			Basso consumo & \xmark & \xmark & \cmark & \xmark & \xmark & \cmark & \cmark \tabularnewline
-			\hline
-			Costo & \xmark & \cmark & \cmark & \xmark & \xmark & \cmark & \xmark \tabularnewline
-			\hline
-		\end{tabular}
-		\begin{tablenotes} \footnotesize
-			\item[*] Si presume che, dato il raggio di funzionamento ristretto di NFC (circa 5 cm), sia sempre identificato un solo dispositivo, che sarà, quindi, il più vicino.
-		\end{tablenotes}
-	\caption{Riepilogo delle tecnologie supportate da Android considerate.}
-	\label{tectable-android}
-	\end{threeparttable}
-\end{table}
-
 Dalla fase di ricognizione sulle tecnologie attualmente disponibili su Android è conseguita una drastica limitazione dello spettro di quelle utilizzabili all'interno del sistema. In \autoref{tectable-android} sono mostrati i risultati più significativi raccolti in questa fase.
 
-\subsubsection{Analisi di tecnologie alternative}
+\subsubsection{Analisi di tecnologie alternative} \label{tec-other}
 Dall'analisi dei protocolli di connettività supportati da Android, eseguita in \autoref{tec-android}, non è emersa alcuna tecnologia in grado di soddisfare tutti i requisiti. Si procede, dunque, all'analisi di tecnologie alternative che non sono compatibili con Android.
 
-\begin{description}
-	\item[RFID (Radio-Frequency IDentification)]: è una tecnologia wireless di comunicazione, incentrata sull'identificazione di oggetti e lo scambio di informazioni. La tecnologia è molto simile a NFC, descritto in precedenza,  difatti quest'ultimo non è che un caso particolare di RFID. Il protocollo prevede due tipi distinti di dispositivi: lettori e tag. A differenza di NFC non è possibile la comunicazione diretta tra due lettori. I tag si dividono in due categorie: passivi ed attivi. Da qui in avanti saranno trattati solo tag passivi, dato che quelli attivi non hanno vantaggi tangibili nel caso in esame, oltre ad avere lo svantaggio di dover costantemente essere alimentati. Un tag non è altro che un antenna, un microchip ed una memoria non volatile, che può essere in sola lettura o anche scrivibile. Il lettore illumina il tag con un'onda elettromagnetica ad una data frequenza, il tag assorbe la potenza dell'onda e si attiva, trasmettendo il contenuto o una parte soltanto della memoria. Nella versione base dei tag non vi è alcun controllo dell'identità del lettore, quindi ogni dispositivo capace di generare onde alla frequenza richiesta può ricevere i dati. La differenza con NFC è data dalla distanza di comunicazione, che può essere maggiore. Esistono tre principali frequenze di funzionamento dei tag:
-	\begin{itemize}
-		\item \emph{125kHz} (LF RFID): range di qualche centimetro.
-		\item \emph{13.56MHz} (HF RFID o NFC): range massimo di 20 centimetri.
-		\item \emph{860-960MHz} (UHF RFID): range dal metro fino ai 10 metri.
-	\end{itemize}
-	Come si può vedere la tecnologia UHF RFID soddisfa il requisito di distanza, ma, come per NFC, non c'è alcun tipo di sicurezza o crittografia, non risolvendo del tutto le problematiche di tracciabilità e masquerade. Ciò è vero per il protocollo base di RFID, tuttavia esistono ulteriori protocolli, come \emph{EPCGlobal v2} che per i tag UHF prevedono forme blande di crittografia all'interno dei tag, facendo sopratutto affidamento a generatori di numeri pseudo-casuali. Anche a fronte di tali passi in avanti non esistono sul mercato tag RFID in grado di garantire un livello di sicurezza allo stato dell'arte. Oltre a ciò sussiste un grave problema di privacy, dato che chiunque in possesso di un lettore può leggere i dati all'interno di un tag, anche da svariati metri di distanza.
-	
-	\item[Raggi infrarossi]: tecnologia di comunicazione basata sulla rilevazione ed invio di raggi infrarossi. Essa è stata utilizzata come tecnologia principale per lo scambio di dati tra telefoni cellulari prima dell'avvento di \emph{bluetooth}, ed ancora oggi ampiamente utilizzata nei telecomandi dei dispositivi elettronici domestici (televisioni, stereo \dots). Essa si basa sulla modulazione di onde elettromagnetiche nello spettro infrarosso, con lo scopo di trasmettere dati. Ogni dispositivo può agire sia da ricevitore che da emettitore. Il principale svantaggio di tale tecnologia è dato dalla necessità di visibilità reciproca dei due dispositivi, ad una distanza massima di 1-2 metri. La radiazione infrarossa, infatti, non è penetrante, e viene bloccata da qualsiasi corpo solido frapposto tra i due dispositivi (anche il solo vetro di una finestra potrebbe bloccare la radiazione). Ciò significa anche che non è possibile una fase di ricerca dei dispositivi nelle vicinanze, dato che solamente quelli visibili al fascio elettromagnetico saranno contattabili. Esistono vari protocolli per l'utilizzo di tale tecnologia, alcuni dei quali disponibili anche su alcuni dispositivi Andoid. Uno degli svantaggi principali, oltre all'allineamento, è dato dal fatto che l'identificatore dovrà essere alimentato, e sempre in ascolto nella ricezione di segnali. Ciò può comportare una breve vita degli identificatori, contravvenendo ad un requisito. La sicurezza può e deve essere gestita a livelli più alti, ma avendo un identificatore attivo non ci sono problemi a riguardo. 
-	
-	\item[Onde radio]: tecnologia basata sullo scambio di informazioni attraverso onde radio, tipicamente con frequenza di 2.4GHz. Esse sono normalmente utilizzate per la comunicazione wireless tra computer e periferiche come tastiera o mouse, in contrapposizione a bluetooth. Il range massimo è tipicamente di qualche metro, ma richiede che ogni dispositivo sia dotato di un captatore di onde radio, ed un trasmettitore. Ciò significa che, similmente alla tecnologia a infrarossi, gli identificatori dovranno essere attivi e sempre in ascolto. Un altro svantaggio è che tutti i dispositivi (lettori e identificatori) sono in grado di leggere tutti i segnali inviati nel raggio di qualche metro. Ciò significa che un malintenzionato potrebbe modificare l'identificatore in modo che sia in grado di processare e leggere tutte le informazioni trasmesse nelle sue vicinanze. Al contrario dei raggi infrarossi analizzati in precedenza non ci sono vincoli sulla visibilità reciproca dei dispositivi. La sicurezza, come per la comunicazione tramite infrarossi, dovrà essere gestita a un livello più alto. Ciò è possibile grazie al fatto di lavorare con identificatori attivi. Il costo del dispositivo identificatore potrebbe risultare superiore a quanto espresso nei requisiti, in quanto si necessita di qualche potenza computazionale. 
-\end{description}
-
-\begin{table}[h]
+\begin{table}[H]
 	\centering
 	\begin{threeparttable}
 		\begin{tabular}{|
@@ -521,29 +509,82 @@ Dall'analisi dei protocolli di connettività supportati da Android, eseguita in 
 	\end{threeparttable}
 \end{table}
 
+\begin{description}
+	\item[RFID (Radio-Frequency IDentification)]: è una tecnologia wireless di comunicazione, incentrata sull'identificazione di oggetti e lo scambio di informazioni. La tecnologia è molto simile a NFC, descritto in precedenza,  difatti quest'ultimo non è che un caso particolare di RFID. Il protocollo prevede due tipi distinti di dispositivi: lettori e tag. A differenza di NFC non è possibile la comunicazione diretta tra due lettori. I tag si dividono in due categorie: passivi ed attivi. Da qui in avanti saranno trattati solo tag passivi, dato che quelli attivi non hanno vantaggi tangibili nel caso in esame, oltre ad avere lo svantaggio di dover costantemente essere alimentati. Un tag non è altro che un antenna, un microchip ed una memoria non volatile, che può essere in sola lettura o anche scrivibile. Il lettore illumina il tag con un'onda elettromagnetica ad una data frequenza, il tag assorbe la potenza dell'onda e si attiva, trasmettendo il contenuto o una parte soltanto della memoria. Nella versione base dei tag non vi è alcun controllo dell'identità del lettore, quindi ogni dispositivo capace di generare onde alla frequenza richiesta può ricevere i dati. La differenza con NFC è data dalla distanza di comunicazione, che può essere maggiore. Esistono tre principali frequenze di funzionamento dei tag:
+	\begin{itemize}
+		\item \emph{125kHz} (LF RFID): range di qualche centimetro.
+		\item \emph{13.56MHz} (HF RFID o NFC): range massimo di 20 centimetri.
+		\item \emph{860-960MHz} (UHF RFID): range dal metro fino ai 10 metri.
+	\end{itemize}
+	Come si può vedere la tecnologia UHF RFID soddisfa il requisito di distanza, ma, come per NFC, non c'è alcun tipo di sicurezza o crittografia, non risolvendo del tutto le problematiche di tracciabilità e masquerade. Ciò è vero per il protocollo base di RFID, tuttavia esistono ulteriori protocolli, come \emph{EPCGlobal v2} che per i tag UHF prevedono forme blande di crittografia all'interno dei tag, facendo sopratutto affidamento a generatori di numeri pseudo-casuali. Anche a fronte di tali passi in avanti non esistono sul mercato tag RFID in grado di garantire un livello di sicurezza allo stato dell'arte. Oltre a ciò sussiste un grave problema di privacy, dato che chiunque in possesso di un lettore può leggere i dati all'interno di un tag, anche da svariati metri di distanza.
+	
+	\item[Raggi infrarossi]: tecnologia di comunicazione basata sulla rilevazione ed invio di raggi infrarossi. Essa è stata utilizzata come tecnologia principale per lo scambio di dati tra telefoni cellulari prima dell'avvento di \emph{bluetooth}, ed ancora oggi ampiamente utilizzata nei telecomandi dei dispositivi elettronici domestici (televisioni, stereo \dots). Essa si basa sulla modulazione di onde elettromagnetiche nello spettro infrarosso, con lo scopo di trasmettere dati. Ogni dispositivo può agire sia da ricevitore che da emettitore. Il principale svantaggio di tale tecnologia è dato dalla necessità di visibilità reciproca dei due dispositivi, ad una distanza massima di 1-2 metri. La radiazione infrarossa, infatti, non è penetrante, e viene bloccata da qualsiasi corpo solido frapposto tra i due dispositivi (anche il solo vetro di una finestra potrebbe bloccare la radiazione). Ciò significa anche che non è possibile una fase di ricerca dei dispositivi nelle vicinanze, dato che solamente quelli visibili al fascio elettromagnetico saranno contattabili. Esistono vari protocolli per l'utilizzo di tale tecnologia, alcuni dei quali disponibili anche su alcuni dispositivi Andoid. Uno degli svantaggi principali, oltre all'allineamento, è dato dal fatto che l'identificatore dovrà essere alimentato, e sempre in ascolto nella ricezione di segnali. Ciò può comportare una breve vita degli identificatori, contravvenendo ad un requisito. La sicurezza può e deve essere gestita a livelli più alti, ma avendo un identificatore attivo non ci sono problemi a riguardo. 
+	
+	\item[Onde radio]: tecnologia basata sullo scambio di informazioni attraverso onde radio, tipicamente con frequenza di 2.4GHz. Esse sono normalmente utilizzate per la comunicazione wireless tra computer e periferiche come tastiera o mouse, in contrapposizione a bluetooth. Il range massimo è tipicamente di qualche metro, ma richiede che ogni dispositivo sia dotato di un captatore di onde radio, ed un trasmettitore. Ciò significa che, similmente alla tecnologia a infrarossi, gli identificatori dovranno essere attivi e sempre in ascolto. Un altro svantaggio è che tutti i dispositivi (lettori e identificatori) sono in grado di leggere tutti i segnali inviati nel raggio di qualche metro. Ciò significa che un malintenzionato potrebbe modificare l'identificatore in modo che sia in grado di processare e leggere tutte le informazioni trasmesse nelle sue vicinanze. Al contrario dei raggi infrarossi analizzati in precedenza non ci sono vincoli sulla visibilità reciproca dei dispositivi. La sicurezza, come per la comunicazione tramite infrarossi, dovrà essere gestita a un livello più alto. Ciò è possibile grazie al fatto di lavorare con identificatori attivi. Il costo del dispositivo identificatore potrebbe risultare superiore a quanto espresso nei requisiti, in quanto si necessita di qualche potenza computazionale. 
+\end{description}
+I risultati più significativi individuati nella fase di ricognizione delle tecnologie non supportate da Android sono raccolti in \autoref{tectable-other}.
+
 \subsubsection{Considerazioni}
+Tra le tecnologie supportate da Android, analizzate in \autoref{tec-android}, quelle che risultano più appropriate per il problema in esame sono NFC (in modalità reader) e contactless smart card. Entrambe non soddisfano, però, il requisito relativo al raggio di funzionamento, rivelatosi uno scoglio insuperabile per ogni tecnologia supportata da Android. Rispetto ad NFC semplice, l'utilizzo di una contactless smart card consentirebbe la risoluzione delle problematiche di sicurezza relative a tracciabilità e masquerade, a discapito, però, di costi elevati, al di fuori del budget definito nei requisiti. 
 
+Per quanto riguarda le tecnologie non supportate da Android, analizzate in \autoref{tec-other}, quella che permette di affrontare il problema in maniera più efficacie è RFID. Tale tecnologia necessiterebbe, però, di un apposito lettore \emph{ad-hoc}, il cui costo, unitamente a quello del tag RFID, supererebbe il budget massimo stabilito nei requisiti.
 
-\section{Abstraction gap}
+In conclusione, fra le tecnologie esaminate per l'implementazione della comunicazione fra lettore ed identificatore, nessuna permette di soddisfare la totalità dei requisiti. Si decide, in accordo con il committente, di optare per l'utilizzo di NFC, preferito a contactless smart card per i costi notevolmente inferiori, non considerando i problemi di tracciabilità e masquerade che, nell'ambito del primo soccorso, possono essere trascurati.
 
-\section{Analisi dei rischi}
+\subsection{Autenticazione del soccorritore}
+L'autenticazione del soccorritore è necessaria per l'utilizzo del servizio. In una situazione di emergenza, i tempi dedicati a questa fase devono essere minimi ed il meccanismo di autenticazione deve essere solido e non invasivo, evitando errori derivanti da un mancato riconoscimento del soccorritore. Vengono individuate varie possibilità:
+\begin{itemize}
+	\item \textbf{Username e password}: il meccanismo di autenticazione più diffuso nell'uso quotidiano. In questo caso, ad ogni soccorritore verrebbero assegnate delle credenziali di accesso al sistema. Ad ogni utilizzo dell'applicazione, il soccorritore dovrebbe inserire tali credenziali in modo da confermare la propria identità. In una situazione di emergenza, questo approccio potrebbe risultare problematico, sia per il tempo necessario per l'inserimento, sia per questioni relative alle credenziali, che il soccorritore potrebbe temporaneamente non ricordare.
+	\item \textbf{Riconoscimento biometrico}: meccanismo di autenticazione che si basa sulle caratteristiche biometriche dell'utente. Tramite il lettore sarebbe, ad esempio, possibile implementare meccanismi di riconoscimento del volto, riconoscimento dell'impronta digitale e riconoscimento della voce. Tali meccanismi di autenticazione non garantiscono, però, un grado di affidabilità adeguato per il sistema.
+	\item \textbf{Lettore}: per slegare il soccorritore dall'obbligo di autenticazione, è possibile delegare tale processo al lettore. In questo modo, sarebbe il lettore che, in automatico, si occuperebbe della fase di autenticazione, permettendo al soccorritore di concentrarsi esclusivamente sul paziente. Questo meccanismo potrebbe essere messo in atto dotando il lettore di una chiave segreta, in grado di identificare un determinato soccorritore. In questo modo, però, si presenterebbe la problematica relativa alla sicurezza della chiave.
+	\item \textbf{Identificatore}: è lecito assumere che il soccorritore sia in possesso di un proprio identificatore. Esso presenta un modo per identificare univocamente il soggetto, e potrebbe, quindi, essere utilizzato per attestare l'identità del soccorritore. Come già discusso in \autoref{tec-id}, sarebbe possibile per un malintenzionato recuperare l'identificativo di un soccorritore ed utilizzarlo per superare la fase di autenticazione, risultando così un soggetto autorizzato alla lettura dei dati medici.
+\end{itemize}
+I meccanismi di autenticazione appena citati potrebbero anche essere combinati tra loro, in modo da garantire una maggiore affidabilità nel riconoscimento, così come una robustezza più elevata a fronte di attacchi informatici.
+
+In accordo con il committente, si è deciso di optare per una soluzione che combina i vantaggi di lettore e identificatore. L'autenticazione avverrà a due livelli, il soccorritore si autenticherà nel sistema tramite il suo identificatore, mentre il lettore confermerà l'identità del soccorritore tramite la chiave segreta.  
 
 \section{Architettura logica}
-Il sistema risulta essere composto dalle seguenti componenti:
+L'analisi delle problematiche, svolta in \autoref{issues}, congiuntamente allo studio di fattibilità in \autoref{feasibility}, ha portato alla definizione di un'architettura logica, in grado di descrivere struttura, interazione e comportamento del sistema.
+
+Dallo studio di fattibilità è emersa una variazione particolarmente rilevante rispetto ai requisiti espressi in \autoref{requirements}. In accordo con il committente, si è infatti deciso di adottare il protocollo NFC per la trasmissione dell'identificativo da identificatore a lettore. Di conseguenza l'identificatore diviene un tag NFC, all'interno del quale è memorizzato l'identificativo del paziente. Il tag è passivo (non alimentato) e può essere attivato dal lettore nel momento in cui il soccorritore necessita l'identificativo del paziente.
+
+L'utilizzo di NFC provoca un impatto evidente anche sugli scenari di esecuzione del sistema, illustrati in \autoref{scenarios}. Il breve raggio di funzionamento di NFC impone una vicinanza strettissima, prossima al contatto, fra lettore e identificatore, rendendo, di fatto, altamente improbabile l'individuazione di più identificatori nella fase di ricerca di un lettore. Il soccorritore, dopo aver aperto l'applicazione, deve superare una prima fase di autenticazione, che prevede che egli avvicini il lettore al proprio identificatore. Fatto ciò, il soccorritore dovrà avvicinare il lettore all'identificatore del paziente, in modo da ricevere l'identificativo, utilizzato poi per accedere ai dati medici del paziente, contenuti all'interno della banca dati. 
+
+All'interno del sistema sono individuati quattro componenti principali:
 \begin{itemize}
-	\item Server
-	\item Lettore
-	\item Identificatore
+	\item \textbf{Patient}: entità attiva che rappresenta il paziente, per mezzo del suo identificatore. Nel sistema, infatti, un paziente è descritto dall'identificativo contenuto all'interno del suo identificatore.  
+	\item \textbf{Rescuer}: entità attiva che rappresenta il soccorritore. Nel sistema, un soccorritore è descritto dall'identificativo contenuto all'interno del suo identificatore.
+	\item \textbf{Data Control}: entità attiva preposta al controllo degli accessi alla banca dati. Si assicura che i soli medici autorizzati possano entrare in possesso dei dati medici dei pazienti.  
+	\item \textbf{Data}: entità attiva che rappresenta il database contenente i dati medici dei pazienti.
+\end{itemize}
+I componenti individuati sono entità distinte e ben distinguibili tra loro, ognuna con un proprio flusso di controllo logico. Il sistema risulta essere eterogeneo e distribuito. L'interazione tra i componenti riveste un ruolo chiave all'interno del sistema. Essa può essere descritta come segue:
+\begin{itemize}
+	\item \textbf{Rescuer e Patient}: in \autoref{tec-id} era stata formulata una prima ipotesi in grado di descrivere l'interazione fra lettore (Rescuer) e identificatore (Patient). Essa prevedeva una prima fase di ricerca di tutti i pazienti situati in una certa area. Tale approccio non è più valido, dato il nuovo requisito, che consiste nell'utilizzo di NFC. L'interazione era poi stata definita come \emph{request-response}, con il soccorritore che, effettuando una richiesta al paziente, otteneva una risposta contenente l'identificativo dello stesso. Questa soluzione sembra essere la più adatta per il problema in esame, sia perché garantisce che la trasmissione dell'identificativo avvenga solamente quando richiesto (evitando una continua propagazione dello stesso), sia perché è quella che permette di definire in maniera più corretta un'interazione tramite il protocollo NFC.
+	\item \textbf{Rescuer e Data Control}: dopo aver recuperato l'identificativo del paziente, il soccorritore deve reperire i dati medici dalla banca dati, contattando il componente \emph{Data control}. Indipendentemente dal protocollo di comunicazione che si andrà ad utilizzare, dal punto di vista logico l'interazione può essere descritta come una \emph{request-response}, con il soccorritore che richiede i dati medici di un certo paziente e il \emph{Data Control} che risponde in maniera adeguata a seconda che il soccorritore sia autorizzato o meno alla visione dei dati.
+	\item \textbf{Data Control e Data}: il \emph{Data Control} non dispone di un accesso diretto ai dati medici, ma deve richiederli al componente nel quale essi sono mantenuti, ovvero \emph{Data}. Anche in questo caso l'interazione è \emph{request-response}.
 \end{itemize}
 
-\subsection{Scenario I}
-In una situazione di emergenza, il soccorritore arriva sul posto, apre l'applicazione sul proprio lettore e lo avvicina al proprio identificatore, in modo da autenticarsi nel sistema. Subito dopo il soccorritore avvicina il lettore all'identificatore del paziente e riceverà i dati medici dello stesso. 
-\subsection{Scenario II}
-In una situazione di emergenza, il soccorritore arriva sul posto, apre l'applicazione sul proprio lettore e lo avvicina al proprio identificatore, in modo da autenticarsi nel sistema. Subito dopo il soccorritore avvicina il lettore all'identificatore del paziente per richiedere i dati medici dello stesso. Nel caso essi non siano presenti nel sistema, dovrà essere mostrato un messaggio di errore.
-\subsection{Scenario III} 
-In una situazione di emergenza, il soccorritore arriva sul posto e apre l'applicazione sul proprio lettore. Nel caso non sia possibile creare alcuna connessione con il server, deve essere mostrato un messaggio che avvisa il soccorritore di intervenire ``manualmente'', senza contare sul servizio.
+L'architettura logica può essere espressa in maniera formale tramite l’utilizzo del meta-modello
+QActor, sviluppato dal professore Antonio Natali. Sulla base dei requisiti e dell'analisi del problema, si procede in maniera incrementale alla realizzazione di tre modelli:
+\begin{itemize}
+	\item \textbf{Base model}: ogni componente del sistema viene modellato come un \emph{QActor}. I dati medici dei pazienti, contenuti nella base di conoscenza dell'attore \emph{Data}, sono simulati (si trattano solamente nome, cognome e gruppo sanguigno di ogni paziente). Il modello è eseguibile e permette di simulare uno scenario completo di utilizzo del sistema, dall'apertura dell'applicazione del soccorritore fino alla visualizzazione dei dati medici del paziente.
+	\item \textbf{Connection model}: estensione del modello di base considerando il problema della connettività. Infatti, il soccorritore necessita di connettività per poter reperire i dati medici del paziente, e nel caso essa non sia presente, il servizio \emph{Proxima} non può essere erogato. All'apertura dell'applicazione deve essere immediatamente notificata al soccorritore l'eventuale mancanza di connettività, in modo da non fargli sprecare tempo prezioso.
+	\item \textbf{Man-in-the-middle model}: estensione del \emph{Connection model} con l'introduzione delle problematiche di \emph{sniffing} e \emph{replay attack}. Se i dati medici transitassero in chiaro fra \emph{Data contro} e \emph{Rescuer}, un \emph{man-in-the-middle} potrebbe intercettarli e visualizzarli e/o modificarli a piacere. Per evitare questa problematica, nel modello si è simulato l'utilizzo di crittografia attraverso uno dei più semplici algoritmi crittografici, ovvero il \emph{cifrario di Cesare}. Per semplicità, la crittografia è stata considerata solamente nella comunicazione fra \emph{Data control} e \emph{Rescuer}, ma allo stesso modo potrebbe essere applicata anche alle altre comunicazioni.
+\end{itemize}
 
+I modelli realizzati costituiscono una linea guida per la fase di progettazione, racchiudendo l'architettura logica emersa dall'analisi del problema. I modelli sono stati opportunamente testati, in modo da garantire una corretta rappresentazione dei requisiti analizzati. I test implementati in questo stadio dovranno essere verificati anche nelle successive fasi di progettazione e implementazione.
 
+\section{Analisi dei rischi}
+In questa sezione verranno analizzati i rischi principali del progetto, ovvero le parti più complesse dello stesse, per le quali non ci sono soluzioni banali o standardizzate. In modo particolare si farà riferimento al rischio di una consegna del sistema ritardata, che non rispetta quindi i tempi prefissati. 
+
+I principali componenti del sistema che presentano rischi per una sua consegna nei tempi prestabiliti sono elencati di seguito: 
+\begin{itemize}
+	\item \textbf{Interazione con NFC}: l'interazione con l'identificatore dovrà avvenire tramite NFC. Ciò presenta un rischio per il sistema, poiché ciò significa dover intervenire a basso livello, manipolando in modo diretto la memoria ed i sensori all'interno del dispositivo Android. Se non si volesse perseguire questa strada, un possibilità è quella di utilizzare librerie \emph{ad hoc} per l'interazione tramite NFC. Il rischio di tale software è dato dalla sua non controllabilità, ovvero il modello dell'interazione potrebbe essere diverso da quello analizzato e progettato. Ciò porterebbe ad un ripensamento della parte progettuale del sistema, dovendo operare in modo \emph{bottom-up}.
+	\item \textbf{Sicurezza delle comunicazioni}: la sicurezza è una feature fondamentale del sistema, ed una sua corretta implementazione è un forte requisito per la sua riuscita. La sicurezza, data la vastità dell'argomento anche se limitato alle sole comunicazioni, non è un concetto semplice da trattare. Essa, infatti, non può essere aggiunta come una \emph{patch} una volta implementato il sistema, ma la sicurezza dovrà essere una parte fondamentale del progetto del sistema (\emph{secure by design}\footnote{\url{https://en.wikipedia.org/wiki/Secure_by_design}}). In particolar modo l'implementazione di comunicazioni sicure, allo stato dell'arte, si basa sulla generazione di chiavi crittografiche e certificati. In fase prototipale ciò aumenta la complessità sia dell'implementazione che del deployment del sistema. Inoltre gli attacchi possibili alla sicurezza della comunicazione sono molteplici, e testare la sicurezza del sistema a fronte anche solo di una parte consistente di essi richiederà ulteriore tempo e lavoro.
+	\item \textbf{Scalabilità e availability}: esse sono due proprietà sia del sistema \emph{Proxima} generale, sia del servizio di aiuto in caso di emergenza descritto in \autoref{requirements}. Non esiste alcuna metodologia automatica per progettare e implementare sistemi scalabili e sempre disponibili. Esistono, in letteratura, metodologie generiche, ed alcune soluzioni pratiche al problema (come la replicazione), ma esse non sono valide per ogni sistema. Il rischio principale è quello di sottostimare o sovrastimare la problematica, rendendo il sistema troppo scalabile o troppo poco scalabile. Mentre quest'ultima problematica è comprensibile da tutti, la prima è molto più sottile. Rendere un sistema più scalabile di quanto in realtà sia necessario è un problema, poiché per raggiungere tali risultati non richiesti si è speso tempo (di progettazione, di implementazione\dots) e denaro (deployment di infrastrutture più complesse, replicazione\dots). \`{E} dunque un rischio da non sottovalutare quello di sotto o sovra stimare il livello di scalabilità del sistema, in modo da non allungare i tempi di consegna per funzionalità non richieste. 
+	\item \textbf{Nuovi requisiti, o modifica di quelli esistenti}: esso è uno dei maggiori rischi che ogni progetto pone. I requisiti variano, e anche a distanza di tempo possono esserne aggiunti di nuovi o modificati quelli preesistenti. Un sistema \emph{rigido} è senz'altro un grosso rischio per una consegna nei tempi prestabiliti. La costruzione di un \emph{modello} del sistema mitiga il problema, a patto che il modello sia corretto, e accettato dal cliente stesso. Esso dovrà essere facilmente estensibile e modificabile, anche in corso d'opera, e ciò non dovrà pesantemente influire sul tempo richiesto per l'implementazione del sistema finito. Esso dovrà inoltre servire come base per ulteriori estensioni future, in modo che anche a distanza di tempo sia possibile analizzare i nuovi problemi, progettare la modifica al sistema ed implementarla in un lasso di tempo ragionevole. 
+	\item \textbf{Cambiamenti nelle API utilizzate}: essa è una problematica nascosta, ma che può portare a gravi ritardi nella consegna. Non esistono progetti software in cui non si fa uso di librerie esterne o parti di codice sviluppate e mantenute da terzi. Un esempio può essere dato dalla \emph{Java Virtual Machine (JVM)}. I cambiamenti di tali dipendenze, sopratutto se non viene mantenuta la piena retro-compatibilità, può portare a gravi ritardi, dovuti allo studio e alla implementazione \emph{ex-novo} di intere parti del progetto. Tale problematica non può essere gestita dal team di sviluppo, ma è dipendente solamente da fattori esterni, per cui non può essere del tutto prevista e prevenuta.
+\end{itemize}
 
 \chapter{Piano di lavoro}
 

@@ -2,12 +2,12 @@
 /*
 This code is generated only ONCE
 */
-package it.unibo.qdoctor;
+package it.unibo.qdatacontrol;
 import it.unibo.is.interfaces.IOutputEnvView;
 import it.unibo.qactors.QActorContext;
 
-public class Qdoctor extends AbstractQdoctor { 
-	public Qdoctor(String actorId, QActorContext myCtx, IOutputEnvView outEnvView )  throws Exception{
+public class Qdatacontrol extends AbstractQdatacontrol { 
+	public Qdatacontrol(String actorId, QActorContext myCtx, IOutputEnvView outEnvView )  throws Exception{
 		super(actorId, myCtx, outEnvView);
 	}
 /*
