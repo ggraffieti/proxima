@@ -24,7 +24,7 @@ public class ConnectionModelTest {
 	private QActor patient;
 	private QActor patient2;
 	private QActor rescuer;
-	private QActor datacontrol;
+	private QActor dataControl;
 	private QActor data;
 	
 	@Before
@@ -32,31 +32,28 @@ public class ConnectionModelTest {
     	MainCtxBaseDebug.initTheContext();
     	//We create the actors, but we must also be sure that 
     	//each actor has terminated its initialization phase
-   		while (data == null || datacontrol == null || patient == null || patient2 == null || rescuer == null) {
+   		while (data == null || dataControl == null || patient == null || patient2 == null || rescuer == null) {
    			//wait for creation
   	 		Thread.sleep(100);  
   	 		data = QActorUtils.getQActor("qdata_ctrl");
- 			datacontrol  = QActorUtils.getQActor("qdatacontrol_ctrl");
+ 			dataControl  = QActorUtils.getQActor("qdatacontrol_ctrl");
  			patient = QActorUtils.getQActor("qpatient_ctrl");
  			patient2 = QActorUtils.getQActor("qpatient2_ctrl");
  			rescuer = QActorUtils.getQActor("qrescuer_ctrl");
   		};
-  		setData();
-  		Thread.sleep(2000);
 	}
 
  	@Test
 	public void firstDataTest() {  
  		System.out.println("[TEST] First data test");
 		try {
-			setConnection(true);
-			setNearestPatient(patient);
-			setRescuerIdentifier(RESCUER_IDENTIFIER);
+			setData(true, patient, RESCUER_IDENTIFIER);
+			Thread.sleep(2000);
 			raiseButtonClick(rescuer);
 			assertTrue("First data test", patient != null);
 			assertTrue("First data test", patient2 != null);
 			assertTrue("First data test", rescuer != null);
-	 		assertTrue("First data test", datacontrol != null);
+	 		assertTrue("First data test", dataControl != null);
 	 		assertTrue("First data test", data != null);
  			assertTrue("First data test", PATIENT_DATA.equals(getData()));
 	 		Thread.sleep(2000);
@@ -69,14 +66,13 @@ public class ConnectionModelTest {
 	public void secondDataTest() {  
  		System.out.println("[TEST] Second data test");
 		try {
-			setConnection(true);
-			setNearestPatient(patient2);
-			setRescuerIdentifier(RESCUER_IDENTIFIER);
+			setData(true, patient2, RESCUER_IDENTIFIER);
+			Thread.sleep(2000);
 			raiseButtonClick(rescuer);
 			assertTrue("Second data test", patient != null);
 			assertTrue("Second data test", patient2 != null);
 			assertTrue("Second data test", rescuer != null);
-	 		assertTrue("Second data test", datacontrol != null);
+	 		assertTrue("Second data test", dataControl != null);
 	 		assertTrue("Second data test", data != null);
  			assertTrue("Second data test", PATIENT2_DATA.equals(getData()));
 	 		Thread.sleep(2000);
@@ -89,14 +85,13 @@ public class ConnectionModelTest {
  	public void firstAuthorizationTest() {
  		System.out.println("[TEST] First authorization test");
 		try {
-			setConnection(true);
-			setNearestPatient(patient);
-			setRescuerIdentifier(RESCUER_IDENTIFIER);
+			setData(true, patient, RESCUER_IDENTIFIER);
+			Thread.sleep(2000);
 			raiseButtonClick(rescuer);
 			assertTrue("First authorization test", patient != null);
 			assertTrue("First authorization test", patient2 != null);
 			assertTrue("First authorization test", rescuer != null);
-	 		assertTrue("First authorization test", datacontrol != null);
+	 		assertTrue("First authorization test", dataControl != null);
 	 		assertTrue("First authorization test", data != null);
  			assertTrue("First authorization test", PATIENT_DATA.equals(getData()));
 	 		Thread.sleep(2000);
@@ -109,14 +104,13 @@ public class ConnectionModelTest {
  	public void secondAuthorizationTest() {
  		System.out.println("[TEST] Second authorization test");
 		try {
-			setConnection(true);
-			setNearestPatient(patient);
-			setRescuerIdentifier(RESCUER2_IDENTIFIER);
+			setData(true, patient, RESCUER2_IDENTIFIER);
+			Thread.sleep(2000);
 			raiseButtonClick(rescuer);
 			assertTrue("Second authorization test", patient != null);
 			assertTrue("Second authorization test", patient2 != null);
 			assertTrue("Second authorization test", rescuer != null);
-	 		assertTrue("Second authorization test", datacontrol != null);
+	 		assertTrue("Second authorization test", dataControl != null);
 	 		assertTrue("Second authorization test", data != null);
  			assertTrue("Second authorization test", isDoctorUnauthorized());
 	 		Thread.sleep(2000);
@@ -129,14 +123,13 @@ public class ConnectionModelTest {
 	public void firstConnectionTest() {  
  		System.out.println("[TEST] First connection test");
 		try {
-			setConnection(true);
-			setNearestPatient(patient);
-			setRescuerIdentifier(RESCUER_IDENTIFIER);
+			setData(true, patient, RESCUER_IDENTIFIER);
+			Thread.sleep(2000);
 			raiseButtonClick(rescuer);
 			assertTrue("First connection test", patient != null);
 			assertTrue("First connection test", patient2 != null);
 			assertTrue("First connection test", rescuer != null);
-	 		assertTrue("First connection test", datacontrol != null);
+	 		assertTrue("First connection test", dataControl != null);
 	 		assertTrue("First connection test", data != null);
  			assertTrue("First connection test", PATIENT_DATA.equals(getData()));
 	 		Thread.sleep(2000);
@@ -152,14 +145,13 @@ public class ConnectionModelTest {
 	public void secondConnectionTest() throws NoSolutionException {  
  		System.out.println("[TEST] Second connection test");
 		try {
-			setConnection(false);
-			setNearestPatient(patient2);
-			setRescuerIdentifier(RESCUER_IDENTIFIER);
+			setData(false, patient2, RESCUER_IDENTIFIER);
+			Thread.sleep(2000);
 			raiseButtonClick(rescuer);
 			assertTrue("Second connection test", patient != null);
 			assertTrue("Second connection test", patient2 != null);
 			assertTrue("Second connection test", rescuer != null);
-	 		assertTrue("Second connection test", datacontrol != null);
+	 		assertTrue("Second connection test", dataControl != null);
 	 		assertTrue("Second connection test", data != null);
 	 		exception.expect(NoSolutionException.class);
 	 		getData();
@@ -170,13 +162,23 @@ public class ConnectionModelTest {
 		}		
 	}
  	
- 	private void setData() throws InterruptedException {
+ 	private void setData(boolean connection, QActor nearestPatient, 
+ 			String rescuerId) throws InterruptedException {
 		patient.removeRule("identifier(_)");
 		patient.addRule("identifier(" + PATIENT_IDENTIFIER + ")");
 		patient2.removeRule("identifier(_)");
 		patient2.addRule("identifier(" + PATIENT2_IDENTIFIER + ")");
 		
+		rescuer.removeRule("identifier(_)");
+		rescuer.addRule("identifier(" + rescuerId + ")");
 		rescuer.solveGoal("retractall(connection(_))");
+		rescuer.addRule("connection(" + connection + ")");
+		rescuer.solveGoal("retractall(nearest(_))");
+ 		if (nearestPatient.equals(patient)) {
+ 			rescuer.addRule("nearest(qpatient)");
+ 		} else {
+ 			rescuer.addRule("nearest(qpatient2)");
+ 		}
 		rescuer.solveGoal("retractall(dataResponse(_, _, _, _, _))");
 		rescuer.solveGoal("retractall(unauthorized)");
 		
@@ -184,27 +186,9 @@ public class ConnectionModelTest {
 		data.addRule("data(" + PATIENT_IDENTIFIER + ", " + PATIENT_DATA + ")");
 		data.addRule("data(" + PATIENT2_IDENTIFIER + ", " + PATIENT2_DATA + ")");
 		
-		datacontrol.solveGoal("retractall(rescuer(_))");
-		datacontrol.addRule("rescuer(" + RESCUER_IDENTIFIER + ")");
+		dataControl.solveGoal("retractall(rescuer(_))");
+		dataControl.addRule("rescuer(" + RESCUER_IDENTIFIER + ")");
 	}
- 	
- 	private void setConnection(boolean connectionState) {
- 		rescuer.addRule("connection(" + connectionState + ")");
- 	}
- 	
- 	private void setNearestPatient(QActor nearestPatient) throws InterruptedException {
- 		rescuer.solveGoal("retractall(nearest(_))");
- 		if (nearestPatient.equals(patient)) {
- 			rescuer.addRule("nearest(qpatient)");
- 		} else {
- 			rescuer.addRule("nearest(qpatient2)");
- 		}
- 	}
- 	
- 	private void setRescuerIdentifier(String id) {
- 		rescuer.removeRule("identifier(_)");
-		rescuer.addRule("identifier(" + id + ")");
- 	}
  	
  	private String getData() throws NoSolutionException {
  		final SolveInfo solveInfo = rescuer.solveGoal("dataResponse(_, NAME, SURNAME, BLOOD_GROUP)");
