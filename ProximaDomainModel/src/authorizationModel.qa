@@ -2,16 +2,13 @@ System proxima
 
 Dispatch identificationRequest : identificationRequest
 Dispatch identificationResponse : identificationResponse(ID)
-Dispatch dataRequest : dataRequest(DOCTOR_ID, PATIENT_ID)
-Dispatch dataResponse : dataResponse(DOCTOR_ID, PATIENT_ID, NAME, SURNAME, BLOOD_GROUP)
+Dispatch dataRequest : dataRequest(RESCUER_ID, PATIENT_ID)
+Dispatch dataResponse : dataResponse(RESCUER_ID, PATIENT_ID, NAME, SURNAME, BLOOD_GROUP)
 Dispatch unauthorized : unauthorized
 
 Event local_start : start
 
 Context ctxAuthDebug ip[host="localhost" port=1406 ]
-//Context ctxPatient ip[host="localhost" port=1406] -g white
-//Context ctxDoctor ip[host="localhost" port=6041] -g blue
-//Context ctxControl ip[host="localhost" port=6042] -g yellow
 
 QActor qpatient context ctxAuthDebug {
 	Rules {
@@ -66,31 +63,31 @@ QActor qpatient2 context ctxAuthDebug {
 }
 
 
-QActor qdoctor context ctxAuthDebug {
+QActor qrescuer context ctxAuthDebug {
 	Rules {
-		identifier(doctor1).
+		identifier(rescuer1).
 		distance(qpatient, 100).
 		distance(qpatient2, 150).
 	}
 	
 	Plan init normal
 	[
-		println("[qdoctor] started!");
-		demo consult("./src/it/unibo/qatheory/qDoctorTheory.pl");
-		actorOp buildCustomGui("doctorGui")
+		println("[qrescuer] started!");
+		demo consult("./src/it/unibo/qatheory/qRescuerTheory.pl");
+		actorOp buildCustomGui("rescuerGui")
 	]
 	switchTo idle
 	
 	Plan idle 
 	[
-		println("[qdoctor] waiting for emergency")	
+		println("[qrescuer] waiting for emergency")	
 	]
 	transition stopAfter 20000
 			   whenEvent local_start -> requestPatientIdentifier
 	
 	Plan requestPatientIdentifier 
 	[
-		println("[qdoctor] sending identification request to patient");
+		println("[qrescuer] sending identification request to patient");
 		[!? findNearest(NAME, _)] forward NAME -m identificationRequest : identificationRequest
 	]
 	transition stopAfter 2000
@@ -98,7 +95,7 @@ QActor qdoctor context ctxAuthDebug {
 			   
     Plan handlePatientIdentifierResponse
     [
-    	println("[qdoctor] patient identifier read");
+    	println("[qrescuer] patient identifier read");
     	onMsg identificationResponse : identificationResponse(PATIENT_ID) ->
 			addRule patientid(PATIENT_ID)
     ] 
@@ -106,9 +103,9 @@ QActor qdoctor context ctxAuthDebug {
     
     Plan sendDataRequest
     [
-    	println("[qdoctor] sending data request to qcontrol");
-    	[!? identifiers(DOCTOR_ID, PATIENT_ID)] 
-			forward qcontrol -m dataRequest : dataRequest(DOCTOR_ID, PATIENT_ID)
+    	println("[qrescuer] sending data request to qdatacontrol");
+    	[!? identifiers(RESCUER_ID, PATIENT_ID)] 
+			forward qdatacontrol -m dataRequest : dataRequest(RESCUER_ID, PATIENT_ID)
     ]
     transition stopAfter 2000
     	whenMsg dataResponse -> handleDataResponse,
@@ -116,52 +113,52 @@ QActor qdoctor context ctxAuthDebug {
     
     Plan handleDataResponse
     [
-    	println("[qdoctor] patient data retrieved");
-    	onMsg dataResponse : dataResponse(DOCTOR_ID, PATIENT_ID, NAME, SURNAME, BLOOD_GROUP) -> 
-    		addRule dataResponse(DOCTOR_ID, PATIENT_ID, NAME, SURNAME, BLOOD_GROUP)
+    	println("[qrescuer] patient data retrieved");
+    	onMsg dataResponse : dataResponse(RESCUER_ID, PATIENT_ID, NAME, SURNAME, BLOOD_GROUP) -> 
+    		addRule dataResponse(RESCUER_ID, PATIENT_ID, NAME, SURNAME, BLOOD_GROUP)
     ] switchTo showPatientData
     
     Plan showPatientData
     [
-    	println("[qdoctor] showing patient data");
+    	println("[qrescuer] showing patient data");
     	[!? dataResponse(_, _, NAME, SURNAME, BLOOD_GROUP)] actorOp showDataOnGUI(NAME, SURNAME, BLOOD_GROUP)
     ] 
     switchTo idle
     
     Plan handleUnauthrorizedResponse 
     [
-    	println("[qdoctor] unauthorized");
+    	println("[qrescuer] unauthorized");
     	addRule unauthorized
     ]
     switchTo showUnauthorizedMessage
     
     Plan showUnauthorizedMessage
     [
-    	println("[qdoctor] showing unauthorized message");
+    	println("[qrescuer] showing unauthorized message");
     	actorOp showUnauthorizedMessageOnGUI
     ]
     switchTo idle
 }
 
-QActor qcontrol context ctxAuthDebug {
+QActor qdatacontrol context ctxAuthDebug {
 	Rules {
 		data(patient2, jane, doe, a_positive).
 		data(patient1, john, doe, ab_negative).
 		
-		doctor(doctor10).
-		doctor(doctor2).
+		rescuer(rescuer1).
+		rescuer(rescuer2).
 	}
 	
 	Plan init normal 
 	[
-		demo consult("./src/it/unibo/qatheory/qControlAuthTheory.pl");
-		println("[qcontrol] started!")
+		demo consult("./src/it/unibo/qatheory/qDataControlAuthTheory.pl");
+		println("[qdatacontrol] started!")
 	]
 	switchTo waitForRequest
 	
 	Plan waitForRequest
 	[
-		println("[qcontrol] waiting for request")
+		println("[qdatacontrol] waiting for request")
 	]
 	transition stopAfter 20000
 			   whenMsg dataRequest -> handleRequest
@@ -169,15 +166,15 @@ QActor qcontrol context ctxAuthDebug {
 			   
     Plan handleRequest resumeLastPlan 
     [
-		println("[qcontrol] handling data request");
-		onMsg dataRequest : dataRequest(DOCTOR_ID, PATIENT_ID) -> 
-			addRule request(DOCTOR_ID, PATIENT_ID);
-		[!? authorized(DOCTOR_ID, PATIENT_ID)]
-			println("[qcontrol] doctor authorized")
+		println("[qdatacontrol] handling data request");
+		onMsg dataRequest : dataRequest(RESCUER_ID, PATIENT_ID) -> 
+			addRule request(RESCUER_ID, PATIENT_ID);
+		[!? authorized(RESCUER_ID, PATIENT_ID)]
+			println("[qdatacontrol] rescuer authorized")
 		else
 			replyToCaller -m unauthorized : unauthorized;
-		[!? response(DOCTOR_ID, PATIENT_ID, NAME, SURNAME, BLOOD_GROUP)]
-			replyToCaller -m dataResponse : dataResponse(DOCTOR_ID, PATIENT_ID, NAME, SURNAME, BLOOD_GROUP);
+		[!? response(RESCUER_ID, PATIENT_ID, NAME, SURNAME, BLOOD_GROUP)]
+			replyToCaller -m dataResponse : dataResponse(RESCUER_ID, PATIENT_ID, NAME, SURNAME, BLOOD_GROUP);
 		removeRule request(X, Y)
     ]
 }

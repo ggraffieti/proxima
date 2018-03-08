@@ -1,0 +1,1 @@
+fetchData(ID, NAME, SURNAME, BLOOD_GROUP) :- request(ID), data(ID, NAME, SURNAME, BLOOD_GROUP).
