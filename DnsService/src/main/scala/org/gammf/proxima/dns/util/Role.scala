@@ -5,7 +5,7 @@ package org.gammf.proxima.dns.util
   */
 object Role extends Enumeration {
   type Role = Value
-  
+
   val Root,
   InternalNode,
   LeafNode
