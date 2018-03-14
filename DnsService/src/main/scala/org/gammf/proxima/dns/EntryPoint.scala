@@ -5,7 +5,7 @@ import akka.pattern.ask
 import akka.util.Timeout
 import org.gammf.proxima.dns.actors.{DNSNodeActor, DNSRootActor}
 import org.gammf.proxima.dns.messages.{AddressRequestMessage, AddressResponseMessage, AddressResponseOKMessage}
-import org.gammf.proxima.dns.util.Service
+import org.gammf.proxima.dns.util.{Service, ServiceAddress}
 
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -39,27 +39,27 @@ object EntryPoint extends App {
     service = Service() :+ "proxima" :+ "commercial" :+ "shop" :+ "armani"))
 
   actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "medical" :+ "firstAid", address = ("192.168.0.1", 4096)))
+    service = Service() :+ "proxima" :+ "medical" :+ "firstAid", address = ServiceAddress("192.168.0.1", 4096)))
   actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "medical" :+ "firstAid", address = ("192.168.0.2", 4096)))
+    service = Service() :+ "proxima" :+ "medical" :+ "firstAid", address = ServiceAddress("192.168.0.2", 4096)))
   actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "medical" :+ "exam", address = ("192.168.0.3", 4096)))
+    service = Service() :+ "proxima" :+ "medical" :+ "exam", address = ServiceAddress("192.168.0.3", 4096)))
   actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "commercial" :+ "supermarket" :+ "coop", address = ("192.168.0.4", 4096)))
+    service = Service() :+ "proxima" :+ "commercial" :+ "supermarket" :+ "coop", address = ServiceAddress("192.168.0.4", 4096)))
   actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "commercial" :+ "supermarket" :+ "conad", address = ("192.168.0.5", 4096)))
+    service = Service() :+ "proxima" :+ "commercial" :+ "supermarket" :+ "conad", address = ServiceAddress("192.168.0.5", 4096)))
   actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "commercial" :+ "supermarket" :+ "a&o", address = ("192.168.0.6", 4096)))
+    service = Service() :+ "proxima" :+ "commercial" :+ "supermarket" :+ "a&o", address = ServiceAddress("192.168.0.6", 4096)))
   actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "commercial" :+ "restaurant" :+ "scottadito", address = ("192.168.0.7", 4096)))
+    service = Service() :+ "proxima" :+ "commercial" :+ "restaurant" :+ "scottadito", address = ServiceAddress("192.168.0.7", 4096)))
   actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "commercial" :+ "shop" :+ "armani", address = ("192.168.0.8", 4096)))
+    service = Service() :+ "proxima" :+ "commercial" :+ "shop" :+ "armani", address = ServiceAddress("192.168.0.8", 4096)))
 
   Thread.sleep(1000)
 
   (dnsRoot ? AddressRequestMessage(service = Service() :+ "proxima" :+ "commercial" :+ "supermarket" :+ "coop"))
     .mapTo[AddressResponseMessage].map {
-    case response: AddressResponseOKMessage[(String, Int)] => println(response.address)
+    case response: AddressResponseOKMessage => println(response.address)
     case _ => println("error")
   }
 }

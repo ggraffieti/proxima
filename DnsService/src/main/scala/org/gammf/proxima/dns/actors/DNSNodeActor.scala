@@ -4,6 +4,7 @@ import akka.actor.{ActorRef, Props}
 import org.gammf.proxima.dns.messages._
 import org.gammf.proxima.dns.util.Role._
 import org.gammf.proxima.dns.util.Service.StringService
+import org.gammf.proxima.dns.util.ServiceAddress
 
 /**
   * Represents a simple DNS node identified by a name and a role, offering a [[StringService]].
@@ -49,13 +50,12 @@ class DNSInternalNodeActor(override val name: String,
   * @param service the service handled by this actor.
   * @param dnsRoot the reference to the DNS root actor.
   * @param serviceAddress the address of the service.
-  * @tparam A the generic type of the service address.
   */
-class DNSLeafNodeActor[A](override val name: String,
+class DNSLeafNodeActor(override val name: String,
                           override val role: Role = LeafNode,
                           override val service: StringService,
                           override val dnsRoot: ActorRef,
-                          val serviceAddress: A) extends DNSNodeActor {
+                          val serviceAddress: ServiceAddress) extends DNSNodeActor {
   override def receive: Receive = ({
     case _: AddressRequestMessage => sender ! AddressResponseOKMessage(serviceAddress)
   }: Receive) orElse super.receive
@@ -70,7 +70,7 @@ object DNSNodeActor {
     * @param address the address of the service.
     * @return the Props to use to create a DNS leaf node actor.
     */
-  def leafNodeProps(dnsRoot: ActorRef, name: String = "Leaf Node", service: StringService, address: (String, Int)): Props =
+  def leafNodeProps(dnsRoot: ActorRef, name: String = "Leaf Node", service: StringService, address: ServiceAddress): Props =
     Props(new DNSLeafNodeActor(name = name, service = service, dnsRoot = dnsRoot, serviceAddress = address))
 
   /**

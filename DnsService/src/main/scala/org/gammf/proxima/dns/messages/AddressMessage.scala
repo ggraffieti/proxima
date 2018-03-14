@@ -2,6 +2,7 @@ package org.gammf.proxima.dns.messages
 
 import org.gammf.proxima.dns.util.Role._
 import org.gammf.proxima.dns.util.Service.StringService
+import org.gammf.proxima.dns.util.ServiceAddress
 
 /**
   * Represents a request to the DNS service.
@@ -19,9 +20,8 @@ sealed trait AddressResponseMessage extends DNSMessage
   * Represents a positive response to an [[AddressRequestMessage]].
   * Contains the address of a service that meets all the requested specifications.
   * @param address the service address.
-  * @tparam A the generic type of the service address.
   */
-case class AddressResponseOKMessage[A](address: A) extends AddressResponseMessage
+case class AddressResponseOKMessage(address: ServiceAddress) extends AddressResponseMessage
 
 /**
   * Represents a negative response to an [[AddressRequestMessage]].

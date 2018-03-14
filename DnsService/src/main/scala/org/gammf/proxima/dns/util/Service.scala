@@ -161,3 +161,5 @@ object Service {
   }
   type StringService = Service[String]
 }
+
+case class ServiceAddress(ip: String, port: Int)
