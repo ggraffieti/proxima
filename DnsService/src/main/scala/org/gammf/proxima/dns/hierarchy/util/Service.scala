@@ -1,4 +1,4 @@
-package org.gammf.proxima.dns.util
+package org.gammf.proxima.dns.hierarchy.util
 
 import scala.annotation.tailrec
 

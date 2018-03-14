@@ -1,4 +1,4 @@
-package org.gammf.proxima.dns.util
+package org.gammf.proxima.dns.hierarchy.util
 
 /**
   * An enumeration containing all the application related roles of dns actors.

@@ -1,6 +1,6 @@
-package org.gammf.proxima.dns.messages
+package org.gammf.proxima.dns.hierarchy.messages
 
-import org.gammf.proxima.dns.util.ActorDNSEntry
+import org.gammf.proxima.dns.hierarchy.util.ActorDNSEntry
 
 /**
   * Represents a message about the hierarchical structure of the actor system.
@@ -8,7 +8,7 @@ import org.gammf.proxima.dns.util.ActorDNSEntry
 trait HierarchyMessage
 
 /**
-  * Represents a request sent to an [[org.gammf.proxima.dns.actors.DNSRouterActor]] in order to build a
+  * Represents a request sent to an [[org.gammf.proxima.dns.hierarchy.actors.DNSRouterActor]] in order to build a
   * hierarchical structure of the Domain Name System.
   * @param level a number indicating the depth level of the current structure.
   */

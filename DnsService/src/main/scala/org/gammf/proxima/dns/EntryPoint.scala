@@ -3,9 +3,9 @@ package org.gammf.proxima.dns
 import akka.actor.ActorSystem
 import akka.pattern.ask
 import akka.util.Timeout
-import org.gammf.proxima.dns.actors.{DNSNodeActor, DNSRootActor, PrinterActor}
-import org.gammf.proxima.dns.messages._
-import org.gammf.proxima.dns.util.{Service, ServiceAddress}
+import org.gammf.proxima.dns.hierarchy.actors.{DNSNodeActor, DNSRootActor}
+import org.gammf.proxima.dns.hierarchy.messages._
+import org.gammf.proxima.dns.hierarchy.util.{Service, ServiceAddress}
 
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global

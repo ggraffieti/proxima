@@ -1,10 +1,10 @@
 package org.gammf.proxima.dns
 
 import akka.actor.ActorRef
-import org.gammf.proxima.dns.messages.{DeletionRequestMessage, HierarchyNode, RedirectionRequestMessage}
-import org.gammf.proxima.dns.util.ActorDNSEntry
-import org.gammf.proxima.dns.util.Role.Role
-import org.gammf.proxima.dns.util.Service.StringService
+import org.gammf.proxima.dns.hierarchy.messages.{DeletionRequestMessage, HierarchyNode, RedirectionRequestMessage}
+import org.gammf.proxima.dns.hierarchy.util.ActorDNSEntry
+import org.gammf.proxima.dns.hierarchy.util.Role.Role
+import org.gammf.proxima.dns.hierarchy.util.Service.StringService
 
 package object actors {
   object entriesImplicitConversions {

@@ -1,11 +1,11 @@
-package org.gammf.proxima.dns.messages
+package org.gammf.proxima.dns.hierarchy.messages
 
 import akka.actor.ActorRef
-import org.gammf.proxima.dns.util.Role.Role
-import org.gammf.proxima.dns.util.Service.StringService
+import org.gammf.proxima.dns.hierarchy.util.Role.Role
+import org.gammf.proxima.dns.hierarchy.util.Service.StringService
 
 /**
-  * Represents a request from an actor to a [[org.gammf.proxima.dns.actors.DNSRouterActor]] that leads to an
+  * Represents a request from an actor to a [[org.gammf.proxima.dns.hierarchy.actors.DNSRouterActor]] that leads to an
   * entry insertion in the DNS hierarchy.
   */
 sealed trait InsertionRequestMessage extends DNSMessage {
@@ -42,8 +42,9 @@ case class RegistrationRequestMessage(override val reference: ActorRef, override
   extends InsertionRequestMessage
 
 /**
-  * Represents a message between objects of type [[org.gammf.proxima.dns.actors.DNSRouterActor]] containing the info about an entry.
+  * Represents a message between objects of type [[org.gammf.proxima.dns.hierarchy.actors.DNSRouterActor]] containing the info about an entry.
   * An actor should send this message to delegate an entry management to another actor.
+  *
   * @param reference the reference of the actor of the entry.
   * @param name the name of the actor of the entry.
   * @param role the role of the actor of the entry.

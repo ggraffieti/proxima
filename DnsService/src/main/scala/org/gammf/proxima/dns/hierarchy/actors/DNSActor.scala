@@ -1,8 +1,8 @@
-package org.gammf.proxima.dns.actors
+package org.gammf.proxima.dns.hierarchy.actors
 
 import akka.actor.Actor
-import org.gammf.proxima.dns.util.Role._
-import org.gammf.proxima.dns.util.Service.StringService
+import org.gammf.proxima.dns.hierarchy.util.Role._
+import org.gammf.proxima.dns.hierarchy.util.Service.StringService
 
 /**
   * Represents a simple actor of the DNS hierarchy. It's characterized by a name, a role into the DNS system and a service.

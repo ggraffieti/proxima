@@ -1,11 +1,11 @@
-package org.gammf.proxima.dns.actors
+package org.gammf.proxima.dns.hierarchy.actors
 
 import akka.actor.ActorRef
 import akka.util.Timeout
 import akka.pattern.ask
-import org.gammf.proxima.dns.messages._
-import org.gammf.proxima.dns.util.ActorDNSEntry
-import org.gammf.proxima.dns.util.Role._
+import org.gammf.proxima.dns.hierarchy.messages._
+import org.gammf.proxima.dns.hierarchy.util.ActorDNSEntry
+import org.gammf.proxima.dns.hierarchy.util.Role._
 
 import scala.concurrent.Await
 import scala.annotation.tailrec
@@ -23,7 +23,7 @@ trait DNSRouterActor extends DNSActor {
   private[this] var dnsEntries: List[ActorDNSEntry] = List()
   implicit val timeout: Timeout = Timeout(5 seconds)
 
-  import org.gammf.proxima.dns.actors.entriesImplicitConversions._
+  import org.gammf.proxima.dns.hierarchy.actors.entriesImplicitConversions._
   override def receive: Receive = {
     case msg: InsertionRequestMessage => handleActorInsertion(msg)
     case msg: DeletionRequestMessage => handleActorDeletion(msg)

@@ -1,7 +1,7 @@
-package org.gammf.proxima.dns.actors
+package org.gammf.proxima.dns.hierarchy.util
 
 import akka.actor.{Actor, Props}
-import org.gammf.proxima.dns.messages.{HierarchyNode, HierarchyNodesMessage}
+import org.gammf.proxima.dns.hierarchy.messages.{HierarchyNode, HierarchyNodesMessage}
 
 /**
   * This is an actor that deals with prints on the output console.
