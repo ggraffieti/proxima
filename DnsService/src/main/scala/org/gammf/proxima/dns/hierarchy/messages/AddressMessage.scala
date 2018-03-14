@@ -3,6 +3,7 @@ package org.gammf.proxima.dns.hierarchy.messages
 import org.gammf.proxima.dns.hierarchy.util.Role._
 import org.gammf.proxima.dns.hierarchy.util.Service.StringService
 import org.gammf.proxima.dns.hierarchy.util.ServiceAddress
+import org.gammf.proxima.dns.messages.DNSMessage
 
 /**
   * Represents a request to the DNS service.

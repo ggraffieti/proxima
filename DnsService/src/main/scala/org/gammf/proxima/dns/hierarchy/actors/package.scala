@@ -1,4 +1,4 @@
-package org.gammf.proxima.dns
+package org.gammf.proxima.dns.hierarchy
 
 import akka.actor.ActorRef
 import org.gammf.proxima.dns.hierarchy.messages.{DeletionRequestMessage, HierarchyNode, RedirectionRequestMessage}
