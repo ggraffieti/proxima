@@ -3,14 +3,17 @@ package org.gammf.proxima.dns
 import akka.actor.ActorSystem
 import akka.pattern.ask
 import akka.util.Timeout
-import org.gammf.proxima.dns.actors.{DNSNodeActor, DNSRootActor}
-import org.gammf.proxima.dns.messages.{AddressRequestMessage, AddressResponseMessage, AddressResponseOKMessage}
+import org.gammf.proxima.dns.actors.{DNSNodeActor, DNSRootActor, PrinterActor}
+import org.gammf.proxima.dns.messages._
 import org.gammf.proxima.dns.util.{Service, ServiceAddress}
 
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.postfixOps
 
+/**
+  * Application entry point.
+  */
 object EntryPoint extends App {
   implicit val timeout: Timeout = Timeout(5 seconds)
 
@@ -34,7 +37,11 @@ object EntryPoint extends App {
   actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
     service = Service() :+ "proxima" :+ "commercial" :+ "supermarket" :+ "a&o"))
   actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
+    service = Service() :+ "proxima" :+ "commercial" :+ "restaurant"))
+  actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
     service = Service() :+ "proxima" :+ "commercial" :+ "restaurant" :+ "scottadito"))
+  actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
+    service = Service() :+ "proxima" :+ "commercial" :+ "shop"))
   actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
     service = Service() :+ "proxima" :+ "commercial" :+ "shop" :+ "armani"))
 
@@ -54,6 +61,11 @@ object EntryPoint extends App {
     service = Service() :+ "proxima" :+ "commercial" :+ "restaurant" :+ "scottadito", address = ServiceAddress("192.168.0.7", 4096)))
   actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
     service = Service() :+ "proxima" :+ "commercial" :+ "shop" :+ "armani", address = ServiceAddress("192.168.0.8", 4096)))
+
+  Thread.sleep(1000)
+
+  val printer = actorSystem.actorOf(PrinterActor.printerProps())
+  (dnsRoot ? HierarchyRequestMessage(0)).mapTo[HierarchyNodesMessage].foreach(printer ! _)
 
   Thread.sleep(1000)
 

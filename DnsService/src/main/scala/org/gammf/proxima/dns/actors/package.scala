@@ -1,7 +1,7 @@
 package org.gammf.proxima.dns
 
 import akka.actor.ActorRef
-import org.gammf.proxima.dns.messages.{DeletionRequestMessage, RedirectionRequestMessage}
+import org.gammf.proxima.dns.messages.{DeletionRequestMessage, HierarchyNode, RedirectionRequestMessage}
 import org.gammf.proxima.dns.util.ActorDNSEntry
 import org.gammf.proxima.dns.util.Role.Role
 import org.gammf.proxima.dns.util.Service.StringService
@@ -26,5 +26,9 @@ package object actors {
 
     implicit def yellowPagesEntry2DeleteRequest(entry: ActorDNSEntry): DeletionRequestMessage =
       DeletionRequestMessage(reference = entry.reference, name = entry.name, role = entry.role, service = entry.service)
+
+    implicit def entryList2hierarchyNodeList(list: List[(Int, ActorDNSEntry)]): List[HierarchyNode] =
+      list.map(node => HierarchyNode(level = node._1, reference = node._2.reference.toString, name = node._2.name.toString,
+        role = node._2.role.toString, service = node._2.service.toString))
   }
 }

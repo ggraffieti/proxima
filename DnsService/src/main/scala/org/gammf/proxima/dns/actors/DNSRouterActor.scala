@@ -1,5 +1,6 @@
 package org.gammf.proxima.dns.actors
 
+import akka.actor.ActorRef
 import akka.util.Timeout
 import akka.pattern.ask
 import org.gammf.proxima.dns.messages._
@@ -27,6 +28,7 @@ trait DNSRouterActor extends DNSActor {
     case msg: InsertionRequestMessage => handleActorInsertion(msg)
     case msg: DeletionRequestMessage => handleActorDeletion(msg)
     case msg: AddressRequestMessage => handleAddressRequest(msg)
+    case msg: HierarchyRequestMessage => handleHierarchy(msg.level)
   }
 
   private[this] def handleActorInsertion(msg: InsertionRequestMessage): Unit = {
@@ -72,6 +74,27 @@ trait DNSRouterActor extends DNSActor {
     def searchForValidNode(msg: AddressRequestMessage): Unit = dnsEntries.filter(n => n > msg && n.role == InternalNode) match {
       case h :: _ => h.reference forward msg
       case _ => sender ! AddressResponseErrorMessage()
+    }
+  }
+
+  private[this] def handleHierarchy(lvl: Int): Unit = {
+    role match {
+      case Root => printHierarchy(getActors(lvl + 1))
+      case _ => sender ! HierarchyResponseMessage(getActors(lvl + 1))
+    }
+    def getActors(level: Int): List[(Int, ActorDNSEntry)] = {
+      def searchActors(actors: List[(Int, ActorDNSEntry)]): List[(Int, ActorDNSEntry)] = actors match {
+        case h :: t if h._2.role != InternalNode => h :: searchActors(t)
+        case h :: t if h._2.role == InternalNode => h :: getActorsFromChildren(h._2.reference) ++ searchActors(t)
+        case _ => Nil
+      }
+      def getActorsFromChildren(node: ActorRef): List[(Int, ActorDNSEntry)] = Await.result(
+        node ? HierarchyRequestMessage(level), timeout.duration).asInstanceOf[HierarchyResponseMessage].actors
+      searchActors(dnsEntries.map((level, _)))
+    }
+    def printHierarchy(list: List[(Int, ActorDNSEntry)]): Unit = {
+      def getRoot: HierarchyNode = HierarchyNode(level = lvl, reference = self.toString(), name = name, role = role.toString, service = service.toString)
+      sender ! HierarchyNodesMessage(getRoot :: (list: List[HierarchyNode]))
     }
   }
 }
