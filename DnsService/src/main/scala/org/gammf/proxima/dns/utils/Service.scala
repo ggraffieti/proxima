@@ -19,6 +19,11 @@ sealed trait Service[A] {
   def subdomains: Option[Service[A]]
 
   /**
+    * Returns the last domain.
+    */
+  def last: Option[A]
+
+  /**
     * Returns the size of the service, as the number of structured domains.
     */
   def size(): Int
@@ -113,6 +118,17 @@ trait ServiceImpl[A] extends Service[A] {
     case _ :: s => Some(s)
     case _ => None
   }
+
+  override def last: Option[A] = {
+    @tailrec
+    def getLast(service: Service[A]): Option[A] = service match {
+      case m :: EmptyService() => Some(m)
+      case _ :: s => getLast(s)
+      case _ => None
+    }
+    getLast(this)
+  }
+
   override def size(): Int = {
     @tailrec
     def getSize(service: Service[A], size: Int): Int = service match {
@@ -162,4 +178,6 @@ object Service {
   type StringService = Service[String]
 }
 
-case class ServiceAddress(ip: String, port: Int)
+case class ServiceAddress(ip: String, port: Int) {
+  override def toString: String = ip + ":" + port
+}
