@@ -16,8 +16,9 @@ import scala.language.postfixOps
   * this actor that can forward it appropriately to the internal DNS hierarchy.
   * @param name the name of this actor.
   * @param dnsRoot the reference to the [[org.gammf.proxima.dns.hierarchy.actors.DNSRootActor]] of the DNS hierarchy.
+  * @param dnsNodesCreator the reference to the [[DNSNodesCreatorActor]].
   */
-class BridgeActor(val name: String, val dnsRoot: ActorRef) extends Actor {
+class BridgeActor(val name: String, val dnsRoot: ActorRef, val dnsNodesCreator: ActorRef) extends Actor {
   implicit val timeout: Timeout = Timeout(5 seconds)
 
   override def receive: Receive = {
@@ -34,7 +35,9 @@ class BridgeActor(val name: String, val dnsRoot: ActorRef) extends Actor {
   }
 
   private[this] def handleExternalAddressCreation(msg: ExternalAddressCreationRequestMessage, msgSender: ActorRef): Unit = {
-    msgSender ! ExternalAddressCreationResponseMessage(true)
+    (dnsNodesCreator ? (msg: AddressCreationRequestMessage)).mapTo[AddressCreationResponseMessage].map { res =>
+      msgSender ! (res: ExternalAddressCreationResponseMessage)
+    }
   }
 }
 
@@ -44,6 +47,6 @@ object BridgeActor {
     * @param name the name of the bridge actor.
     * @return the Props to use to create a bridge actor.
     */
-  def bridgeProps(name: String = "Bridge", dnsRoot: ActorRef): Props =
-    Props(new BridgeActor(name, dnsRoot))
+  def bridgeProps(name: String = "Bridge", dnsRoot: ActorRef, dnsNodesCreator: ActorRef): Props =
+    Props(new BridgeActor(name, dnsRoot, dnsNodesCreator))
 }
