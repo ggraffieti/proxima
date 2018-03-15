@@ -1,0 +1,15 @@
+{
+  "name": "userauthservice",
+  "version": "1.0.0",
+  "description": "Web service aimed at filtering the requests towards proxima on the basis of the permission given by the users",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node build/main.js"
+  },
+  "author": "Alfredo Maffi",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^9.4.7"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+        "noImplicitAny": false,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noUnusedParameters": true,
+        "sourceMap": false,
+        "watch": true,
+        "outDir": "build",
+        "rootDir": "src"
+    },
+    "compileOnSave": true
+}
