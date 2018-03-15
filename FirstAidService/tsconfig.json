@@ -7,7 +7,10 @@
         "sourceMap": false,
         "watch": true,
         "outDir": "build",
-        "rootDir": "src"
+        "rootDir": "src",
+        "lib": [
+            "es5", "es2015.promise"
+        ]
     },
     "compileOnSave": true
 }
