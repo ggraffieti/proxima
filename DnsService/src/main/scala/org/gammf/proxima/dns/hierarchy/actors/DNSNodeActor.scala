@@ -65,21 +65,21 @@ object DNSNodeActor {
   /**
     * Factory methods that returns a Props to create a DNS leaf node actor offering the specified service.
     * @param dnsRoot the reference to the DNS root actor.
-    * @param name the name of this actor.
     * @param service the service handled by this actor.
     * @param address the address of the service.
     * @return the Props to use to create a DNS leaf node actor.
     */
-  def leafNodeProps(dnsRoot: ActorRef, name: String = "Leaf Node", service: StringService, address: ServiceAddress): Props =
-    Props(new DNSLeafNodeActor(name = name, service = service, dnsRoot = dnsRoot, serviceAddress = address))
+  def leafNodeProps(dnsRoot: ActorRef, service: StringService, address: ServiceAddress): Props =
+    Props(new DNSLeafNodeActor(name = "LeafNode[" + address + "]", service = service, dnsRoot = dnsRoot, serviceAddress = address))
 
   /**
     * Factory methods that returns a Props to create a DNS internal node actor offering the specified service.
     * @param dnsRoot the reference to the DNS root actor.
-    * @param name the name of this actor.
     * @param service the service handled by this actor.
     * @return the Props to use to create a DNS internal node actor.
     */
-  def internalNodeProps(dnsRoot: ActorRef, name: String = "Internal Node", service: StringService): Props =
-    Props(new DNSInternalNodeActor(name = name, service = service, dnsRoot = dnsRoot))
+  def internalNodeProps(dnsRoot: ActorRef, service: StringService): Props = {
+    Props(new DNSInternalNodeActor(name = "InternalNode[" + service.last.getOrElse("") + "]", service = service, dnsRoot = dnsRoot))
+  }
+
 }

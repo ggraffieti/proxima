@@ -28,5 +28,6 @@ object DNSRootActor {
     * @param service the service offered by this actor. It should be the most general service of the DNS system.
     * @return the Props to use to create the DNS root actor.
     */
-  def rootProps(service: StringService): Props = Props(new DNSRootActor(name = "Root_YellowPages", service = service))
+  def rootProps(service: StringService): Props =
+    Props(new DNSRootActor(name = "RootNode[" + service + "]", service = service))
 }
