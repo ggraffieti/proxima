@@ -1,8 +1,8 @@
 package org.gammf.proxima.dns.hierarchy.messages
 
 import akka.actor.ActorRef
-import org.gammf.proxima.dns.hierarchy.util.Role.Role
-import org.gammf.proxima.dns.hierarchy.util.Service.StringService
+import org.gammf.proxima.dns.utils.Role.Role
+import org.gammf.proxima.dns.utils.Service.StringService
 
 /**
   * Represents a request from an actor to a [[org.gammf.proxima.dns.hierarchy.actors.DNSRouterActor]] that leads to an
@@ -37,9 +37,8 @@ sealed trait InsertionRequestMessage extends DNSMessage {
   * @param role the role of the actor in the DNS hierarchy.
   * @param service the service offered by the actor.
   */
-case class RegistrationRequestMessage(override val reference: ActorRef, override val name: String,
-                                      override val role: Role, override val service: StringService)
-  extends InsertionRequestMessage
+case class RegistrationRequestMessage(override val reference: ActorRef, override val name: String, override val role: Role,
+                                      override val service: StringService) extends InsertionRequestMessage
 
 /**
   * Represents a message between objects of type [[org.gammf.proxima.dns.hierarchy.actors.DNSRouterActor]] containing the info about an entry.
@@ -50,9 +49,8 @@ case class RegistrationRequestMessage(override val reference: ActorRef, override
   * @param role the role of the actor of the entry.
   * @param service the service of the actor of the entry.
   */
-case class RedirectionRequestMessage(override val reference: ActorRef, override val name: String,
-                                     override val role: Role, override val service: StringService)
-  extends InsertionRequestMessage
+case class RedirectionRequestMessage(override val reference: ActorRef, override val name: String, override val role: Role,
+                                     override val service: StringService) extends InsertionRequestMessage
 
 /**
   * It's a response to an [[InsertionRequestMessage]].

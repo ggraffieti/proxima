@@ -1,6 +1,6 @@
 package org.gammf.proxima.dns.hierarchy.messages
 
-import org.gammf.proxima.dns.hierarchy.util.ActorDNSEntry
+import org.gammf.proxima.dns.utils.ActorDNSEntry
 
 /**
   * Represents a message about the hierarchical structure of the actor system.
@@ -25,7 +25,7 @@ case class HierarchyResponseMessage(actors: List[(Int, ActorDNSEntry)]) extends 
   * Represents a message containing the hierarchical actor structure of the whole Domain Name Systems.
   * @param actors the actors that are part of the hierarchical structure.
   */
-case class HierarchyNodesMessage(actors: List[HierarchyNode])
+case class HierarchyNodesMessage(actors: List[HierarchyNode]) extends HierarchyMessage
 
 /**
   * Represents a node in a hierarchical structure.

@@ -1,8 +1,8 @@
 package org.gammf.proxima.dns.hierarchy.actors
 
 import akka.actor.Props
-import org.gammf.proxima.dns.hierarchy.util.Role._
-import org.gammf.proxima.dns.hierarchy.util.Service.StringService
+import org.gammf.proxima.dns.utils.Role._
+import org.gammf.proxima.dns.utils.Service.StringService
 
 /**
   * Represents the master of the [[DNSRouterActor]] actors.

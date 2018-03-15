@@ -3,9 +3,11 @@ package org.gammf.proxima.dns
 import akka.actor.ActorSystem
 import akka.pattern.ask
 import akka.util.Timeout
+import org.gammf.proxima.dns.general.actors.{BridgeActor, PrinterActor}
+import org.gammf.proxima.dns.dnsserver.DNSServer
 import org.gammf.proxima.dns.hierarchy.actors.{DNSNodeActor, DNSRootActor}
 import org.gammf.proxima.dns.hierarchy.messages._
-import org.gammf.proxima.dns.hierarchy.util.{Service, ServiceAddress}
+import org.gammf.proxima.dns.utils.{Service, ServiceAddress}
 
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -16,9 +18,9 @@ import scala.language.postfixOps
   */
 object EntryPoint extends App {
   implicit val timeout: Timeout = Timeout(5 seconds)
-
   val actorSystem = ActorSystem("ProximaDNS")
   val dnsRoot = actorSystem.actorOf(DNSRootActor.rootProps(Service() :+ "proxima"))
+  DNSServer.start(actorSystem, actorSystem.actorOf(BridgeActor.bridgeProps(dnsRoot = dnsRoot)))
 
   actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
     service = Service() :+ "proxima" :+ "medical"))
@@ -62,16 +64,8 @@ object EntryPoint extends App {
   actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
     service = Service() :+ "proxima" :+ "commercial" :+ "shop" :+ "armani", address = ServiceAddress("192.168.0.8", 4096)))
 
-  Thread.sleep(1000)
+  Thread.sleep(500)
 
   val printer = actorSystem.actorOf(PrinterActor.printerProps())
   (dnsRoot ? HierarchyRequestMessage(0)).mapTo[HierarchyNodesMessage].foreach(printer ! _)
-
-  Thread.sleep(1000)
-
-  (dnsRoot ? AddressRequestMessage(service = Service() :+ "proxima" :+ "commercial" :+ "supermarket" :+ "coop"))
-    .mapTo[AddressResponseMessage].map {
-    case response: AddressResponseOKMessage => println(response.address)
-    case _ => println("error")
-  }
 }

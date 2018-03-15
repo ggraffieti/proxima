@@ -1,8 +1,8 @@
 package org.gammf.proxima.dns.hierarchy.messages
 
 import akka.actor.ActorRef
-import org.gammf.proxima.dns.hierarchy.util.Role.Role
-import org.gammf.proxima.dns.hierarchy.util.Service.StringService
+import org.gammf.proxima.dns.utils.Role.Role
+import org.gammf.proxima.dns.utils.Service.StringService
 
 /**
   * Represents a request about a deletion of a DNS entry.

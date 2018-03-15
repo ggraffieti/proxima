@@ -2,9 +2,9 @@ package org.gammf.proxima.dns.hierarchy.actors
 
 import akka.actor.{ActorRef, Props}
 import org.gammf.proxima.dns.hierarchy.messages._
-import org.gammf.proxima.dns.hierarchy.util.Role._
-import org.gammf.proxima.dns.hierarchy.util.Service.StringService
-import org.gammf.proxima.dns.hierarchy.util.ServiceAddress
+import org.gammf.proxima.dns.utils.Role._
+import org.gammf.proxima.dns.utils.Service.StringService
+import org.gammf.proxima.dns.utils.ServiceAddress
 
 /**
   * Represents a simple DNS node identified by a name and a role, offering a [[StringService]].

@@ -1,4 +1,4 @@
-package org.gammf.proxima.dns.communication.messages
+package org.gammf.proxima.dns.general.messages
 
 /**
   * Represents an external request to the DNS service.

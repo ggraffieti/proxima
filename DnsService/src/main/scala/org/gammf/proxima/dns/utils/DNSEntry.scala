@@ -1,8 +1,8 @@
-package org.gammf.proxima.dns.hierarchy.util
+package org.gammf.proxima.dns.utils
 
 import akka.actor.ActorRef
-import org.gammf.proxima.dns.hierarchy.util.Role._
-import org.gammf.proxima.dns.hierarchy.util.Service.StringService
+import org.gammf.proxima.dns.utils.Role._
+import org.gammf.proxima.dns.utils.Service.StringService
 
 import language.reflectiveCalls
 

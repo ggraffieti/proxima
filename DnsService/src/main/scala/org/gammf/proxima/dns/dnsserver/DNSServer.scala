@@ -1,4 +1,4 @@
-package org.gammf.proxima.dns.communication.dnsserver
+package org.gammf.proxima.dns.dnsserver
 
 import akka.Done
 import akka.actor.{ActorRef, ActorSystem}
@@ -11,7 +11,7 @@ import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
-import org.gammf.proxima.dns.communication.messages._
+import org.gammf.proxima.dns.general.messages._
 import play.api.libs.json.{JsError, JsSuccess, Json}
 
 import scala.concurrent.{ExecutionContextExecutor, Future}

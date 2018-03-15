@@ -4,8 +4,8 @@ import akka.actor.ActorRef
 import akka.util.Timeout
 import akka.pattern.ask
 import org.gammf.proxima.dns.hierarchy.messages._
-import org.gammf.proxima.dns.hierarchy.util.ActorDNSEntry
-import org.gammf.proxima.dns.hierarchy.util.Role._
+import org.gammf.proxima.dns.utils.ActorDNSEntry
+import org.gammf.proxima.dns.utils.Role._
 
 import scala.concurrent.Await
 import scala.annotation.tailrec

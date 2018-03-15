@@ -1,8 +1,8 @@
-package org.gammf.proxima.dns.communication
+package org.gammf.proxima.dns.general
 
-import org.gammf.proxima.dns.communication.messages.{ExternalAddressRequestMessage, ExternalAddressResponseOKMessage}
+import org.gammf.proxima.dns.general.messages.{ExternalAddressRequestMessage, ExternalAddressResponseOKMessage}
 import org.gammf.proxima.dns.hierarchy.messages.{AddressRequestMessage, AddressResponseOKMessage}
-import org.gammf.proxima.dns.hierarchy.util.Service
+import org.gammf.proxima.dns.utils.Service
 import language.implicitConversions
 import language.reflectiveCalls
 

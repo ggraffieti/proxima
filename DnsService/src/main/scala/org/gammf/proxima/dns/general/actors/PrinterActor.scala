@@ -1,4 +1,4 @@
-package org.gammf.proxima.dns.hierarchy.util
+package org.gammf.proxima.dns.general.actors
 
 import akka.actor.{Actor, Props}
 import org.gammf.proxima.dns.hierarchy.messages.{HierarchyNode, HierarchyNodesMessage}
