@@ -18,7 +18,7 @@ package object actors {
       def service: StringService
     }
 
-    implicit def message2yellowPagesEntry(msg: EntryType): ActorDNSEntry =
+    implicit def message2YellowPagesEntry(msg: EntryType): ActorDNSEntry =
       ActorDNSEntry(reference = msg.reference, name = msg.name, role = msg.role, service = msg.service)
 
     implicit def yellowPagesEntry2RedirectionRequest(entry: ActorDNSEntry): RedirectionRequestMessage =
@@ -27,7 +27,7 @@ package object actors {
     implicit def yellowPagesEntry2DeleteRequest(entry: ActorDNSEntry): DeletionRequestMessage =
       DeletionRequestMessage(reference = entry.reference, name = entry.name, role = entry.role, service = entry.service)
 
-    implicit def entryList2hierarchyNodeList(list: List[(Int, ActorDNSEntry)]): List[HierarchyNode] =
+    implicit def entryList2HierarchyNodeList(list: List[(Int, ActorDNSEntry)]): List[HierarchyNode] =
       list.map(node => HierarchyNode(level = node._1, reference = node._2.reference.toString, name = node._2.name.toString,
         role = node._2.role.toString, service = node._2.service.toString))
   }

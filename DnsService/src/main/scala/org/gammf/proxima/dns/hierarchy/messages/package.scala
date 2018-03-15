@@ -1,4 +1,4 @@
-package org.gammf.proxima.dns
+package org.gammf.proxima.dns.hierarchy
 
 package object messages {
   /**
