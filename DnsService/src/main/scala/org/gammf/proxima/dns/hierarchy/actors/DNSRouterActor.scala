@@ -32,27 +32,36 @@ trait DNSRouterActor extends DNSActor {
   }
 
   private[this] def handleActorInsertion(msg: InsertionRequestMessage): Unit = {
-    searchForValidNode(msg)
-    def searchForValidNode(msg: InsertionRequestMessage): Unit = dnsEntries.filter(n => n > msg && n.role == InternalNode) match {
-      case h :: _ => h.reference forward msg
-      case _ => evaluateActorInsertion(msg)
+    role match {
+      case Root if !isServiceValid(msg) => sender ! InsertionErrorMessage()
+      case _ => insertActor(msg)
     }
-    def evaluateActorInsertion(msg: InsertionRequestMessage): Unit = msg.role match {
-      case InternalNode => if (dnsEntries.exists(_ === msg)) sender ! InsertionErrorMessage() else insertInternalNode(msg)
-      case _ => insertSimpleActor(msg)
-    }
-    def insertInternalNode(msg: InsertionRequestMessage): Unit = { insertSimpleActor(msg); delegateNodesToNewNode(msg) }
-    def insertSimpleActor(msg: InsertionRequestMessage): Unit = { dnsEntries = msg :: dnsEntries; sender ! buildResponse(msg) }
-    def buildResponse(msg: InsertionRequestMessage): InsertionResponseMessage = msg match {
-      case _: RegistrationRequestMessage => RegistrationResponseMessage()
-      case RedirectionRequestMessage(ref, name, role, service) => RedirectionResponseMessage(ref, name, role, service)
-    }
-    def delegateNodesToNewNode(msg: InsertionRequestMessage): Unit = dnsEntries.filter(_ < msg).foreach(n => {
-      Await.result(msg.reference ? (n: RedirectionRequestMessage), timeout.duration).asInstanceOf[InsertionResponseMessage] match {
-        case m: RedirectionResponseMessage => dnsEntries = dnsEntries.filterNot(_ == (m: ActorDNSEntry))
-        case _ => // If you don't want the actor reference it's fine, I'll keep it
+
+    def isServiceValid(msg: InsertionRequestMessage): Boolean = msg.service.main == service.main
+
+    def insertActor(msg: InsertionRequestMessage): Unit = {
+      searchForValidNode(msg)
+      def searchForValidNode(msg: InsertionRequestMessage): Unit = dnsEntries.filter(n => n > msg && n.role == InternalNode) match {
+        case h :: _ => h.reference forward msg
+        case _ => evaluateActorInsertion(msg)
       }
-    })
+      def evaluateActorInsertion(msg: InsertionRequestMessage): Unit = msg.role match {
+        case InternalNode => if (dnsEntries.exists(_ === msg)) sender ! InsertionErrorMessage() else insertInternalNode(msg)
+        case _ => insertSimpleActor(msg)
+      }
+      def insertInternalNode(msg: InsertionRequestMessage): Unit = { insertSimpleActor(msg); delegateNodesToNewNode(msg) }
+      def insertSimpleActor(msg: InsertionRequestMessage): Unit = { dnsEntries = msg :: dnsEntries; sender ! buildResponse(msg) }
+      def buildResponse(msg: InsertionRequestMessage): InsertionResponseMessage = msg match {
+        case _: RegistrationRequestMessage => RegistrationResponseMessage()
+        case RedirectionRequestMessage(ref, name, role, service) => RedirectionResponseMessage(ref, name, role, service)
+      }
+      def delegateNodesToNewNode(msg: InsertionRequestMessage): Unit = dnsEntries.filter(_ < msg).foreach(n => {
+        Await.result(msg.reference ? (n: RedirectionRequestMessage), timeout.duration).asInstanceOf[InsertionResponseMessage] match {
+          case m: RedirectionResponseMessage => dnsEntries = dnsEntries.filterNot(_ == (m: ActorDNSEntry))
+          case _ => // If you don't want the actor reference it's fine, I'll keep it
+        }
+      })
+    }
   }
 
   private[this] def handleActorDeletion(msg: ActorDNSEntry): Unit = dnsEntries.filter(_ == msg) match {

@@ -24,6 +24,23 @@ object EntryPoint extends App {
   val printer = actorSystem.actorOf(PrinterActor.printerProps())
   DNSServer.start(actorSystem, actorSystem.actorOf(BridgeActor.bridgeProps(dnsRoot = dnsRoot, dnsNodesCreator = dnsNodesCreator)))
 
+  actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
+    service = Service() :+ "proxima" :+ "medical" :+ "firstAid", address = ServiceAddress("192.168.0.1", 4096)))
+  actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
+    service = Service() :+ "proxima" :+ "medical" :+ "firstAid", address = ServiceAddress("192.168.0.2", 4096)))
+  actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
+    service = Service() :+ "proxima" :+ "medical" :+ "exam", address = ServiceAddress("192.168.0.3", 4096)))
+  actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
+    service = Service() :+ "proxima" :+ "commercial" :+ "supermarket" :+ "coop", address = ServiceAddress("192.168.0.4", 4096)))
+  actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
+    service = Service() :+ "proxima" :+ "commercial" :+ "supermarket" :+ "conad", address = ServiceAddress("192.168.0.5", 4096)))
+  actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
+    service = Service() :+ "proxima" :+ "commercial" :+ "supermarket" :+ "a&o", address = ServiceAddress("192.168.0.6", 4096)))
+  actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
+    service = Service() :+ "proxima" :+ "commercial" :+ "restaurant" :+ "scottadito", address = ServiceAddress("192.168.0.7", 4096)))
+  actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
+    service = Service() :+ "proxima" :+ "commercial" :+ "shop" :+ "armani", address = ServiceAddress("192.168.0.8", 4096)))
+
   actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
     service = Service() :+ "proxima" :+ "medical"))
   actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
@@ -47,26 +64,11 @@ object EntryPoint extends App {
   actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
     service = Service() :+ "proxima" :+ "commercial" :+ "shop"))
   actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "commercial" :+ "shop" :+ "armani"))
+    service = Service() :+ "proxima" :+ "commercial" :+ "shop" :+ "prada"))
   actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "commercial" :+ "shop" :+ "armani"))
-
-  actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "medical" :+ "firstAid", address = ServiceAddress("192.168.0.1", 4096)))
-  actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "medical" :+ "firstAid", address = ServiceAddress("192.168.0.2", 4096)))
-  actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "medical" :+ "exam", address = ServiceAddress("192.168.0.3", 4096)))
-  actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "commercial" :+ "supermarket" :+ "coop", address = ServiceAddress("192.168.0.4", 4096)))
-  actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "commercial" :+ "supermarket" :+ "conad", address = ServiceAddress("192.168.0.5", 4096)))
-  actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "commercial" :+ "supermarket" :+ "a&o", address = ServiceAddress("192.168.0.6", 4096)))
-  actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "commercial" :+ "restaurant" :+ "scottadito", address = ServiceAddress("192.168.0.7", 4096)))
-  actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "commercial" :+ "shop" :+ "armani", address = ServiceAddress("192.168.0.8", 4096)))
+    service = Service() :+ "proxima" :+ "commercial" :+ "shop" :+ "prada"))
+  actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
+    service = Service() :+ "proxxima" :+ "commercial" :+ "shop" :+ "scout"))
 
   Thread.sleep(500)
 
