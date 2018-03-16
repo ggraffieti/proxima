@@ -2,6 +2,7 @@ import {Request, Response} from "express";
 import {RequestHandler} from "./abstractRequestHandler";
 import { AuthorizationChecker } from "../digitalSignature/authorizationChecker";
 import { WorkShiftQueries } from "../workShiftsVerifier/workShiftsQueries";
+import { MedicalDataQueries } from "../medicalData/medicalDataQueries";
 
 export class DataRequestHandler extends RequestHandler {
 
@@ -20,18 +21,25 @@ export class DataRequestHandler extends RequestHandler {
         WorkShiftQueries.rescuerAuthorization(req.body.operatorID).then((auth) => {
           console.log("Work Shift OK");
           if (auth) {
-            res.send(JSON.stringify({ciao:"bella"})); // send medical data.
+            MedicalDataQueries.getPatientData(req.body.targetID).then((data) => res.send(data))
+              .catch((err) => console.log(err));
           }
           else {
             throw "false work schedule";
           }
-        }).catch((err) => console.log(err));
+        }).catch((err) => {
+          console.log(err);
+          DataRequestHandler.sendUnauthorizedError(res);
+        });
       }
       else {
         throw "false signature auth";
       }
     })
-    .catch((err) => console.log(err)); // send a 403 ERROR!!
+    .catch((err) => {
+      console.log(err);
+      DataRequestHandler.sendUnauthorizedError(res);
+    });
   }
 
 }
