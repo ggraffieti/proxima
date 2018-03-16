@@ -1,6 +1,6 @@
 export interface IWorkShift {
-  getStartTime(): number;
-  getEndTime(): number;
+  begin: number;
+  end: number;
 
   isInside(time: number): boolean;
 

@@ -4,7 +4,7 @@ export class DatabaseAccess {
 
   private static SINGLETON = new DatabaseAccess();
 
-  private medicalDataUrl = 'mongodb://localhost:27017/medicalData';
+  private medicalDataUrl = 'mongodb://localhost:27017/proximaFirstAid';
   private medicalDataConnection;
   //private authorizationDataUrl = 'mongodb://localhost:27017/authorizationData';
   //private authorizationDataConnection;

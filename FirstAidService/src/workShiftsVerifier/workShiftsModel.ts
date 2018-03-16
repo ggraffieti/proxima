@@ -1,6 +1,8 @@
 import * as mongoose from "mongoose";
 import { IWeeklyWorkShift } from "./utils/IWeeklyWorkShift";
-import { WeeklyWorkShift } from "./utils/WeeklyWorkShift";
+import { WeeklyWorkShift } from "./utils/weeklyWorkShift";
+import { DatabaseAccess } from "../databaseAccess";
+import { WorkShift } from "./utils/workShift";
 
 export interface IWeeklyWorkShiftModel extends mongoose.Document { 
   getWeeklyWorkShift(): IWeeklyWorkShift;
@@ -22,7 +24,7 @@ const workShiftsSchema = new mongoose.Schema({
   sunday: [shiftSchema]
 });
 workShiftsSchema.methods.getWeeklyWorkShift = function(): IWeeklyWorkShift {
-  return new WeeklyWorkShift(this.rescuerID, this.monday, this.tuesday, this.wednesday, this.thursday, this.friday, this.saturday, this.sunday);
+  return new WeeklyWorkShift(this.rescuerID, this.monday.map((w) => new WorkShift(w.begin, w.end)), this.tuesday.map((w) => new WorkShift(w.begin, w.end)), this.wednesday.map((w) => new WorkShift(w.begin, w.end)), this.thursday.map((w) => new WorkShift(w.begin, w.end)), this.friday.map((w) => new WorkShift(w.begin, w.end)), this.saturday.map((w) => new WorkShift(w.begin, w.end)), this.sunday.map((w) => new WorkShift(w.begin, w.end)));
 }
 
-export const workShifts: mongoose.Model<IWeeklyWorkShiftModel> = mongoose.model('rescuersWorkSchedule', workShiftsSchema);
+export const workShifts: mongoose.Model<IWeeklyWorkShiftModel> = DatabaseAccess.getInstance().getMedicalDataConnection().model('rescuersworkschedules', workShiftsSchema);

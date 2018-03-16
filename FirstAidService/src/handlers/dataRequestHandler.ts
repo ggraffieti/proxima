@@ -10,22 +10,25 @@ export class DataRequestHandler extends RequestHandler {
   }
 
   public static handleDataRequest(req: Request, res: Response) {
+    console.log("handleDataRequest");
+    console.log("operator: " + req.body.operatorID);
     DataRequestHandler.prepareResponse(res);
     AuthorizationChecker.verifyDigitalSignature(req.body.operatorID, req.body.targetID, req.body.signature)
     .then((authorized) => {
       if (authorized) {
-        WorkShiftQueries.rescuerAuthorization(req.body.operatorID)
-        .then((auth) => {
+        console.log("verify digital signature OK");
+        WorkShiftQueries.rescuerAuthorization(req.body.operatorID).then((auth) => {
+          console.log("Work Shift OK");
           if (auth) {
-            res.send(JSON.stringify({ciao:"bella"}));
+            res.send(JSON.stringify({ciao:"bella"})); // send medical data.
           }
           else {
-            throw new Error();
+            throw "false work schedule";
           }
-        });
+        }).catch((err) => console.log(err));
       }
       else {
-        throw new Error();
+        throw "false signature auth";
       }
     })
     .catch((err) => console.log(err)); // send a 403 ERROR!!
