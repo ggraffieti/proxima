@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import * as mongoose from "mongoose";
 
 const userAuthorizationsSchema = new mongoose.Schema({
   targetID : String,

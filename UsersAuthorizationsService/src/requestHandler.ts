@@ -12,13 +12,14 @@ export class RequestHandler {
     var serviceId = req.query.serviceid;
 
     if(targetId !== undefined && serviceId !== undefined) {
-      userAuthorizations.findOne({'targetID' : targetId}, 'authorizations', (err, doc) => {
-        if (err || doc == undefined) {
+      userAuthorizations.findOne({targetID : targetId, authorizations : serviceId}, (err, doc) => {
+        if (err) {
           RequestHandler.sendError(res, RequestHandler.INTERNAL_ERROR_CODE, 'Internal Error');
-        } else if(doc.authorizations.includes(serviceId)) {
-          res.send("Authorized");
-        } else {
+        } else if(!doc) {
           RequestHandler.sendError(res, RequestHandler.FORBIDDEN_ERROR_CODE, 'Forbidden');
+        } else {
+          res.send("Authorized");
+          console.log(doc.toString());
         }
       });
     } else {

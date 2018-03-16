@@ -1,16 +1,16 @@
 import * as express from "express";
+import * as mongoose from "mongoose";
 import {DatabaseConnection} from "./databaseConnection";
 import {RequestHandler} from "./requestHandler";
 
 var app = express();
-const mongoose = require('mongoose');
 
 DatabaseConnection.connect();
 
 app.get('/authorize', RequestHandler.handleRequest);
 
 app.listen(8436, function () {
-    console.log('Authorizer service listening on port 8436.');
+    console.log('Authorization service listening on port 8436.');
 });
 
 
