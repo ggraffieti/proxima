@@ -58,6 +58,17 @@ object DNSServer {
           }
         }
       }
+    } ~
+    delete {
+      pathPrefix(DNS_PATH / Segment / Segment / IntNumber) {
+        (service, ip, port) => {
+          println("[DNSServer] serving address deletion request: service " + service + ", address " + ip)
+          onComplete(deleteAddress((service, ip, port))) { _ =>
+            println("[DNSServer] address deletion completed, sending response")
+            complete(HttpResponse(OK))
+          }
+        }
+      }
     }
 
   def start(actorSystem: ActorSystem, bridgeActor: ActorRef) {
@@ -79,6 +90,12 @@ object DNSServer {
   private[this] def createAddress(info: (String, String, Int)): Future[Done] = {
     (bridgeActor ? ExternalAddressCreationRequestMessage(service = info._1, ipAddress = info._2, port = info._3))
       .mapTo[ExternalAddressCreationResponseMessage]
+    Future{Done}
+  }
+
+  private[this] def deleteAddress(info: (String, String, Int)): Future[Done] = {
+    (bridgeActor ? ExternalDeletionRequestMessage(service = info._1, ipAddress = info._2, port = info._3))
+      .mapTo[ExternalDeletionResponseMessage]
     Future{Done}
   }
 }

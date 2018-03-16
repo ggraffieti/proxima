@@ -6,10 +6,11 @@ import org.gammf.proxima.dns.utils.ServiceAddress
 
 /**
   * Represents a request to the DNS service.
-  * @param role the role of the actor containing the desired information. In most cases, it's a [[LeafNode]].
+ *
+  * @param role    the role of the actor containing the desired information. In most cases, it's a [[LEAF_NODE]].
   * @param service the desired service.
   */
-case class AddressRequestMessage(role: Role = LeafNode, service: StringService) extends DNSMessage
+case class AddressRequestMessage(role: Role = LEAF_NODE, service: StringService) extends DNSMessage
 
 /**
   * It's a response to a [[AddressRequestMessage]].

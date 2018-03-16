@@ -108,12 +108,12 @@ case class ActorDNSEntryImpl(override val reference: ActorRef, override val name
   }
   override def ===(that: EntryParam): Boolean = role == that.role && service == that.service
   override def >(that: EntryParam): Boolean = role match {
-    case InternalNode if that.role != InternalNode => service >= that.service
+    case INTERNAL_NODE if that.role != INTERNAL_NODE => service >= that.service
     case _ => service > that.service
   }
   override def >=(that: EntryParam): Boolean = this > that || this === that
   override def <(that: EntryParam): Boolean = that.role match {
-    case InternalNode if role != InternalNode => service <= that.service
+    case INTERNAL_NODE if role != INTERNAL_NODE => service <= that.service
     case _ => service < that.service
   }
   override def <=(that: EntryParam): Boolean = this < that || this === that

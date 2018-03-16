@@ -4,7 +4,7 @@ import akka.actor.{Actor, ActorRef, Props}
 import akka.pattern.ask
 import akka.util.Timeout
 import org.gammf.proxima.dns.general.messages._
-import org.gammf.proxima.dns.hierarchy.messages.{AddressRequestMessage, AddressResponseMessage, AddressResponseOKMessage}
+import org.gammf.proxima.dns.hierarchy.messages._
 
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -24,6 +24,7 @@ class BridgeActor(val name: String, val dnsRoot: ActorRef, val dnsNodesCreator: 
   override def receive: Receive = {
     case msg: ExternalAddressRequestMessage => handleExternalAddressRequest(msg, sender)
     case msg: ExternalAddressCreationRequestMessage => handleExternalAddressCreation(msg, sender)
+    case msg: ExternalDeletionRequestMessage => handleExternalDeletionRequest(msg, sender)
     case _ => println("["+ name + "] Huh?"); unhandled(_)
   }
 
@@ -37,6 +38,12 @@ class BridgeActor(val name: String, val dnsRoot: ActorRef, val dnsNodesCreator: 
   private[this] def handleExternalAddressCreation(msg: ExternalAddressCreationRequestMessage, msgSender: ActorRef): Unit = {
     (dnsNodesCreator ? (msg: AddressCreationRequestMessage)).mapTo[AddressCreationResponseMessage].map { res =>
       msgSender ! (res: ExternalAddressCreationResponseMessage)
+    }
+  }
+
+  private[this] def handleExternalDeletionRequest(msg: ExternalDeletionRequestMessage, msgSender: ActorRef): Unit = {
+    (dnsRoot ? (msg: DeletionRequestMessage)).mapTo[DeletionResponseMessage].map { _ =>
+      msgSender ! ExternalDeletionResponseMessage()
     }
   }
 }
