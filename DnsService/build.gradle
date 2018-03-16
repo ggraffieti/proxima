@@ -19,7 +19,9 @@ dependencies {
     compile group: 'com.typesafe.akka', name: 'akka-http_2.12', version: "${akkaHttpVersion}"
     compile group: 'com.typesafe.akka', name: 'akka-http-testkit_2.12', version: "${akkaHttpVersion}"
     compile group: 'com.typesafe.play', name: 'play-json_2.12', version: "${playFrameworkVersion}"
-
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: "${httpClientVersion}"
+    compile group: 'org.json', name: 'json', version: "${jsonVersion}"
+    
     testCompile group: 'junit', name: 'junit', version: "${jUnitVersion}"
     testCompile group: 'org.scalatest', name: 'scalatest_2.12', version: "${scalaTestVersion}"
     testCompile group: 'com.typesafe.akka', name: 'akka-testkit_2.12', version: "${akkaVersion}"

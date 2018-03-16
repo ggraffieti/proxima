@@ -7,7 +7,7 @@ import org.gammf.proxima.dns.general.actors.{BridgeActor, DNSNodesCreatorActor, 
 import org.gammf.proxima.dns.dnsserver.DNSServer
 import org.gammf.proxima.dns.hierarchy.actors.{DNSNodeActor, DNSRootActor}
 import org.gammf.proxima.dns.hierarchy.messages._
-import org.gammf.proxima.dns.utils.{Service, ServiceAddress}
+import org.gammf.proxima.dns.utils.Service
 
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -48,38 +48,11 @@ object EntryPoint extends App {
     service = Service() :+ "proxima" :+ "commercial" :+ "shop"))
   actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
     service = Service() :+ "proxima" :+ "commercial" :+ "shop" :+ "prada"))
-  actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "commercial" :+ "shop" :+ "prada"))
-  actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxxima" :+ "commercial" :+ "shop" :+ "scout"))
 
-  actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "medical" :+ "firstAid", address = ServiceAddress("192.168.0.1", 4096)))
-  actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "medical" :+ "firstAid", address = ServiceAddress("192.168.0.2", 4096)))
-  actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "medical" :+ "exam", address = ServiceAddress("192.168.0.3", 4096)))
-  actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "commercial" :+ "supermarket" :+ "coop", address = ServiceAddress("192.168.0.4", 4096)))
-  actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "commercial" :+ "supermarket" :+ "conad", address = ServiceAddress("192.168.0.5", 4096)))
-  actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "commercial" :+ "supermarket" :+ "a&o", address = ServiceAddress("192.168.0.6", 4096)))
-  actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "commercial" :+ "restaurant" :+ "scottadito", address = ServiceAddress("192.168.0.7", 4096)))
-  actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "commercial" :+ "shop" :+ "armani", address = ServiceAddress("192.168.0.8", 4096)))
-
-  Thread.sleep(500)
-
+  Thread.sleep(200)
   (dnsRoot ? HierarchyRequestMessage(0)).mapTo[HierarchyNodesMessage].foreach(printer ! _)
-
-  Thread.sleep(500)
-
-  dnsRoot ! DeletionRequestMessage(service = Service() :+ "proxima" :+ "commercial" :+ "supermarket" :+ "conad",
-    address = ServiceAddress("192.168.0.5", 4096))
-
-  Thread.sleep(2000)
-
+  Thread.sleep(200)
+  Postman.main()
+  Thread.sleep(200)
   (dnsRoot ? HierarchyRequestMessage(0)).mapTo[HierarchyNodesMessage].foreach(printer ! _)
 }
