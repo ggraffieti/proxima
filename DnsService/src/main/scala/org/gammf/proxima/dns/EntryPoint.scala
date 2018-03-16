@@ -21,6 +21,7 @@ object EntryPoint extends App {
   val actorSystem = ActorSystem("ProximaDNS")
   val dnsRoot = actorSystem.actorOf(DNSRootActor.rootProps(Service() :+ "proxima"))
   val dnsNodesCreator = actorSystem.actorOf(DNSNodesCreatorActor.creatorProps(actorSystem = actorSystem, dnsRoot = dnsRoot))
+  val printer = actorSystem.actorOf(PrinterActor.printerProps())
   DNSServer.start(actorSystem, actorSystem.actorOf(BridgeActor.bridgeProps(dnsRoot = dnsRoot, dnsNodesCreator = dnsNodesCreator)))
 
   actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
@@ -47,6 +48,8 @@ object EntryPoint extends App {
     service = Service() :+ "proxima" :+ "commercial" :+ "shop"))
   actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
     service = Service() :+ "proxima" :+ "commercial" :+ "shop" :+ "armani"))
+  actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
+    service = Service() :+ "proxima" :+ "commercial" :+ "shop" :+ "armani"))
 
   actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot,
     service = Service() :+ "proxima" :+ "medical" :+ "firstAid", address = ServiceAddress("192.168.0.1", 4096)))
@@ -67,9 +70,9 @@ object EntryPoint extends App {
 
   Thread.sleep(500)
 
-  val printer = actorSystem.actorOf(PrinterActor.printerProps())
   (dnsRoot ? HierarchyRequestMessage(0)).mapTo[HierarchyNodesMessage].foreach(printer ! _)
 
   Thread.sleep(10000)
+
   (dnsRoot ? HierarchyRequestMessage(0)).mapTo[HierarchyNodesMessage].foreach(printer ! _)
 }

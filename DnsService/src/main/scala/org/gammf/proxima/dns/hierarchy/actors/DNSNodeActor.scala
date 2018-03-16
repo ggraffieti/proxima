@@ -1,6 +1,6 @@
 package org.gammf.proxima.dns.hierarchy.actors
 
-import akka.actor.{ActorRef, Props}
+import akka.actor.{ActorRef, PoisonPill, Props}
 import org.gammf.proxima.dns.hierarchy.messages._
 import org.gammf.proxima.dns.utils.Role._
 import org.gammf.proxima.dns.utils.Service.StringService
@@ -16,13 +16,19 @@ sealed trait DNSNodeActor extends DNSActor {
     */
   def dnsRoot: ActorRef
 
-  override def preStart(): Unit = super.preStart; dnsRoot !
-    RegistrationRequestMessage(reference = self, name = name, role = role, service = service)
+  override def preStart(): Unit = {
+    super.preStart; println("[" + name + "] Started")
+    dnsRoot ! RegistrationRequestMessage(reference = self, name = name, role = role, service = service)
+  }
 
   override def receive: Receive = {
     case RegistrationResponseMessage() => println("[" + name + "] Registration OK.")
-    case InsertionErrorMessage() => println("[" + name + "] Insertion Error.")
+    case InsertionErrorMessage() => println("[" + name + "] Insertion Error."); self ! PoisonPill
     case _ => println("["+ name + "] Huh?"); unhandled(_)
+  }
+
+  override def postStop {
+    super.postStop; println("[" + name + "] Stopped")
   }
 }
 
@@ -81,5 +87,4 @@ object DNSNodeActor {
   def internalNodeProps(dnsRoot: ActorRef, service: StringService): Props = {
     Props(new DNSInternalNodeActor(name = "InternalNode[" + service.last.getOrElse("") + "]", service = service, dnsRoot = dnsRoot))
   }
-
 }
