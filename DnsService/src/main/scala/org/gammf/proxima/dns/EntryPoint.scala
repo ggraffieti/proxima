@@ -29,30 +29,18 @@ object EntryPoint extends App {
   actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
     service = Service() :+ "proxima" :+ "medical" :+ "firstAid"))
   actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "medical" :+ "exam"))
-  actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
     service = Service() :+ "proxima" :+ "commercial"))
   actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
     service = Service() :+ "proxima" :+ "commercial" :+ "supermarket"))
   actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "commercial" :+ "supermarket" :+ "coop"))
-  val conad = actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "commercial" :+ "supermarket" :+ "conad"))
-  actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "commercial" :+ "supermarket" :+ "a&o"))
-  actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
     service = Service() :+ "proxima" :+ "commercial" :+ "restaurant"))
   actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "commercial" :+ "restaurant" :+ "scottadito"))
-  actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
     service = Service() :+ "proxima" :+ "commercial" :+ "shop"))
-  actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
-    service = Service() :+ "proxima" :+ "commercial" :+ "shop" :+ "prada"))
 
-  Thread.sleep(200)
+  Thread.sleep(100)
   (dnsRoot ? HierarchyRequestMessage(0)).mapTo[HierarchyNodesMessage].foreach(printer ! _)
-  Thread.sleep(200)
+  Thread.sleep(100)
   Postman.main()
-  Thread.sleep(200)
+  Thread.sleep(100)
   (dnsRoot ? HierarchyRequestMessage(0)).mapTo[HierarchyNodesMessage].foreach(printer ! _)
 }

@@ -25,7 +25,7 @@ object DNSServer {
 
   val route: Route =
     get {
-      pathPrefix(DNS_PATH / Segment) {
+      pathPrefix(DNS_PATH / ADDRESS_PATH / Segment) {
         service => {
           println("[DNSServer] serving address request: service " + service)
           onSuccess(fetchAddress(service)) {
@@ -42,15 +42,15 @@ object DNSServer {
       }
     } ~
     post {
-      path(DNS_PATH) {
+      path(DNS_PATH / ADDRESS_PATH) {
         entity(as[String]) { jsonString =>
           println("[DNSServer] parsing address creation request")
           Json.parse(jsonString).validate[(String, String, Int)] match {
             case info: JsSuccess[(String, String, Int)] =>
               println("[DNSServer] serving address creation request: service " + info.value._1)
               onComplete(createAddress(info.value)) { _ =>
-                println("[DNSServer] address created, sending response with url: " + DNS_URL + info.value._1)
-                complete(HttpResponse(Created, headers = List(Location(DNS_URL + info.value._1))))
+                println("[DNSServer] address created, sending response with url: " + COMPLETE_URL + info.value._1)
+                complete(HttpResponse(Created, headers = List(Location(COMPLETE_URL + info.value._1))))
               }
             case _: JsError =>
               println("[DNSServer] address creation request malformed")
@@ -60,7 +60,7 @@ object DNSServer {
       }
     } ~
     delete {
-      pathPrefix(DNS_PATH / Segment) { service => {
+      pathPrefix(DNS_PATH / ADDRESS_PATH / Segment) { service => {
           parameters('ip, 'port.as[Int]) { (ip, port) =>
             println("[DNSServer] serving address deletion request: service " + service + ", address " + ip + ":" + port)
             onComplete(deleteAddress((service, ip, port))) { _ =>

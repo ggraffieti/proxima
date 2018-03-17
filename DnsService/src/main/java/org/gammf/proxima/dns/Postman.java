@@ -9,18 +9,18 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.json.JSONObject;
 
 public class Postman {
-    private static final String URL = "http://localhost:6041/dns";
+    private static final String URL = "http://localhost:6041/dns/address";
 
     public static void main() {
         try {
-            postRequest(computeJson("proxima.medical.firstAid", "192.168.0.1", 4096));
-            postRequest(computeJson("proxima.medical.firstAid", "192.168.0.2", 4096));
-            postRequest(computeJson("proxima.medical.exam", "192.168.0.3", 4096));
-            postRequest(computeJson("proxima.commercial.supermarket.coop", "192.168.0.4", 4096));
-            postRequest(computeJson("proxima.commercial.supermarket.conad", "192.168.0.5", 4096));
-            postRequest(computeJson("proxima.commercial.supermarket.a&o", "192.168.0.6", 4096));
-            postRequest(computeJson("proxima.commercial.restaurant.scottadito", "192.168.0.7", 4096));
-            postRequest(computeJson("proxima.commercial.shop.prada", "192.168.0.8", 4096));
+            postRequest(computeJson("proxima.medical.firstAid", "192.168.0.1", 1406));
+            postRequest(computeJson("proxima.medical.firstAid", "192.168.0.1", 1406));
+            postRequest(computeJson("proxima.medical.exam", "192.168.0.3", 1406));
+            postRequest(computeJson("proxima.commercial.supermarket.coop", "192.168.0.4", 1406));
+            postRequest(computeJson("proxima.commercial.supermarket.conad", "192.168.0.5", 1406));
+            postRequest(computeJson("proxima.commercial.supermarket.a&o", "192.168.0.6", 1406));
+            postRequest(computeJson("proxima.commercial.restaurant.scottadito", "192.168.0.7", 1406));
+            postRequest(computeJson("proxima.commercial.shop.prada", "192.168.0.8", 1406));
         } catch (final IOException e) {
             e.printStackTrace();
         }

@@ -25,9 +25,14 @@ package object dnsserver {
   val DNS_PATH: String = "dns"
 
   /**
-    * The complete URL to be used to contact the server about a DNS issue
+    * The path to be used in order to contact the server about an address issue.
     */
-  val DNS_URL: String = APPLICATION_PROTOCOL + "://" + IP_ADDRESS + ":" + PORT_NUMBER + "/" + DNS_PATH + "/"
+  val ADDRESS_PATH: String = "address"
+
+  /**
+    * The complete URL to be used to contact the server about a DNS issue.
+    */
+  val COMPLETE_URL: String = APPLICATION_PROTOCOL + "://" + IP_ADDRESS + ":" + PORT_NUMBER + "/" + DNS_PATH + "/" + ADDRESS_PATH + "/"
 
   implicit val address2Json: Writes[(String, Int)] = Writes { address =>
     Json.obj(
