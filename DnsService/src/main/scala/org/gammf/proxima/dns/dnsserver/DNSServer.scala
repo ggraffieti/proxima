@@ -19,11 +19,20 @@ import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.postfixOps
 
+/**
+  * A RESTful HTTP Server, that manage all the DNS-related request in the Proxima system.
+  * The server handles requests of type GET, POST and DELETE.
+  * On the address path, the clients can send a GET request, specifying a service (as path parameter), to receive the
+  * address of the component that offers that service.
+  * On the address path, the clients can send a POST request, to create a resource representing the address of a component
+  * that offers a certain service (passed as a parameter in the request body).
+  * On the address path, the clients can, also, send a DELETE request, to delete the address of a certain component
+  * (passing IP address and port number as query parameters).
+  */
 object DNSServer {
   implicit val timeout: Timeout = Timeout(5 seconds)
   private[this] var bridgeActor: ActorRef = _
-
-  val route: Route =
+  private[this] val route: Route =
     get {
       pathPrefix(DNS_PATH / ADDRESS_PATH / Segment) {
         service => {
@@ -72,6 +81,11 @@ object DNSServer {
       }
     }
 
+  /**
+    * This method starts the server.
+    * @param actorSystem the actor system of the application.
+    * @param bridgeActor the authentication actor, used to contact the internal DNS actor system.
+    */
   def start(actorSystem: ActorSystem, bridgeActor: ActorRef) {
     this.bridgeActor = bridgeActor
     implicit val system: ActorSystem = actorSystem

@@ -8,13 +8,17 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.json.JSONObject;
 
+/**
+ * Simple java class that performs some post requests to the Domain Name System service, in order to submit the creation
+ * of the addresses of a bunch of components that offer specifics services.
+ */
 public class Postman {
     private static final String URL = "http://localhost:6041/dns/address";
 
-    public static void main() {
+    public static void main(String[] args) {
         try {
             postRequest(computeJson("proxima.medical.firstAid", "192.168.0.1", 1406));
-            postRequest(computeJson("proxima.medical.firstAid", "192.168.0.1", 1406));
+            postRequest(computeJson("proxima.medical.firstAid", "192.168.0.2", 1407));
             postRequest(computeJson("proxima.medical.exam", "192.168.0.3", 1406));
             postRequest(computeJson("proxima.commercial.supermarket.coop", "192.168.0.4", 1406));
             postRequest(computeJson("proxima.commercial.supermarket.conad", "192.168.0.5", 1406));

@@ -15,6 +15,8 @@ import scala.language.postfixOps
 
 /**
   * Application entry point.
+  * This object takes care of the Domain Name System hierarchy setup through the creation of its root node.
+  * Furthermore, this class starts the DNS server.
   */
 object EntryPoint extends App {
   implicit val timeout: Timeout = Timeout(5 seconds)
@@ -37,10 +39,7 @@ object EntryPoint extends App {
   actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
     service = Service() :+ "proxima" :+ "commercial" :+ "shop"))
 
-  Thread.sleep(100)
-  (dnsRoot ? HierarchyRequestMessage(0)).mapTo[HierarchyNodesMessage].foreach(printer ! _)
-  Thread.sleep(100)
-  Postman.main()
+  Postman.main(Array.empty)
   Thread.sleep(100)
   (dnsRoot ? HierarchyRequestMessage(0)).mapTo[HierarchyNodesMessage].foreach(printer ! _)
 }

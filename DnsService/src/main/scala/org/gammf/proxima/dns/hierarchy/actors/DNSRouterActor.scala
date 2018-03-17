@@ -7,7 +7,6 @@ import org.gammf.proxima.dns.hierarchy.messages._
 import org.gammf.proxima.dns.utils.{ActorDNSEntry, ServiceAddress}
 import org.gammf.proxima.dns.utils.Role._
 import org.gammf.proxima.dns.utils.Service.StringService
-import org.gammf.proxima.dns.hierarchy.actors.entriesImplicitConversions._
 
 import scala.concurrent.Await
 import scala.annotation.tailrec

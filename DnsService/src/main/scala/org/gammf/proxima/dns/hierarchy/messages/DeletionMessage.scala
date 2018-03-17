@@ -12,10 +12,19 @@ import org.gammf.proxima.dns.utils.ServiceAddress
   */
 case class DeletionRequestMessage(service: StringService, role: Role = LEAF_NODE, address: ServiceAddress) extends DNSMessage
 
+/**
+  * It's a response to a [[DeletionRequestMessage]].
+  */
 trait DeletionResponseMessage extends DNSMessage
 
+/**
+  * Represents a positive response to a [[DeletionRequestMessage]].
+  */
 case class DeletionResponseOKMessage() extends DeletionResponseMessage
 
+/**
+  * Represents a negative response to a [[DeletionRequestMessage]].
+  */
 case class DeletionResponseErrorMessage() extends DeletionResponseMessage
 
 /**
