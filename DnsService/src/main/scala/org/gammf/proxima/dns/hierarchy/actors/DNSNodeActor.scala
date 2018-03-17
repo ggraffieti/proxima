@@ -81,7 +81,7 @@ object DNSNodeActor {
     * @return the Props to use to create a DNS leaf node actor.
     */
   def leafNodeProps(dnsRoot: ActorRef, service: StringService, address: ServiceAddress): Props =
-    Props(new DNSLeafNodeActor(name = address.toString, service = service, dnsRoot = dnsRoot, serviceAddress = address))
+    Props(new DNSLeafNodeActor(name = service.last.getOrElse("") + "(" + address.toString + ")", service = service, dnsRoot = dnsRoot, serviceAddress = address))
 
   /**
     * Factory methods that returns a Props to create a DNS internal node actor offering the specified service.

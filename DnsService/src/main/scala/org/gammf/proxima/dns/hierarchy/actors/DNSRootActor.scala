@@ -30,5 +30,5 @@ object DNSRootActor {
     * @return the Props to use to create the DNS root actor.
     */
   def rootProps(service: StringService): Props =
-    Props(new DNSRootActor(name = "RootNode[" + service + "]", service = service))
+    Props(new DNSRootActor(name = service.toString, service = service))
 }
