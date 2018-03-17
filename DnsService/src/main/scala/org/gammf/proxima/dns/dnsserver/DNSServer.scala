@@ -60,12 +60,13 @@ object DNSServer {
       }
     } ~
     delete {
-      pathPrefix(DNS_PATH / Segment / Segment / IntNumber) {
-        (service, ip, port) => {
-          println("[DNSServer] serving address deletion request: service " + service + ", address " + ip)
-          onComplete(deleteAddress((service, ip, port))) { _ =>
-            println("[DNSServer] address deletion completed, sending response")
-            complete(HttpResponse(OK))
+      pathPrefix(DNS_PATH / Segment) { service => {
+          parameters('ip, 'port.as[Int]) { (ip, port) =>
+            println("[DNSServer] serving address deletion request: service " + service + ", address " + ip + ":" + port)
+            onComplete(deleteAddress((service, ip, port))) { _ =>
+              println("[DNSServer] address deletion completed, sending response")
+              complete(HttpResponse(OK))
+            }
           }
         }
       }
