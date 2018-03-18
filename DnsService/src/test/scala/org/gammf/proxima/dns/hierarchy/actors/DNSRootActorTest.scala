@@ -1,32 +1,16 @@
 package org.gammf.proxima.dns.hierarchy.actors
 
-import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.actor.{ActorRef, ActorSystem}
 import akka.testkit.{ImplicitSender, TestKit}
-import akka.util.Timeout
-import org.gammf.proxima.dns.hierarchy.messages.{AddressRequestMessage, AddressResponseErrorMessage, AddressResponseOKMessage, DeletionRequestMessage, DeletionResponseErrorMessage, DeletionResponseOKMessage, RegistrationRequestMessage, RegistrationResponseMessage}
-import org.gammf.proxima.dns.utils.{Service, ServiceAddress}
-import org.gammf.proxima.dns.utils.Service.StringService
+import org.gammf.proxima.dns.hierarchy.messages._
+import org.gammf.proxima.dns.TestsUtils._
 import org.gammf.proxima.dns.utils.Role._
 import org.scalatest._
 
-import scala.concurrent.duration._
-import scala.language.postfixOps
-
-class DNSRouterActorTest extends TestKit(ActorSystem("ProximaDNS")) with ImplicitSender with WordSpecLike
-  with Matchers with BeforeAndAfterAll {
-
-  val ROOT_SERVICE: StringService = Service() :+ "proxima"
-  val MEDICAL_SERVICE: StringService = ROOT_SERVICE :+ "medical"
-  val FIRST_AID_SERVICE: StringService = MEDICAL_SERVICE :+ "firstAid"
-  val EXAM_SERVICE: StringService = MEDICAL_SERVICE :+ "exam"
-  val FIRST_AID_ADDRESS: ServiceAddress = ServiceAddress(ip = "192.168.0.1", port = 1406)
-
-  implicit val timeout: Timeout = Timeout(5 seconds)
+class DNSRootActorTest extends TestKit(ActorSystem("ProximaDNS")) with ImplicitSender with WordSpecLike with BeforeAndAfterAll {
   val dnsRoot: ActorRef = system.actorOf(DNSRootActor.rootProps(ROOT_SERVICE))
 
-  override def afterAll: Unit = {
-    TestKit.shutdownActorSystem(system)
-  }
+  override def afterAll: Unit = TestKit.shutdownActorSystem(system)
 
   "A just-initialized DNS root actor" must {
     "respond with an AddressResponseErrorMessage if an address is requested" in {
@@ -37,8 +21,7 @@ class DNSRouterActorTest extends TestKit(ActorSystem("ProximaDNS")) with Implici
 
   "The DNS root actor" must {
     "respond with a RegistrationResponseMessage if a first aid actor asks to be registered" in {
-      dnsRoot ! RegistrationRequestMessage(reference = system.actorOf(Props.empty), name = "name", role = LEAF_NODE,
-        service = ROOT_SERVICE :+ "payment")
+      dnsRoot ! RegistrationRequestMessage(reference = EXAMPLE_REFERENCE, name = EXAMPLE_NAME, role = LEAF_NODE, service = EXAMPLE_SERVICE)
       expectMsgType[RegistrationResponseMessage]
     }
   }
