@@ -5,7 +5,7 @@ import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit}
 import org.gammf.proxima.dns.general.messages.{AddressCreationRequestMessage, AddressCreationResponseMessage}
 import org.gammf.proxima.dns.hierarchy.messages.RegistrationRequestMessage
-import org.gammf.proxima.dns.utils.Role.{LEAF_NODE, Role}
+import org.gammf.proxima.dns.utils.Role._
 import org.gammf.proxima.dns.utils.Service.StringService
 import org.scalatest.concurrent.Eventually
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Matchers, WordSpecLike}
@@ -28,11 +28,11 @@ class DNSNodesCreatorActorTest extends TestKit(ActorSystem("ProximaDNS")) with I
 
   "A DNS nodes creator actor" must {
     "reply to an AddressCreationRequestMessage with an AddressCreationResponseMessage" in {
-      creator ! AddressCreationRequestMessage(service = FIRST_AID_SERVICE, ipAddress = FIRST_AID_ADDRESS.ip, port = FIRST_AID_ADDRESS.port)
+      creator ! AddressCreationRequestMessage(service = FIRST_AID_SERVICE, ipAddress = FIRST_AID_IP, port = FIRST_AID_PORT)
       expectMsg(AddressCreationResponseMessage(true))
     }
     "create the leaf node specified in the AddressCreationRequestMessage" in {
-      creator ! AddressCreationRequestMessage(service = FIRST_AID_SERVICE, ipAddress = FIRST_AID_ADDRESS.ip, port = FIRST_AID_ADDRESS.port)
+      creator ! AddressCreationRequestMessage(service = FIRST_AID_SERVICE, ipAddress = FIRST_AID_IP, port = FIRST_AID_PORT)
       eventually {
         registration should not be None
       }

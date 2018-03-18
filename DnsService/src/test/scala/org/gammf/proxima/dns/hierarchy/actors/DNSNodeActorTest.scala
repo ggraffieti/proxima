@@ -12,6 +12,9 @@ import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Matchers, WordSpecL
 class DNSNodeActorTest extends TestKit(ActorSystem("ProximaDNS")) with ImplicitSender with WordSpecLike with BeforeAndAfterAll
   with Eventually with Matchers with BeforeAndAfterEach {
 
+  var registration: Option[(ActorRef, Role, StringService)] = _
+  var messageNotDelivered: Boolean = _
+
   var leafNode: ActorRef = _
   var internalNode: ActorRef = _
   val fakeDnsRoot: ActorRef = system.actorOf(Props(new Actor {
@@ -25,9 +28,6 @@ class DNSNodeActorTest extends TestKit(ActorSystem("ProximaDNS")) with ImplicitS
     }
   }))
   system.eventStream.subscribe(deadLetterMonitor, classOf[DeadLetter])
-
-  var registration: Option[(ActorRef, Role, StringService)] = _
-  var messageNotDelivered: Boolean = _
 
   override def beforeEach(): Unit = {
     registration = None
