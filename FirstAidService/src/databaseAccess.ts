@@ -6,8 +6,8 @@ export class DatabaseAccess {
 
   private medicalDataUrl = 'mongodb://localhost:27017/proximaFirstAid';
   private medicalDataConnection;
-  //private authorizationDataUrl = 'mongodb://localhost:27017/authorizationData';
-  //private authorizationDataConnection;
+  private keyDataUrl = 'mongodb://localhost:27017/proximaRescuersKeys';
+  private keyDataConnection;
 
   public static getInstance() {
     return DatabaseAccess.SINGLETON;
@@ -20,19 +20,19 @@ export class DatabaseAccess {
     // show an error if something went wrong.
     this.medicalDataConnection.on('error', console.error.bind(console, 'connection error:'));
 
-    //connect to the authorization database
-    //this.authorizationDataConnection = mongoose.createConnection(this.authorizationDataUrl);
+    //connect to the public key database
+    this.keyDataConnection = mongoose.createConnection(this.keyDataUrl);
 
     // show an error if something went wrong
-    //this.authorizationDataConnection.on('error', console.error.bind(console, 'connection error: '));
+    this.keyDataConnection.on('error', console.error.bind(console, 'connection error: '));
   }
 
   public getMedicalDataConnection(): mongoose.Connection {
     return this.medicalDataConnection;
   }
 
-  // public getAuthorizationDataConnection(): mongoose.Connection {
-  //   return this.authorizationDataConnection;
-  // }
+  public getKeyDataConnection(): mongoose.Connection {
+    return this.keyDataConnection;
+  }
 
 }
