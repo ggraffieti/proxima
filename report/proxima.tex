@@ -209,7 +209,7 @@ Di seguito sono elencati i requisiti non funzionali del sistema:
 
 \section{Domain model} \label{domain-model}
 \subsection{Banca dati}
-Il committente ha reso disponibile una base dati, la quale contiene le informazioni mediche dei pazienti. I dati sono memorizzati all'interno della banca dati attraverso un database \emph{MongoDB}\footnote{\url{https://www.mongodb.com}}, e strutturati in documenti \emph{JSON}\footnote{\url{https://www.json.org}}. I dati sono contenuti in un'unica collezione chiamata \emph{medicalData}. La struttura dei dati è riportata di seguito:
+Il committente ha reso disponibile una base dati, la quale contiene le informazioni mediche dei pazienti. I dati sono memorizzati all'interno della banca dati attraverso un database \emph{MongoDB}\footnote{\url{https://www.mongodb.com}}, e strutturati in documenti \emph{JSON}\footnote{\url{https://www.json.org}}. I dati sono contenuti in un'unica collezione chiamata \emph{medicalrecords}. La struttura dei dati è riportata di seguito:
 \begin{lstlisting}[style=json, caption={Esempio di una entry all'interno del database dato.}, captionpos=b]
 {
 	"_id": ObjectId("507f1f77bcf86cd799439011"),
@@ -244,25 +244,25 @@ Il committente ha reso disponibile una base dati, la quale contiene le informazi
 }
 \end{lstlisting}
 
-Similmente la base dati contenente i turni dei soccorritori è fornita, e anch'essa consta di una collezione \emph{MongoDB}, chiamata \emph{RescuersWorkSchedule}. Il formato dei dati è riportato di seguito:
+Similmente la base dati contenente i turni dei soccorritori è fornita, e anch'essa consta di una collezione \emph{MongoDB}, chiamata \emph{rescuersworkschedules}. Il formato dei dati è riportato di seguito:
 
-\begin{lstlisting}[style=json, caption={Esempio di un turno lavorativo all'interno della banca dati. Gli orari di inizio e fine turno sono espressi in numero di secondi dopo la mezzanotte del giorno stesso. In uno stesso giorno un soccorritore può avere assegnati più turni.}, captionpos=b]
+\begin{lstlisting}[style=json, caption={Esempio di un turno lavorativo all'interno della banca dati. Gli orari di inizio e fine turno sono espressi in numero di minuti dopo la mezzanotte del giorno stesso. In uno stesso giorno un soccorritore può avere assegnati più turni.}, captionpos=b]
 {
 	"rescuerID": "df54f5gdfh4",
-	"monday": [
+	"monday": [ 
 		{
 			"begin": 0,
-			"end": 21600
-		},
+			"end": 360
+		}, 
 		{
-			"begin": 79200,
-			"end": 86499
+			"begin": 1320,
+			"end": 1439
 		}
 	],
-	"tuesday": [
+	"tuesday": [ 
 		{
 			"begin": 0,
-			"end": 25200
+			"end": 180
 		}
 	],
 	
