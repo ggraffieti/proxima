@@ -65,17 +65,21 @@ trait DNSRouterActor extends DNSActor {
 
   private[this] def handleActorDeletion(msg: DeletionRequestMessage): Unit = {
     dnsEntries.filter(_ === msg) match {
-      case Nil => dnsEntries.filter(n => n > msg && n.role == INTERNAL_NODE).foreach(_.reference forward (msg : DeletionRequestMessage))
-      case list => deleteActor(list, msg.service, msg.address)
+      case Nil => dnsEntries.filter(n => n > msg && n.role == INTERNAL_NODE) match {
+        case h :: t => h.reference forward (msg : DeletionRequestMessage)
+        case _ => sender ! DeletionResponseErrorMessage()
+      }
+      case list => deleteActor(list, msg.service, msg.address, sender)
     }
-    def deleteActor(list: List[ActorDNSEntry], srv: StringService, addr: ServiceAddress): Unit = list match {
+    def deleteActor(list: List[ActorDNSEntry], srv: StringService, addr: ServiceAddress, msgSender: ActorRef): Unit = list match {
       case h :: t => (h.reference ? AddressRequestMessage(service = srv)).mapTo[AddressResponseMessage].map {
         case AddressResponseOKMessage(a) if a == addr =>
           h.reference ! ActorDeletedMessage()
           dnsEntries = dnsEntries.filterNot(_.reference == h.reference)
-        case _ => deleteActor(t, srv, addr)
+          msgSender ! DeletionResponseOKMessage()
+        case _ => deleteActor(t, srv, addr, msgSender)
       }
-      case _ => // There is no actor to delete
+      case _ => msgSender ! DeletionResponseErrorMessage()
     }
   }
 
