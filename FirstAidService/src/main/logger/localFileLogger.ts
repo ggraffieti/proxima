@@ -1,31 +1,28 @@
 import * as fs from "fs";
 import { AbstractLogger } from "./abstractLogger";
-import { ILogger } from "./ILogger"
  
 export class LocalFileLogger extends AbstractLogger {
 
-  private static SINGLETON = new LocalFileLogger();
-  private static dataAccessFile = "/log/dataAccess.txt";
-  private static dataAccessDeniedFile = "/log/dataAccessDenied.txt";
+  private dataAccessFile;
+  private dataAccessDeniedFile;
 
   private dataAccessStream: fs.WriteStream;
   private dataAccessDeniedStream: fs.WriteStream; 
 
-  private constructor() {
+  public constructor(dataAccessFile: string, dataAccessDeniedFile: string) {
     super();
-    this.dataAccessStream = fs.createWriteStream(LocalFileLogger.dataAccessFile, {
+    this.dataAccessFile = dataAccessFile;
+    this.dataAccessDeniedFile = dataAccessDeniedFile;
+
+    this.dataAccessStream = fs.createWriteStream(this.dataAccessFile, {
       flags: 'a' // append
     });
 
-    this.dataAccessDeniedStream = fs.createWriteStream(LocalFileLogger.dataAccessDeniedFile, {
+    this.dataAccessDeniedStream = fs.createWriteStream(this.dataAccessDeniedFile, {
       flags: 'a' // append
     });
 
    }
-
-  public static getInstance(): ILogger {
-    return LocalFileLogger.SINGLETON;
-  }
 
   public logDataAccess(rescuerID: string, patientID: string) {
     this.dataAccessStream.write(this.formatLog(rescuerID, patientID));
