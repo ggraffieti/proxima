@@ -3,7 +3,6 @@ import { NetworkManager } from "../network/networkManager";
 
 export class RemoteLogger extends AbstractLogger {
 
-
   private static loggerAddress: string = "http://localhost:6666/proxima/medical/firstAid/"
   private static logAccessUrl: string = "logAccess";
   private static locDeniedUrl: string = "logDeny";
