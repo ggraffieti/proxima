@@ -17,8 +17,10 @@ class DNSServerTest extends WordSpec with Matchers with Eventually with Scalates
 
   val fakeBridge: ActorRef = system.actorOf(Props(new Actor {
     override def receive: Receive = {
-      case ExternalAddressRequestMessage(service) => addressRequest = Some(service)
-        sender ! ExternalAddressResponseOKMessage(FIRST_AID_IP, FIRST_AID_PORT)
+      case ExternalAddressRequestMessage(service) => addressRequest = Some(service); service match {
+        case STRING_FIRST_AID_SERVICE => sender ! ExternalAddressResponseOKMessage(FIRST_AID_IP, FIRST_AID_PORT)
+        case _ => sender ! ExternalAddressResponseErrorMessage()
+      }
       case ExternalAddressCreationRequestMessage(service, ip, port) => addressCreation = Some((service, ip, port))
         sender ! ExternalAddressCreationResponseMessage(true)
       case ExternalDeletionRequestMessage(service, ip, port) => addressDeletion = Some((service, ip, port))
@@ -30,6 +32,11 @@ class DNSServerTest extends WordSpec with Matchers with Eventually with Scalates
     HttpMethods.POST,
     uri = FIRST_AID_POST_PATH,
     entity = FIRST_AID_POST_REQUEST
+  )
+  val wrongPostRequest = HttpRequest (
+    HttpMethods.POST,
+    uri = FIRST_AID_POST_PATH,
+    entity = "some wrong data"
   )
 
   override def beforeAll(): Unit = {
@@ -53,10 +60,15 @@ class DNSServerTest extends WordSpec with Matchers with Eventually with Scalates
         assert(addressRequest.contains(STRING_FIRST_AID_SERVICE))
       }
     }
-    "reply to a GET request with the appropriate address" in {
+    "reply to a GET request with the appropriate address, if present" in {
       Get(FIRST_AID_GET_PATH) ~> DNSServer.route ~> check {
         status shouldEqual StatusCodes.OK
         responseAs[String] shouldEqual FIRST_AID_GET_RESPONSE
+      }
+    }
+    "reply to a GET request with an error, if the address is not present" in {
+      Get(EXAM_GET_PATH) ~> DNSServer.route ~> check {
+        status shouldEqual StatusCodes.NotFound
       }
     }
   }
@@ -74,6 +86,11 @@ class DNSServerTest extends WordSpec with Matchers with Eventually with Scalates
       postRequest ~> DNSServer.route ~> check {
         status shouldEqual StatusCodes.Created
         header("Location").map(_.toString).contains(COMPLETE_URL + "/" + FIRST_AID_SERVICE)
+      }
+    }
+    "reply to a malformed POST request with the appropriate error" in {
+      wrongPostRequest ~> DNSServer.route ~> check {
+        status shouldEqual StatusCodes.BadRequest
       }
     }
   }

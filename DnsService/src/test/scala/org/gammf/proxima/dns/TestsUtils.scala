@@ -40,4 +40,5 @@ object TestsUtils {
   val EXAM_IP: String = "192.168.0.2"
   val EXAM_PORT: Int = 1406
   val EXAM_ADDRESS: ServiceAddress = ServiceAddress(ip = EXAM_IP, port = EXAM_PORT)
+  val EXAM_GET_PATH: String = "/" + DNS_PATH + "/" + ADDRESS_PATH + "/" + STRING_EXAM_SERVICE
 }
