@@ -23,7 +23,7 @@ describe('Authorization checker', () => {
     const privateKey = fs.readFileSync("test/resources/correct_private.pem", "utf8");
     const digitalSignature = signer.sign(privateKey, "base64");
     return AuthorizationChecker.verifyDigitalSignature("aFakeRescuer", data, digitalSignature)
-      .then((res)=> {throw new Error('Expected method to reject.')})
+      .then((_)=> {throw new Error('Expected method to reject.')})
       .catch((_) => expect(_));
   });
 
@@ -34,9 +34,8 @@ describe('Authorization checker', () => {
     const privateKey = fs.readFileSync("test/resources/fake_private.pem", "utf8");
     const digitalSignature = signer.sign(privateKey, "base64");
     return AuthorizationChecker.verifyDigitalSignature("123456789", data, digitalSignature)
-      .then((res)=> {throw new Error('Expected method to reject.')})
+      .then((_)=> {throw new Error('Expected method to reject.')})
       .catch((_) => expect(_));
-
   });
 
 });
