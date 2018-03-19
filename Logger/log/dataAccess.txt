@@ -1,3 +1,1 @@
-[Mon Mar 19 2018 14:02:05 GMT+0100 (CET)] rescuer: 2356 acceded patient 8954 medical data
-[Mon Mar 19 2018 14:02:09 GMT+0100 (CET)] rescuer: 2356 acceded patient 8954 medical data
-[Mon Mar 19 2018 14:02:10 GMT+0100 (CET)] rescuer: 2356 acceded patient 8954 medical data
+[Mon Mar 19 2018 15:42:55 GMT+0100 (CET)] rescuer: abcd acceded patient efgh medical data

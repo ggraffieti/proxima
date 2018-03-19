@@ -10,5 +10,5 @@ app.post("/proxima/medical/firstAid/logAccess", HandleRequest.handleAccessLogReq
 app.post("/proxima/medical/firstAid/logDeny", HandleRequest.handleDeniedLogRequest);
 
 app.listen(6666, () => {
-  console.log("Logger listening on port 6666");
+  console.log("Logger listening on port 6666 ;)");
 });
