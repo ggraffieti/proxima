@@ -3,6 +3,7 @@ package org.gammf.proxima.dns
 import akka.actor.ActorRef
 import org.gammf.proxima.dns.utils.Service.StringService
 import org.gammf.proxima.dns.utils.{Service, ServiceAddress}
+import org.gammf.proxima.dns.dnsserver._
 
 object TestsUtils {
   val STRING_ROOT_SERVICE: String = "proxima"
@@ -26,6 +27,12 @@ object TestsUtils {
   val FIRST_AID_IP: String = "192.168.0.1"
   val FIRST_AID_PORT: Int = 1406
   val FIRST_AID_ADDRESS: ServiceAddress = ServiceAddress(ip = FIRST_AID_IP, port = FIRST_AID_PORT)
+  val FIRST_AID_GET_PATH: String = "/" + DNS_PATH + "/" + ADDRESS_PATH + "/" + STRING_FIRST_AID_SERVICE
+  val FIRST_AID_GET_RESPONSE: String = "{\"ip\":\"" + FIRST_AID_IP + "\",\"port\":" + FIRST_AID_PORT + "}"
+  val FIRST_AID_POST_PATH: String = "/" + DNS_PATH + "/" + ADDRESS_PATH
+  val FIRST_AID_POST_REQUEST: String = "{\"service\":\"" + STRING_FIRST_AID_SERVICE + "\",\"ip\":\"" + FIRST_AID_IP + "\",\"port\":" + FIRST_AID_PORT + "}"
+  val FIRST_AID_DELETE_PATH: String = "/" + DNS_PATH + "/" + ADDRESS_PATH + "/" + STRING_FIRST_AID_SERVICE +
+    "?ip=" + FIRST_AID_IP + "&port=" + FIRST_AID_PORT
 
   val EXAM_NAME: String = "exam"
   val STRING_EXAM_SERVICE: String = STRING_MEDICAL_SERVICE + "." + EXAM_NAME
