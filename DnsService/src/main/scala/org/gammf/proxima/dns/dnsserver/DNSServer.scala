@@ -12,12 +12,13 @@ import akka.pattern.ask
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import org.gammf.proxima.dns.general.messages._
-import play.api.libs.json.{JsError, JsSuccess, Json}
+import play.api.libs.json._
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.postfixOps
+import scala.util.{Try, Success}
 
 /**
   * A RESTful HTTP Server, that manage all the DNS-related request in the Proxima system.
@@ -32,7 +33,7 @@ import scala.language.postfixOps
 object DNSServer {
   implicit val timeout: Timeout = Timeout(5 seconds)
   private[this] var bridgeActor: ActorRef = _
-  private[this] val route: Route =
+  val route: Route =
     get {
       pathPrefix(DNS_PATH / ADDRESS_PATH / Segment) {
         service => {
@@ -44,7 +45,7 @@ object DNSServer {
             }
             case None => complete {
               println("[DNSServer] service not found, sending error response")
-              NotFound
+              HttpResponse(NotFound)
             }
           }
         }
@@ -54,15 +55,18 @@ object DNSServer {
       path(DNS_PATH / ADDRESS_PATH) {
         entity(as[String]) { jsonString =>
           println("[DNSServer] parsing address creation request")
-          Json.parse(jsonString).validate[(String, String, Int)] match {
-            case info: JsSuccess[(String, String, Int)] =>
-              println("[DNSServer] serving address creation request: service " + info.value._1)
-              onComplete(createAddress(info.value)) { _ =>
-                println("[DNSServer] address created, sending response with url: " + COMPLETE_URL + info.value._1)
-                complete(HttpResponse(Created, headers = List(Location(COMPLETE_URL + info.value._1))))
-              }
-            case _: JsError =>
-              println("[DNSServer] address creation request malformed")
+          Try(Json.parse(jsonString)) match {
+            case Success(json) => json.validate[(String, String, Int)] match {
+              case info: JsSuccess[(String, String, Int)] =>
+                println("[DNSServer] serving address creation request: service " + info.value._1)
+                onComplete(createAddress(info.value)) { _ =>
+                  println("[DNSServer] address created, sending response with url: " + COMPLETE_URL + info.value._1)
+                  complete(HttpResponse(Created, headers = List(Location(COMPLETE_URL + info.value._1))))
+                }
+              case _ => println("[DNSServer] address creation request malformed")
+                complete(HttpResponse(BadRequest))
+            }
+            case _ => println("[DNSServer] address creation request malformed")
               complete(HttpResponse(BadRequest))
           }
         }
