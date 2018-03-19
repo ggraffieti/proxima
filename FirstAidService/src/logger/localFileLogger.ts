@@ -1,7 +1,8 @@
 import * as fs from "fs";
-import { ILogger } from "./ILogger";
-
-export class LocalFileLogger implements ILogger {
+import { AbstractLogger } from "./abstractLogger";
+import { ILogger } from "./ILogger"
+ 
+export class LocalFileLogger extends AbstractLogger {
 
   private static SINGLETON = new LocalFileLogger();
   private static dataAccessFile = "/log/dataAccess.txt";
@@ -11,6 +12,7 @@ export class LocalFileLogger implements ILogger {
   private dataAccessDeniedStream: fs.WriteStream; 
 
   private constructor() {
+    super();
     this.dataAccessStream = fs.createWriteStream(LocalFileLogger.dataAccessFile, {
       flags: 'a' // append
     });
@@ -31,10 +33,6 @@ export class LocalFileLogger implements ILogger {
 
   public logDataAccessDenied(rescuerID: string, patientID: string) {
     this.dataAccessDeniedStream.write(this.formatLog(rescuerID, patientID));
-  }
-
-  private formatLog(rescuerID: string, patientID: string) {
-    return "[" + new Date() + "] rescuer: " + rescuerID + " acceded patient " + patientID + " medical data";
   }
 
 }
