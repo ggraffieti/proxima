@@ -7,7 +7,10 @@ export class RemoteLogger extends AbstractLogger {
   private static loggerAddress: string = "http://localhost:6666/proxima/medical/firstAid/"
   private static logAccessUrl: string = "logAccess";
   private static locDeniedUrl: string = "logDeny";
-  
+
+  public constructor() {
+    super();
+  }
 
   public logDataAccess(rescuerID: string, patientID: string) {
     NetworkManager.sendHttpPost(RemoteLogger.loggerAddress + RemoteLogger.logAccessUrl, {
