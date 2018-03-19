@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">Proxima</string>
+    <string name="enable_nfc">Please, enable NFC</string>
+
+    <string name="home_message_default">Tap on the button to start searching</string>
+    <string name="home_message_first_search">Approach the device to your tag</string>
+    <string name="home_message_second_search">Approach the device to the patient tag</string>
+    <string name="home_message_sending_request">Retrieving data…</string>
+
+    <string name="home_button_text_default">Search</string>
+    <string name="home_button_text_stop_searching">Stop searching</string>
+
+    <string name="no_nfc_error">This device doesn\'t support NFC.</string>
+    <string name="home_title_alt">Proxima</string>
+    <string name="data_toolbar_title">Medical Data</string>
+
+    <string name="data_name">Name</string>
+    <string name="data_surname">Surname</string>
+    <string name="data_fiscal_code">Fiscal Code</string>
+    <string name="data_age">Age</string>
+    <string name="data_blood_group">Blood Group</string>
+    <string name="data_organ_donor">Organ Donor</string>
+    <string name="data_medical_conditions">Medical Conditions</string>
+    <string name="data_drug_allergies">Drug Allergies</string>
+    <string name="data_other_allergies">Other Allergies</string>
+    <string name="data_medications">Medications</string>
+    <string name="parse_error">Parse Error.</string>
+    <string name="home_message_printing_data">Loading…</string>
+    <string name="error_hash">Device doesn\'t support SHA256</string>
+</resources>
