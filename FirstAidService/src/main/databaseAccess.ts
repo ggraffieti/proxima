@@ -32,7 +32,7 @@ export class DatabaseAccess {
   }
 
   public getKeyDataConnection(): mongoose.Connection {
-    return this.keyDataConnection; 
+    return this.keyDataConnection;
   }
 
 }

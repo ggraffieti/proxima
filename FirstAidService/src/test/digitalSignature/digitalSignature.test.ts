@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import 'mocha';
 import * as crypto from "crypto";
 import * as fs from "fs";
-import { AuthorizationChecker } from "../../src/digitalSignature/authorizationChecker";
+import { AuthorizationChecker } from "../../main/digitalSignature/authorizationChecker";
 
 describe('Authorization checker', () => {
 
