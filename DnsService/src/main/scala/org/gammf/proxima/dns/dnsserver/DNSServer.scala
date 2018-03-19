@@ -32,7 +32,7 @@ import scala.language.postfixOps
 object DNSServer {
   implicit val timeout: Timeout = Timeout(5 seconds)
   private[this] var bridgeActor: ActorRef = _
-  private[this] val route: Route =
+  val route: Route =
     get {
       pathPrefix(DNS_PATH / ADDRESS_PATH / Segment) {
         service => {
@@ -44,7 +44,7 @@ object DNSServer {
             }
             case None => complete {
               println("[DNSServer] service not found, sending error response")
-              NotFound
+              HttpResponse(NotFound)
             }
           }
         }
