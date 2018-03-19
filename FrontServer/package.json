@@ -1,0 +1,14 @@
+{
+  "name": "frontserver",
+  "version": "1.0.0",
+  "description": "HTTP front server of the Proxima system",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Manuel Peruzzi",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "@types/node": "^9.4.7"
+  }
+}
