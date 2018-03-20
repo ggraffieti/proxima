@@ -10,7 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.gammf.proxima.model.IPatientData;
-import org.gammf.proxima.util.AppUtilities;
+import org.gammf.proxima.util.NfcUtilities;
 import org.gammf.proxima.util.ModelUtilities;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,13 +55,13 @@ public class DataPrinterActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        AppUtilities.setupForegroundDispatch(this);
+        NfcUtilities.setupForegroundDispatch(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        AppUtilities.stopForegroundDispatch(this);
+        NfcUtilities.stopForegroundDispatch(this);
     }
 
     private void displayBaseInformation() {
