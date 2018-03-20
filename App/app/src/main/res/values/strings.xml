@@ -26,5 +26,12 @@
     <string name="data_medications">Medications</string>
     <string name="parse_error">Parse Error.</string>
     <string name="home_message_printing_data">Loading…</string>
-    <string name="error_hash">Device doesn\'t support SHA256</string>
+
+
+    <string name="json_creation_error">Error while creating JSON object</string>
+    <string name="io_error">I/O error</string>
+    <string name="invalid_key_specification_error">Invalid key specification</string>
+    <string name="error_rsa">This device doesn\'t support RSA</string>
+    <string name="signature_error">Unable to create signature</string>
+    <string name="key_null_error">Key is not initialized</string>
 </resources>

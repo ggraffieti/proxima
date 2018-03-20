@@ -18,7 +18,7 @@ import org.gammf.proxima.interfaces.AsyncTaskListener;
 import org.gammf.proxima.interfaces.HTTPClientServiceListener;
 import org.gammf.proxima.HTTPClientService.LocalBinder;
 
-import org.gammf.proxima.util.AppUtilities;
+import org.gammf.proxima.util.NfcUtilities;
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity implements AsyncTaskListener, HTTPClientServiceListener {
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskListener
 
     protected void onResume() {
         super.onResume();
-        AppUtilities.setupForegroundDispatch(this);
+        NfcUtilities.setupForegroundDispatch(this);
         if(mIsSearching) {
             mHomeTextView.setText(R.string.home_message_first_search);
         } else {
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskListener
     @Override
     protected void onPause() {
         super.onPause();
-        AppUtilities.stopForegroundDispatch(this);
+        NfcUtilities.stopForegroundDispatch(this);
     }
 
     @Override
@@ -129,25 +129,19 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskListener
 
     @Override
     public void onDataReceived(final JSONObject jsonObject) {
-        mHomeTextView.setText(R.string.home_message_default);
         final Intent intent = new Intent(this, DataPrinterActivity.class);
-        intent.putExtra("patientData", "{\"name\": \" John \",\"surname\": \"Doe\",\"CF\": \"DOEJHN70P16F205Y\",\"birthDate\": \"1970-09-16T00:00:00.000Z\",\"bloodGroup\": \"A+\",\"organDonor\": \"YES\",\"medicalConditions\": [\"Heart Disease\",\"Diabetes type 2\",\"Pacemaker\"],\"drugAllergies\": [\"Penicillan\",\"Morphine\"],\"otherAllergies\": [\"Peanuts\",\"Bee sting\",\"Latex\",\"Wheat\"],\"medications\": [\"Prozac\",\"Refludan\",\"Hydrochiorothiazide\",\"Cialis\",\"Plavix\"]}");
+        intent.putExtra("patientData", jsonObject.toString());
         startActivity(intent);
         mHomeTextView.setText(R.string.home_message_printing_data);
     }
 
     private void handleIntent(final Intent intent) {
         final String action = intent.getAction();
-        if (mIsSearching && NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action) && AppUtilities.MIME_TEXT_PLAIN.equals(intent.getType())) {
+        if (mIsSearching && NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action) && NfcUtilities.MIME_TEXT_PLAIN.equals(intent.getType())) {
             final Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
             new NdefReaderTask(this).execute(tag);
         }
     }
 }
 
-/*
-*
-* "{\"name\": \" John \",\"surname\": "Doe",\"CF\": \"DOEJHN70P16F205Y\",\"birthDate\": \"1970-09-16T00:00:00.000Z\",\"bloodGroup\": \"A+\",\"organDonor\": \"YES\",\"medicalConditions\": [\"Heart Disease\",\"Diabetes type 2\",\"Pacemaker\"],\"drugAllergies\": [\"Penicillan\",\"Morphine\"],\"otherAllergies\": [\"Peanuts\",\"Bee sting\",\"Latex\",\"Wheat\"],\"medications\": [\"Prozac\",\"Refludan\",\"Hydrochiorothiazide\",\"Cialis\",\"Plavix\"]}"
-*
-*
-* */
+// "patientData", "{\"name\": \" John \",\"surname\": \"Doe\",\"CF\": \"DOEJHN70P16F205Y\",\"birthDate\": \"1970-09-16T00:00:00.000Z\",\"bloodGroup\": \"A+\",\"organDonor\": \"YES\",\"medicalConditions\": [\"Heart Disease\",\"Diabetes type 2\",\"Pacemaker\"],\"drugAllergies\": [\"Penicillan\",\"Morphine\"],\"otherAllergies\": [\"Peanuts\",\"Bee sting\",\"Latex\",\"Wheat\"],\"medications\": [\"Prozac\",\"Refludan\",\"Hydrochiorothiazide\",\"Cialis\",\"Plavix\"]}"
