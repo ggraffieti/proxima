@@ -1,13 +1,13 @@
 {
   "name": "first_aid_service",
   "version": "1.0.0",
-  "description": "",
+  "description": "The server that manages the access to medical data. It manages the authorization system (base on digital signature) and the physical access to medical databases.",
   "main": "build/main.js",
   "scripts": {
     "start": "node build/main/main.js",
     "test": "mocha -r ts-node/register src/test/**/*.test.ts"
   },
-  "author": "",
+  "author": "Gabriele Graffieti",
   "license": "GPL-3.0",
   "dependencies": {
     "@types/express": "^4.11.1",
