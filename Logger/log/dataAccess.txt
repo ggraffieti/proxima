@@ -1,0 +1,1 @@
+[Mon Mar 19 2018 15:42:55 GMT+0100 (CET)] rescuer: abcd acceded patient efgh medical data

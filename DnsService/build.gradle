@@ -1,0 +1,68 @@
+import com.github.jengelman.gradle.plugins.shadow.transformers.AppendingTransformer
+
+group "${group}"
+version "${version}"
+
+apply plugin: 'java'
+apply plugin: 'scala'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+sourceCompatibility = "${jdkVersion}"
+
+def scalaVersion = "${scalaMajorVersion}.${scalaMinorVersion}"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.scala-lang', name: 'scala-library', version: "${scalaVersion}"
+    compile group: 'com.typesafe.akka', name: 'akka-actor_2.12', version: "${akkaVersion}"
+    compile group: 'com.typesafe.akka', name: 'akka-stream_2.12', version: "${akkaVersion}"
+    compile group: 'com.typesafe.akka', name: 'akka-http_2.12', version: "${akkaHttpVersion}"
+    compile group: 'com.typesafe.akka', name: 'akka-http-testkit_2.12', version: "${akkaHttpVersion}"
+    compile group: 'com.typesafe.play', name: 'play-json_2.12', version: "${playFrameworkVersion}"
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: "${httpClientVersion}"
+    compile group: 'org.json', name: 'json', version: "${jsonVersion}"
+    
+    testCompile group: 'junit', name: 'junit', version: "${jUnitVersion}"
+    testCompile group: 'org.scalatest', name: 'scalatest_2.12', version: "${scalaTestVersion}"
+    testCompile group: 'com.typesafe.akka', name: 'akka-testkit_2.12', version: "${akkaVersion}"
+}
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.1'
+    }
+}
+
+compileScala {
+    scalaCompileOptions.additionalParameters = ["-feature"]
+}
+
+task spec(dependsOn: ['testClasses'], type: JavaExec) {
+    main = 'org.scalatest.tools.Runner'
+    args = ['-R', 'build/classes/scala/test', '-o']
+    classpath = sourceSets.test.runtimeClasspath
+}
+
+testClasses.doLast {
+    tasks.spec.execute()
+}
+
+shadowJar {
+    baseName = "${artifactId}-redist"
+    manifest {
+        attributes 'Implementation-Title': 'ProximaDNS',
+                'Implementation-Version': version,
+                'Main-Class': 'org.gammf.proxima.dns.EntryPoint'
+    }
+    transform(AppendingTransformer) {
+        resource = 'reference.conf'
+    }
+}
+
+defaultTasks 'clean', 'build', 'check', 'javadoc', 'scalaDoc', 'assemble', 'shadowJar'
