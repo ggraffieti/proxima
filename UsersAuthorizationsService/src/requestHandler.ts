@@ -8,8 +8,8 @@ export class RequestHandler {
   private static INTERNAL_ERROR_CODE = 500;
 
   public static handleRequest(req: express.Request, res: express.Response) {
-    var targetId = req.query.targetid;
-    var serviceId = req.query.serviceid;
+    var targetId = req.query.targetID;
+    var serviceId = req.query.service;
 
     if(targetId !== undefined && serviceId !== undefined) {
       userAuthorizations.findOne({targetID : targetId, authorizations : serviceId}, (err, doc) => {
