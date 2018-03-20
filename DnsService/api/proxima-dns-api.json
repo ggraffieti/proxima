@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "title": "Proxima DNS Service"
   },
-  "host": "localhost:6041",
+  "host": "localhost:1406",
   "basePath": "/dns",
   "tags": [
     {
