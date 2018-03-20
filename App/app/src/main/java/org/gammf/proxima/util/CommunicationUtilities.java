@@ -15,9 +15,9 @@ public final class CommunicationUtilities {
         return ServerParameters.PROTOCOL +"://" +
                 ServerParameters.SERVER_IP + ":" +
                 ServerParameters.SERVER_PORT + "/" +
-                DATA_RESOURCE_NAME + "?" + PATIENT_QUERY_PARAMETER + "=" + patientIdentifier
-                                         + RESCUER_QUERY_PARAMETER + "=" + rescuerIdentifier
-                                         + SERVICE_QUERY_PARAMETER + "=" + SERVICE_NAME
+                DATA_RESOURCE_NAME + "?" + PATIENT_QUERY_PARAMETER + "=" + patientIdentifier + "&"
+                                         + RESCUER_QUERY_PARAMETER + "=" + rescuerIdentifier + "&"
+                                         + SERVICE_QUERY_PARAMETER + "=" + SERVICE_NAME + "&"
                                          + SIGNATURE_QUERY_PARAMETER + "=" + signature;
     }
 }

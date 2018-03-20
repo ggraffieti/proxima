@@ -62,8 +62,12 @@ public class HTTPClientService extends Service {
                 }
             }, new Response.ErrorListener() {
                 @Override
-                public void onErrorResponse(VolleyError error) {
-
+                public void onErrorResponse(final VolleyError error) {
+                    if(error.networkResponse == null) {
+                        listener.onConnectionError();
+                    } else {
+                        listener.onError(error.networkResponse.statusCode);
+                    }
                 }
             });
             mRequestQueue.add(request);

@@ -21,6 +21,8 @@ import org.gammf.proxima.HTTPClientService.LocalBinder;
 import org.gammf.proxima.util.NfcUtilities;
 import org.json.JSONObject;
 
+import javax.net.ssl.HttpsURLConnection;
+
 public class MainActivity extends AppCompatActivity implements AsyncTaskListener, HTTPClientServiceListener {
 
     private Button mSearchButton;
@@ -133,6 +135,20 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskListener
         intent.putExtra("patientData", jsonObject.toString());
         startActivity(intent);
         mHomeTextView.setText(R.string.home_message_printing_data);
+    }
+
+    @Override
+    public void onError(final Integer errorCode) {
+        if(errorCode == HttpsURLConnection.HTTP_FORBIDDEN) {
+            Toast.makeText(this, R.string.unauthorized_error, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, R.string.unknown_error, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onConnectionError() {
+        Toast.makeText(this, R.string.connection_error, Toast.LENGTH_SHORT).show();
     }
 
     private void handleIntent(final Intent intent) {

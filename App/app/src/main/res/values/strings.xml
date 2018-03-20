@@ -34,4 +34,7 @@
     <string name="error_rsa">This device doesn\'t support RSA</string>
     <string name="signature_error">Unable to create signature</string>
     <string name="key_null_error">Key is not initialized</string>
+    <string name="connection_error">Connection error</string>
+    <string name="unauthorized_error">You are not authorized to consult this patient data</string>
+    <string name="unknown_error">Unknown error from server</string>
 </resources>
