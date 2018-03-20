@@ -17,6 +17,9 @@ let keyManagerApp = express();
 dataApp.use(bodyParser.urlencoded({extended: false}));
 dataApp.use(bodyParser.json());
 
+keyManagerApp.use(bodyParser.urlencoded({extended: false}));
+keyManagerApp.use(bodyParser.json());
+
 dataApp.post("/proxima/medical/firstAid/data", DataRequestHandler.handleDataRequest);
 
 keyManagerApp.post("/addKey", KeyManagerHandler.handleKeyInsertion);
