@@ -5,6 +5,6 @@ let app = express();
 
 app.get('/data', RequestHandler.handleRequest);
 
-app.listen(1111, function () {
-    console.log('Proxima front server listening on port 1111.');
+app.listen(6041, function () {
+    console.log('Proxima front server listening on port 6041.');
 });
