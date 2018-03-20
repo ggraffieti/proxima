@@ -8,8 +8,9 @@ import { WorkShift } from "./workShiftsVerifier/utils/workShift";
 import * as crypto from "crypto";
 import * as fs from "fs";
 import {AuthorizationChecker} from "./digitalSignature/authorizationChecker";
-import { PublicKeyQueries } from "./digitalSignature/publicKeyQueries"
-import { RemoteLogger } from "./logger/remoteLogger"
+import { PublicKeyQueries } from "./digitalSignature/publicKeyQueries";
+import { RemoteLogger } from "./logger/remoteLogger";
+import { DnsRegistration } from "./network/dnsRegistration";
 
 let dataApp = express();
 let keyManagerApp = express();
@@ -17,10 +18,12 @@ let keyManagerApp = express();
 dataApp.use(bodyParser.urlencoded({extended: false}));
 dataApp.use(bodyParser.json());
 
+//DnsRegistration.register();
+
 keyManagerApp.use(bodyParser.urlencoded({extended: false}));
 keyManagerApp.use(bodyParser.json());
 
-dataApp.post("/proxima/medical/firstAid/data", DataRequestHandler.handleDataRequest);
+dataApp.get("/data", DataRequestHandler.handleDataRequest);
 
 keyManagerApp.post("/addKey", KeyManagerHandler.handleKeyInsertion);
 keyManagerApp.put("/substituteKey/:rescuerID", KeyManagerHandler.handleKeySubstitution);
@@ -44,7 +47,7 @@ dataApp.listen(9876, () => {
   var signer = crypto.createSign('RSA-SHA256');
   var data = new Buffer(512);
   data = fs.readFileSync("resources/lol.txt");
-  signer.update('1234');
+  signer.update("patient1rescuer1");
   var sign = signer.sign(privateKey, 'base64');
   console.log(sign);
 

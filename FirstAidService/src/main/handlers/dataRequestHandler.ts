@@ -12,23 +12,25 @@ export class DataRequestHandler extends RequestHandler {
 
   public static handleDataRequest(req: Request, res: Response) {
     DataRequestHandler.prepareResponse(res);
-    let operatorID = req.body.operatorID;
-    let targetID = req.body.targetID;
-    let signature = req.body.signature;
+    let operatorID: string = req.query.operatorID;
+    let targetID: string = req.query.targetID;
+    let signature: string = req.query.signature;
 
     if (operatorID && targetID && signature) {
       console.log("handleDataRequest");
-      console.log("operator: " + req.body.operatorID);
+      console.log("operator: " + operatorID);
 
-      AuthorizationChecker.verifyDigitalSignature(req.body.operatorID, req.body.targetID, req.body.signature)
+      signature = signature.split(" ").join("+");
+
+      AuthorizationChecker.verifyDigitalSignature(operatorID, targetID, signature)
       .then((_) => {
           console.log("verify digital signature OK");
-          return WorkShiftQueries.rescuerAuthorization(req.body.operatorID);
+          return WorkShiftQueries.rescuerAuthorization(operatorID);
       })
       .then((auth) => {
         if (auth) {
           console.log("Work Shift OK");
-          return MedicalDataQueries.getPatientData(req.body.targetID)
+          return MedicalDataQueries.getPatientData(targetID)
         }
         else {
           console.log("Work Shift NOOOOOO");
