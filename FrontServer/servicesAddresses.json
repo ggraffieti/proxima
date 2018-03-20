@@ -9,7 +9,7 @@
         {
             "name": "dnsService",
             "ip": "localhost",
-            "port": 6041,
+            "port": 1406,
             "path": "dns/address"
         },
         {
