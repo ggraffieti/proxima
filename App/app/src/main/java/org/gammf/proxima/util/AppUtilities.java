@@ -1,38 +1,40 @@
 package org.gammf.proxima.util;
 
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.nfc.NfcAdapter;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Context;
+import android.util.Base64;
+import android.util.Log;
+import android.widget.Toast;
+
+import org.gammf.proxima.R;
+import org.json.JSONException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.Signature;
+import java.security.SignatureException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 
 public final class AppUtilities {
 
-    public static final String MIME_TEXT_PLAIN = "text/plain";
+    private static final String SIGNATURE_ALGORITHM = "SHA256withRSA";
 
     private AppUtilities() {}
 
-    public static void setupForegroundDispatch(final AppCompatActivity activity) {
-        final Intent intent = new Intent(activity, activity.getClass());
-        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-        final PendingIntent pendingIntent = PendingIntent.getActivity(activity, 0, intent, 0);
-
-        IntentFilter[] filters = new IntentFilter[1];
-
-        filters[0] = new IntentFilter();
-        filters[0].addAction(NfcAdapter.ACTION_NDEF_DISCOVERED);
-        filters[0].addCategory(Intent.CATEGORY_DEFAULT);
-        try {
-            filters[0].addDataType(MIME_TEXT_PLAIN);
-        } catch (IntentFilter.MalformedMimeTypeException e) {
-            throw new RuntimeException("Check your mime type.");
-        }
-
-        NfcAdapter.getDefaultAdapter(activity).enableForegroundDispatch(activity, pendingIntent, filters, new String[][]{});
-    }
-
-    public static void stopForegroundDispatch(final AppCompatActivity activity) {
-        NfcAdapter.getDefaultAdapter(activity).disableForegroundDispatch(activity);
+    public static String digitalSignature(final String data) throws NoSuchAlgorithmException,
+                                                                    InvalidKeyException,
+                                                                    SignatureException {
+        final Signature s = Signature.getInstance(SIGNATURE_ALGORITHM);
+        s.initSign(KeyManager.getPrivateKey());
+        byte[] dataTmp = data.getBytes(Charset.forName("UTF-8"));
+        s.update(dataTmp);
+        return Base64.encodeToString(s.sign(), Base64.DEFAULT);
     }
 }
