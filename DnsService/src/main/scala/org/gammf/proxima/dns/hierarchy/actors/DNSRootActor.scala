@@ -12,7 +12,7 @@ import org.gammf.proxima.dns.utils.Service.StringService
   * of the appropriate level.
  *
   * @param name    the name of this actor.
-  * @param role    the role of this actor. It should be [[ROOT]].
+  * @param role    the role of this actor. It should be ROOT.
   * @param service the service offered by this actor. It should be the most general service of the DNS system.
   */
 class DNSRootActor(override val name: String,
