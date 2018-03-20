@@ -42,7 +42,7 @@ export class DataRequestHandler extends RequestHandler {
       });
     }
     else {
-      res.status(400).send(); // BAD REQUEST.
+      DataRequestHandler.sendBadRequestError(res);
     }
   }
 

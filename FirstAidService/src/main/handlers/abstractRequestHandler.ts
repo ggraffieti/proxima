@@ -9,6 +9,7 @@ export abstract class RequestHandler {
 
   private static SERVER_ERROR_CODE = 500;
   private static UNAUTHORIZED_ERROR_CODE = 403;
+  private static BAD_REQUEST_ERROR_CODE = 400;
 
   /**
    * Send an HTTP internal server error (500), in the given connection and with an optional error message
@@ -26,6 +27,10 @@ export abstract class RequestHandler {
    */
   protected static sendUnauthorizedError(res: Response, errorMessage?: string) {
     this.sendError(res, this.UNAUTHORIZED_ERROR_CODE, errorMessage);
+  }
+
+  protected static sendBadRequestError(res: Response, errorMessage?: string) {
+    this.sendError(res, this.BAD_REQUEST_ERROR_CODE, errorMessage);
   }
 
   /**
