@@ -43,7 +43,7 @@ export class KeyManagerHandler extends RequestHandler {
   public static handleKeyDeletion(req: Request, res: Response) {
     KeyManagerHandler.prepareResponse(res);
 
-    const rescuerID = req.body.rescuerID;
+    const rescuerID = req.params.rescuerID;
 
     if (rescuerID) {
       PublicKeyQueries.deletePublicKey(rescuerID)
