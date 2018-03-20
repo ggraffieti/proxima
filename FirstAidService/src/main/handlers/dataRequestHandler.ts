@@ -11,35 +11,39 @@ export class DataRequestHandler extends RequestHandler {
   }
 
   public static handleDataRequest(req: Request, res: Response) {
-    console.log("handleDataRequest");
-    console.log("operator: " + req.body.operatorID);
     DataRequestHandler.prepareResponse(res);
-    AuthorizationChecker.verifyDigitalSignature(req.body.operatorID, req.body.targetID, req.body.signature)
-    .then((authorized) => {
-      if (authorized) {
-        console.log("verify digital signature OK");
-        WorkShiftQueries.rescuerAuthorization(req.body.operatorID).then((auth) => {
+    let operatorID = req.body.operatorID;
+    let targetID = req.body.targetID;
+    let signature = req.body.signature;
+
+    if (operatorID && targetID && signature) {
+      console.log("handleDataRequest");
+      console.log("operator: " + req.body.operatorID);
+
+      AuthorizationChecker.verifyDigitalSignature(req.body.operatorID, req.body.targetID, req.body.signature)
+      .then((_) => {
+          console.log("verify digital signature OK");
+          return WorkShiftQueries.rescuerAuthorization(req.body.operatorID);
+      })
+      .then((auth) => {
+        if (auth) {
           console.log("Work Shift OK");
-          if (auth) {
-            MedicalDataQueries.getPatientData(req.body.targetID).then((data) => res.send(data))
-              .catch((err) => console.log(err));
-          }
-          else {
-            throw "false work schedule";
-          }
-        }).catch((err) => {
-          console.log(err);
-          DataRequestHandler.sendUnauthorizedError(res);
-        });
-      }
-      else {
-        throw "false signature auth";
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-      DataRequestHandler.sendUnauthorizedError(res);
-    });
+          return MedicalDataQueries.getPatientData(req.body.targetID)
+        }
+        else {
+          console.log("Work Shift NOOOOOO");
+          return Promise.reject("false work schedule");
+        }
+      })
+      .then((data) => res.send(data))
+      .catch((err) => {
+        console.log(err);
+        DataRequestHandler.sendUnauthorizedError(res);
+      });
+    }
+    else {
+      res.status(400).send(); // BAD REQUEST.
+    }
   }
 
 }
