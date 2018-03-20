@@ -10,15 +10,16 @@ export class RequestHandler {
         let targetID = req.query.targetID;
         let operatorID = req.query.operatorID;
         let service = req.query.service;
+        let signature = req.query.signature;
 
-        if (targetID != undefined && operatorID != undefined && service != undefined) {
-            RequestHandler.computeResponse(targetID, operatorID, service, res);
+        if (targetID != undefined && operatorID != undefined && service != undefined && signature != undefined) {
+            RequestHandler.computeResponse(targetID, operatorID, service, signature, res);
         } else {
             res.sendStatus(BAD_REQUEST);
         }
     }
 
-    private static computeResponse(targetID: String, operatorID: String, service: String, mainRes: express.Response) {
+    private static computeResponse(targetID: String, operatorID: String, service: String, signature: String, mainRes: express.Response) {
         request(this.serviceRequest.getUserAuthRequest(targetID, service))
             .then(res => {
                 if (res.statusCode == OK) {
@@ -28,7 +29,7 @@ export class RequestHandler {
                 }
             }).then(res => {
             if (res.statusCode == OK) {
-                return request(this.serviceRequest.getDataRequest(JSON.parse(res.body), targetID, operatorID));
+                return request(this.serviceRequest.getDataRequest(JSON.parse(res.body), targetID, operatorID, signature));
             } else {
                 return Promise.reject(FORBIDDEN);
             }

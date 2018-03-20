@@ -46,12 +46,12 @@ export class ServiceRequestUtils {
         };
     }
 
-    getDataRequest(address: { ip: String, port: Number}, targetID: String, operatorID: String) {
+    getDataRequest(address: { ip: String, port: Number}, targetID: String, operatorID: String, signature: String) {
         let srv = this.services.filter(s => s.name === "dataService")[0];
         return {
             method: 'GET',
             uri: "http://" + address.ip + ":" + address.port + "/" + srv.path +
-                 "?targetID=" + targetID + "&operatorID=" + operatorID,
+                 "?targetID=" + targetID + "&operatorID=" + operatorID + "&signature=" + signature,
             timeout: ServiceRequestUtils.REQUEST_TIMEOUT,
             resolveWithFullResponse: true
         };
