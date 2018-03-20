@@ -1,12 +1,12 @@
 import * as express from "express";
 import * as request from "request-promise";
-import {getDNSRequest, getUserAuthRequest, getDataRequest} from "./serviceAddress"
+import {ServiceRequestUtils} from "./serviceRequestUtils"
 import {OK, FORBIDDEN, BAD_REQUEST} from "./resStatusCodes"
 
 export class RequestHandler {
+    private static serviceRequest = ServiceRequestUtils.getInstance();
 
     public static handleRequest(req: express.Request, res: express.Response) {
-        console.log("request");
         let targetID = req.query.targetID;
         let operatorID = req.query.operatorID;
         let service = req.query.service;
@@ -19,16 +19,16 @@ export class RequestHandler {
     }
 
     private static computeResponse(targetID: String, operatorID: String, service: String, mainRes: express.Response) {
-        request(getUserAuthRequest(targetID, service))
+        request(this.serviceRequest.getUserAuthRequest(targetID, service))
             .then(res => {
                 if (res.statusCode == OK) {
-                    return request(getDNSRequest(service));
+                    return request(this.serviceRequest.getDNSRequest(service));
                 } else {
                     return Promise.reject(FORBIDDEN);
                 }
             }).then(res => {
             if (res.statusCode == OK) {
-                return request(getDataRequest(JSON.parse(res.body), targetID, operatorID));
+                return request(this.serviceRequest.getDataRequest(JSON.parse(res.body), targetID, operatorID));
             } else {
                 return Promise.reject(FORBIDDEN);
             }

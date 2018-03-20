@@ -9,7 +9,7 @@
         "outDir": "build",
         "rootDir": "src",
         "lib": [
-            "es5", "es2015.promise"
+            "es6", "es2015.promise"
         ]
     },
     "compileOnSave": true

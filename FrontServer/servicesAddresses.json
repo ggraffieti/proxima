@@ -1,0 +1,20 @@
+{
+    "services": [
+        {
+            "name": "usersAuthorizationsService",
+            "ip": "localhost",
+            "port": 8436,
+            "path": "authorize"
+        },
+        {
+            "name": "dnsService",
+            "ip": "localhost",
+            "port": 6041,
+            "path": "dns/address"
+        },
+        {
+            "name": "dataService",
+            "path": "data"
+        }
+    ]
+}
