@@ -39,7 +39,7 @@ object EntryPoint extends App {
   actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot,
     service = Service() :+ "proxima" :+ "commercial" :+ "shop"))
 
-  Postman.main(Array.empty)
-  Thread.sleep(100)
+  //Postman.main(Array.empty)
+  Thread.sleep(500)
   (dnsRoot ? HierarchyRequestMessage(0)).mapTo[HierarchyNodesMessage].foreach(printer ! _)
 }

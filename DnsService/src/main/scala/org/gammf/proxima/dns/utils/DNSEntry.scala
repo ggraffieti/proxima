@@ -44,7 +44,7 @@ sealed trait DNSEntry[A, B, C] {
 
 /**
   * Represents a DNS entry in the actor world.
-  * Contains the actor reference, the actor name, the actor [[Role]] into the system and the [[StringService]] offered by the actor.
+  * Contains the actor reference, the actor name, the actor [[Role]] into the system and the [[Service]] offered by the actor.
   */
 sealed trait ActorDNSEntry extends DNSEntry[ActorRef, Role, StringService] {
   protected[this] type EntryParam = {

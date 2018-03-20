@@ -7,7 +7,7 @@ import org.gammf.proxima.dns.utils.Service.StringService
 import org.gammf.proxima.dns.utils.ServiceAddress
 
 /**
-  * Represents a simple DNS node identified by a name and a role, offering a [[StringService]].
+  * Represents a simple DNS node identified by a name and a role, offering a [[org.gammf.proxima.dns.utils.Service]].
   * In order to take part in the DNS service, this actor needs a reference to a [[DNSRootActor]].
   */
 sealed trait DNSNodeActor extends DNSActor {
@@ -38,10 +38,10 @@ sealed trait DNSNodeActor extends DNSActor {
 /**
   * Represents an internal node of the DNS hierarchy.
   * As every other DNS actor, this actor have to relate to the [[DNSRootActor]]. Becomes useful to create the DNS hierarchy,
-  * managing all the requests regarding a certain service [[StringService]].
+  * managing all the requests regarding a certain [[org.gammf.proxima.dns.utils.Service]].
  *
   * @param name    the name of this actor.
-  * @param role    the role of this actor. It should be [[INTERNAL_NODE]].
+  * @param role    the role of this actor. It should be INTERNAL_NODE.
   * @param service the service handled by this actor.
   * @param dnsRoot the reference to the DNS root actor.
   */
@@ -57,7 +57,7 @@ class DNSInternalNodeActor(override val name: String,
   * As every other DNS actor, this actor have to relate to the [[DNSRootActor]]. It manages the address of a specific service.
  *
   * @param name           the name of this actor.
-  * @param role           the role of this actor. Should be [[LEAF_NODE]].
+  * @param role           the role of this actor. Should be LEAF_NODE.
   * @param service        the service handled by this actor.
   * @param dnsRoot        the reference to the DNS root actor.
   * @param serviceAddress the address of the service.

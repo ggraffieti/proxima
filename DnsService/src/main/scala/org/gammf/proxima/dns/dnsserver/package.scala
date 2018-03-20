@@ -17,7 +17,7 @@ package object dnsserver {
   /**
     * The server port.
     */
-  val PORT_NUMBER: Int = 6041
+  val PORT_NUMBER: Int = 1406
 
   /**
     * The path to be used in order to contact the server about a Domain Name System issue.
