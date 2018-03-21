@@ -29,6 +29,13 @@ sealed trait Service[A] {
   def size(): Int
 
   /**
+    * Returns an Option containing the elements between the specified indexes, if exist, otherwise None.
+    * @param minIndex the lower bound index.
+    * @param maxIndex the upper bound index.
+    */
+  def getInBetween(minIndex: Int, maxIndex: Int): Service[A]
+
+  /**
     * Greater method. Checks if this service is greater than some other service.
     * @param that the other service to be compared to this service.
     * @return true if this service contains more domains than the given service, false otherwise.
@@ -137,6 +144,16 @@ trait ServiceImpl[A] extends Service[A] {
     }
     getSize(this, 0)
   }
+
+  override def getInBetween(minIndex: Int, maxIndex: Int): Service[A] = {
+    def getElems(l: Service[A], i: Int, res: Service[A]): Service[A] = l match {
+      case _ :: s if i < minIndex => getElems(s, i+1, res)
+      case m :: s if i <= maxIndex => getElems(s, i+1, res :+ m)
+      case _ => res
+    }
+    getElems(this, 0, Service())
+  }
+
   override def equals(obj: Any): Boolean = obj match {
     case service: Service[A] => this match {
       case _ if size != service.size => false

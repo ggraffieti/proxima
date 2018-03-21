@@ -1,6 +1,8 @@
 package org.gammf.proxima.dns.hierarchy.messages
 
 import org.gammf.proxima.dns.utils.ActorDNSEntry
+import org.gammf.proxima.dns.utils.Role.Role
+import org.gammf.proxima.dns.utils.Service.StringService
 
 /**
   * Represents a message about the hierarchical structure of the actor system.
@@ -35,4 +37,4 @@ case class HierarchyNodesMessage(actors: List[HierarchyNode]) extends HierarchyM
   * @param role the actor role of the node.
   * @param service the actor service of the node.
   */
-case class HierarchyNode(level: Int, reference: String, name: String, role: String, service: String)
+case class HierarchyNode(level: Int, reference: String, name: String, role: Role, service: StringService)

@@ -116,7 +116,7 @@ trait DNSRouterActor extends DNSActor {
       searchActors(dnsEntries.map((level, _)))
     }
     def printHierarchy(list: List[(Int, ActorDNSEntry)]): Unit = {
-      def getRoot: HierarchyNode = HierarchyNode(level = lvl, reference = self.toString(), name = name, role = role.toString, service = service.toString)
+      def getRoot: HierarchyNode = HierarchyNode(level = lvl, reference = self.toString(), name = name, role = role, service = service)
       sender ! HierarchyNodesMessage(getRoot :: (list: List[HierarchyNode]))
     }
   }
