@@ -70,13 +70,10 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskListener
                 if(!mIsSearching) {
                     mIsSearching = true;
                     mCurrentRole = Role.RESCUER;
-                    mHomeTextView.setText(R.string.home_message_first_search);
-                    mSearchButton.setText(R.string.home_button_text_stop_searching);
                 } else {
                     mIsSearching = false;
-                    mHomeTextView.setText(R.string.home_message_default);
-                    mSearchButton.setText(R.string.home_button_text_default);
                 }
+                refreshView();
             }
         });
 
@@ -93,11 +90,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskListener
     protected void onResume() {
         super.onResume();
         NfcUtilities.setupForegroundDispatch(this);
-        if(mIsSearching) {
-            mHomeTextView.setText(R.string.home_message_first_search);
-        } else {
-            mHomeTextView.setText(R.string.home_message_default);
-        }
+        refreshView();
     }
 
     @Override
@@ -156,6 +149,16 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskListener
         if (mIsSearching && NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action) && NfcUtilities.MIME_TEXT_PLAIN.equals(intent.getType())) {
             final Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
             new NdefReaderTask(this).execute(tag);
+        }
+    }
+
+    private void refreshView() {
+        if(mIsSearching) {
+            mHomeTextView.setText(R.string.home_message_first_search);
+            mSearchButton.setText(R.string.home_button_text_stop_searching);
+        } else {
+            mHomeTextView.setText(R.string.home_message_default);
+            mSearchButton.setText(R.string.home_button_text_default);
         }
     }
 }
