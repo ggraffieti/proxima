@@ -3,6 +3,8 @@ package org.gammf.proxima.dns
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 
+import scala.io.Source
+
 package object dnsserver {
   /**
     * The application-level protocol used by this server. Could be http or https.
@@ -10,14 +12,19 @@ package object dnsserver {
   val APPLICATION_PROTOCOL: String = "http"
 
   /**
+    * The source file that contains the IP address of the DNS server.
+    */
+  lazy val ADDRESS_FILE: Source = Source.fromFile("address.json")
+
+  /**
     * The local IP of the server, presumably the IP of the machine that contains the system.
     */
-  val IP_ADDRESS: String = "localhost"
+  lazy val IP_ADDRESS: String = (Json.parse(try ADDRESS_FILE.mkString finally ADDRESS_FILE.close()) \ "ip").as[String]
 
   /**
     * The server port.
     */
-  val PORT_NUMBER: Int = 1406
+  lazy val PORT_NUMBER: Int = 1406
 
   /**
     * The path to be used in order to contact the server about a Domain Name System issue.

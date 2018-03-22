@@ -29,7 +29,7 @@ class BridgeActorTest extends TestKit(ActorSystem("ProximaDNS")) with ImplicitSe
   val fakeDnsCreator: ActorRef = system.actorOf(Props(new Actor {
     override def receive: Receive = {
       case AddressCreationRequestMessage(service, ipAddress, port) => addressCreationRequest = Some(service, ipAddress, port)
-        sender ! AddressCreationResponseMessage(true)
+        sender ! AddressCreationResponseMessage()
     }
   }))
   val bridge: ActorRef = system.actorOf(BridgeActor.bridgeProps(dnsRoot = fakeDnsRoot, dnsNodesCreator = fakeDnsCreator))
@@ -64,7 +64,7 @@ class BridgeActorTest extends TestKit(ActorSystem("ProximaDNS")) with ImplicitSe
       assert(addressCreationRequest.contains((FIRST_AID_SERVICE, FIRST_AID_IP, FIRST_AID_PORT)))
     }
     "reply to the first message with an ExternalAddressCreationResponseMessage" in {
-      expectMsg(ExternalAddressCreationResponseMessage(true))
+      expectMsg(ExternalAddressCreationResponseMessage())
     }
   }
 

@@ -1,6 +1,8 @@
-package org.gammf.proxima.dns.hierarchy.messages
+package org.gammf.proxima.dns.general.messages
 
 import org.gammf.proxima.dns.utils.ActorDNSEntry
+import org.gammf.proxima.dns.utils.Role.Role
+import org.gammf.proxima.dns.utils.Service.StringService
 
 /**
   * Represents a message about the hierarchical structure of the actor system.
@@ -12,7 +14,7 @@ trait HierarchyMessage
   * hierarchical structure of the Domain Name System.
   * @param level a number indicating the depth level of the current structure.
   */
-case class HierarchyRequestMessage(level: Int) extends HierarchyMessage
+case class HierarchyRequestMessage(level: Int = 0) extends HierarchyMessage
 
 /**
   * It's a response to a [[HierarchyRequestMessage]], in which an actor shares the basic info of all the nodes that are
@@ -28,6 +30,13 @@ case class HierarchyResponseMessage(actors: List[(Int, ActorDNSEntry)]) extends 
 case class HierarchyNodesMessage(actors: List[HierarchyNode]) extends HierarchyMessage
 
 /**
+  * Represents a hierarchy message sent to [[org.gammf.proxima.dns.general.actors.DNSControllerActor]].
+  * It request a control process of the DNS hierarchy, in order to lead to the creation of the necessary internal nodes.
+  * @param threshold the minimum number of leaf nodes offering a common service that should lead to an internal node creation.
+  */
+case class HierarchyControlMessage(threshold: Int) extends HierarchyMessage
+
+/**
   * Represents a node in a hierarchical structure.
   * @param level the depth level of the node.
   * @param reference the actor reference of the node.
@@ -35,4 +44,4 @@ case class HierarchyNodesMessage(actors: List[HierarchyNode]) extends HierarchyM
   * @param role the actor role of the node.
   * @param service the actor service of the node.
   */
-case class HierarchyNode(level: Int, reference: String, name: String, role: String, service: String)
+case class HierarchyNode(level: Int, reference: String, name: String, role: Role, service: StringService)
