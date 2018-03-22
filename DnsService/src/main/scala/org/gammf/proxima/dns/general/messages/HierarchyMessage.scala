@@ -14,7 +14,7 @@ trait HierarchyMessage
   * hierarchical structure of the Domain Name System.
   * @param level a number indicating the depth level of the current structure.
   */
-case class HierarchyRequestMessage(level: Int) extends HierarchyMessage
+case class HierarchyRequestMessage(level: Int = 0) extends HierarchyMessage
 
 /**
   * It's a response to a [[HierarchyRequestMessage]], in which an actor shares the basic info of all the nodes that are
