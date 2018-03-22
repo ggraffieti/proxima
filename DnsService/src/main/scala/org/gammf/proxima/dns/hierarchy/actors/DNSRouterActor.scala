@@ -1,7 +1,6 @@
 package org.gammf.proxima.dns.hierarchy.actors
 
 import akka.actor.ActorRef
-import akka.util.Timeout
 import akka.pattern.ask
 import org.gammf.proxima.dns.general.messages.{HierarchyNode, HierarchyNodesMessage, HierarchyRequestMessage, HierarchyResponseMessage}
 import org.gammf.proxima.dns.hierarchy.messages._
@@ -11,9 +10,7 @@ import org.gammf.proxima.dns.utils.Service.StringService
 
 import scala.concurrent.Await
 import scala.annotation.tailrec
-import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.language.postfixOps
 
 /**
   * This is an actor that deals with the DNS structure.
@@ -24,7 +21,6 @@ import scala.language.postfixOps
   */
 trait DNSRouterActor extends DNSActor {
   private[this] var dnsEntries: List[ActorDNSEntry] = List()
-  implicit val timeout: Timeout = Timeout(5 seconds)
 
   override def receive: Receive = {
     case msg: InsertionRequestMessage => handleActorInsertion(msg)
@@ -67,7 +63,7 @@ trait DNSRouterActor extends DNSActor {
   private[this] def handleActorDeletion(msg: DeletionRequestMessage): Unit = {
     dnsEntries.filter(_ === msg) match {
       case Nil => dnsEntries.filter(n => n > msg && n.role == INTERNAL_NODE) match {
-        case h :: t => h.reference forward (msg : DeletionRequestMessage)
+        case h :: _ => h.reference forward (msg : DeletionRequestMessage)
         case _ => sender ! DeletionResponseErrorMessage()
       }
       case list => deleteActor(list, msg.service, msg.address, sender)
