@@ -2,13 +2,10 @@ package org.gammf.proxima.dns.general.actors
 
 import akka.actor.{Actor, ActorRef, Props}
 import akka.pattern.ask
-import akka.util.Timeout
 import org.gammf.proxima.dns.general.messages._
 import org.gammf.proxima.dns.hierarchy.messages._
 
-import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.language.postfixOps
 
 /**
   * This class represents a "bridge" between the internal Domain Name System and the external world passing through the server.
@@ -19,7 +16,6 @@ import scala.language.postfixOps
   * @param dnsNodesCreator the reference to the [[DNSNodesCreatorActor]].
   */
 class BridgeActor(val name: String, val dnsRoot: ActorRef, val dnsNodesCreator: ActorRef) extends Actor {
-  implicit val timeout: Timeout = Timeout(5 seconds)
 
   override def receive: Receive = {
     case msg: ExternalAddressRequestMessage => handleExternalAddressRequest(msg, sender)

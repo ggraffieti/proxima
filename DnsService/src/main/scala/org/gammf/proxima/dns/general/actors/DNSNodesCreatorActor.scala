@@ -5,6 +5,13 @@ import org.gammf.proxima.dns.general.messages.{AddressCreationRequestMessage, Ad
 import org.gammf.proxima.dns.hierarchy.actors.DNSNodeActor
 import org.gammf.proxima.dns.utils.ServiceAddress
 
+/**
+  * This is an actor that handles the creation of actor of type [[DNSNodeActor]].
+  * It can create both leaf nodes and internal nodes of the DNS hierarchy.
+  * @param name the name of this actor.
+  * @param actorSystem the actor system, necessary for the nodes creation.
+  * @param dnsRoot the reference to the root node actor, that needs to be passed to all the created nodes actor.
+  */
 class DNSNodesCreatorActor(val name: String, val actorSystem: ActorSystem, val dnsRoot: ActorRef) extends Actor {
   override def receive: Receive = {
     case msg: AddressCreationRequestMessage => handleLeafNodeCreation(msg, sender)
