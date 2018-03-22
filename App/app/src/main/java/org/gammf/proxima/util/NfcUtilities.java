@@ -18,7 +18,7 @@ public final class NfcUtilities {
 
         final PendingIntent pendingIntent = PendingIntent.getActivity(activity, 0, intent, 0);
 
-        IntentFilter[] filters = new IntentFilter[1];
+        final IntentFilter[] filters = new IntentFilter[1];
 
         filters[0] = new IntentFilter();
         filters[0].addAction(NfcAdapter.ACTION_NDEF_DISCOVERED);

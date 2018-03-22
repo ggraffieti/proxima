@@ -168,5 +168,3 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskListener
         }
     }
 }
-
-// "patientData", "{\"name\": \" John \",\"surname\": \"Doe\",\"CF\": \"DOEJHN70P16F205Y\",\"birthDate\": \"1970-09-16T00:00:00.000Z\",\"bloodGroup\": \"A+\",\"organDonor\": \"YES\",\"medicalConditions\": [\"Heart Disease\",\"Diabetes type 2\",\"Pacemaker\"],\"drugAllergies\": [\"Penicillan\",\"Morphine\"],\"otherAllergies\": [\"Peanuts\",\"Bee sting\",\"Latex\",\"Wheat\"],\"medications\": [\"Prozac\",\"Refludan\",\"Hydrochiorothiazide\",\"Cialis\",\"Plavix\"]}"

@@ -28,8 +28,8 @@ public class NdefReaderTask extends AsyncTask<Tag, Void, String> {
 
         final NdefMessage ndefMessage = ndef.getCachedNdefMessage();
 
-        NdefRecord[] records = ndefMessage.getRecords();
-        StringBuilder stringBuilder = new StringBuilder();
+        final NdefRecord[] records = ndefMessage.getRecords();
+        final StringBuilder stringBuilder = new StringBuilder();
         for (NdefRecord ndefRecord : records) {
             if (ndefRecord.getTnf() == NdefRecord.TNF_WELL_KNOWN && Arrays.equals(ndefRecord.getType(), NdefRecord.RTD_TEXT)) {
                 try {
@@ -51,7 +51,7 @@ public class NdefReaderTask extends AsyncTask<Tag, Void, String> {
     private String readText(NdefRecord record) throws UnsupportedEncodingException {
         byte[] payload = record.getPayload();
 
-        String textEncoding = ((payload[0] & 128) == 0) ? "UTF-8" : "UTF-16";
+        final String textEncoding = ((payload[0] & 128) == 0) ? "UTF-8" : "UTF-16";
 
         int languageCodeLength = payload[0] & 0x3F;
 

@@ -1,6 +1,5 @@
 package org.gammf.proxima.util;
 
-
 import android.content.Context;
 import android.widget.Toast;
 
@@ -23,7 +22,7 @@ public class KeyManager {
         if(privateKey == null) {
             try {
                 final InputStream inputStream = context.getAssets().open("private_key.der");
-                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
                 int currentByte;
                 while ((currentByte = inputStream.read()) != -1) {
                     buffer.write(currentByte);
@@ -31,7 +30,7 @@ public class KeyManager {
                 inputStream.close();
                 buffer.close();
 
-                byte[] privateKeyBytes = buffer.toByteArray();
+                final byte[] privateKeyBytes = buffer.toByteArray();
 
                 final KeyFactory kf = KeyFactory.getInstance("RSA");
                 privateKey = kf.generatePrivate(new PKCS8EncodedKeySpec(privateKeyBytes));

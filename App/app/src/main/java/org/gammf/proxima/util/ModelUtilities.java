@@ -1,6 +1,5 @@
 package org.gammf.proxima.util;
 
-
 import org.gammf.proxima.model.IPatientData;
 import org.gammf.proxima.model.PatientData;
 import org.joda.time.DateTime;
