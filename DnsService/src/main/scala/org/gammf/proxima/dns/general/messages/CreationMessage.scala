@@ -11,7 +11,12 @@ import org.gammf.proxima.dns.utils.Service.StringService
   * @param ipAddress the ip address of the external component that offers the service.
   * @param port the port number to use to contact the external component that offers the service.
   */
-case class AddressCreationRequestMessage(service: StringService, ipAddress: String, port: Int) extends CommunicationMessage
+case class AddressCreationRequestMessage(service: StringService, ipAddress: String, port: Int) extends DNSMessage
+
+/**
+  * It's a positive response to a [[AddressCreationRequestMessage]].
+  */
+case class AddressCreationResponseMessage() extends DNSMessage
 
 /**
   * Represents a message to the DNS service, requesting the creation of an internal node.
@@ -20,13 +25,6 @@ case class AddressCreationRequestMessage(service: StringService, ipAddress: Stri
 case class InternalNodeCreationRequestMessage(service: StringService) extends DNSMessage
 
 /**
-  * It's a response to a [[InternalNodeCreationRequestMessage]].
-  * @param result true in case of success in the address creation operation, false otherwise.
+  * It's a positive response to a [[InternalNodeCreationRequestMessage]].
   */
-case class InternalNodeCreationResponseMessage(result: Boolean) extends DNSMessage
-
-/**
-  * It's a response to a [[AddressCreationRequestMessage]].
-  * @param result true in case of success in the address creation operation, false otherwise.
-  */
-case class AddressCreationResponseMessage(result: Boolean) extends CommunicationMessage
+case class InternalNodeCreationResponseMessage() extends DNSMessage

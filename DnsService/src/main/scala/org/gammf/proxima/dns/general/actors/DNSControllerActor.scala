@@ -2,8 +2,7 @@ package org.gammf.proxima.dns.general.actors
 
 import akka.pattern.ask
 import akka.actor.{Actor, ActorRef, Props}
-import org.gammf.proxima.dns.general.messages.{HierarchyControlMessage, InternalNodeCreationRequestMessage, InternalNodeCreationResponseMessage}
-import org.gammf.proxima.dns.hierarchy.messages.{HierarchyNode, HierarchyNodesMessage, HierarchyRequestMessage}
+import org.gammf.proxima.dns.general.messages._
 import org.gammf.proxima.dns.utils.Role._
 
 import scala.concurrent.ExecutionContext.Implicits.global

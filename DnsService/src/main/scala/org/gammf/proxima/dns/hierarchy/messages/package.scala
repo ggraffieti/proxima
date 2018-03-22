@@ -1,6 +1,7 @@
 package org.gammf.proxima.dns.hierarchy
 
 import akka.actor.ActorRef
+import org.gammf.proxima.dns.general.messages.HierarchyNode
 import org.gammf.proxima.dns.utils.ActorDNSEntry
 import org.gammf.proxima.dns.utils.Role.Role
 import org.gammf.proxima.dns.utils.Service.StringService

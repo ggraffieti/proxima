@@ -5,7 +5,7 @@ import akka.pattern.ask
 import akka.util.Timeout
 import org.gammf.proxima.dns.general.actors.{BridgeActor, DNSControllerActor, DNSNodesCreatorActor, PrinterActor}
 import org.gammf.proxima.dns.dnsserver.DNSServer
-import org.gammf.proxima.dns.general.messages.HierarchyControlMessage
+import org.gammf.proxima.dns.general.messages.{HierarchyControlMessage, HierarchyNodesMessage, HierarchyRequestMessage}
 import org.gammf.proxima.dns.hierarchy.actors.DNSRootActor
 import org.gammf.proxima.dns.hierarchy.messages._
 import org.gammf.proxima.dns.utils.Service

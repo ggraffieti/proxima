@@ -1,12 +1,12 @@
 package org.gammf.proxima.dns.general.actors
 
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
-import org.gammf.proxima.dns.general.messages.{AddressCreationRequestMessage, AddressCreationResponseMessage, InternalNodeCreationRequestMessage, InternalNodeCreationResponseMessage}
+import org.gammf.proxima.dns.general.messages._
 import org.gammf.proxima.dns.hierarchy.actors.DNSNodeActor
 import org.gammf.proxima.dns.utils.ServiceAddress
 
 /**
-  * This is an actor that handles the creation of actor of type [[DNSNodeActor]].
+  * This is an actor that handles the creation of actors of type [[org.gammf.proxima.dns.hierarchy.actors.DNSNodeActor]].
   * It can create both leaf nodes and internal nodes of the DNS hierarchy.
   * @param name the name of this actor.
   * @param actorSystem the actor system, necessary for the nodes creation.
@@ -21,12 +21,12 @@ class DNSNodesCreatorActor(val name: String, val actorSystem: ActorSystem, val d
 
   private[this] def handleLeafNodeCreation(msg: AddressCreationRequestMessage, msgSender: ActorRef): Unit = {
     actorSystem.actorOf(DNSNodeActor.leafNodeProps(dnsRoot = dnsRoot, service = msg.service, address = ServiceAddress(msg.ipAddress, msg.port)))
-    msgSender ! AddressCreationResponseMessage(true)
+    msgSender ! AddressCreationResponseMessage()
   }
 
   private[this] def handleInternalNodeCreation(msg: InternalNodeCreationRequestMessage, msgSender: ActorRef): Unit = {
     actorSystem.actorOf(DNSNodeActor.internalNodeProps(dnsRoot = dnsRoot, service = msg.service))
-    msgSender ! InternalNodeCreationResponseMessage(true)
+    msgSender ! InternalNodeCreationResponseMessage()
   }
 }
 

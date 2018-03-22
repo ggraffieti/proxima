@@ -3,6 +3,7 @@ package org.gammf.proxima.dns.hierarchy.actors
 import akka.actor.ActorRef
 import akka.util.Timeout
 import akka.pattern.ask
+import org.gammf.proxima.dns.general.messages.{HierarchyNode, HierarchyNodesMessage, HierarchyRequestMessage, HierarchyResponseMessage}
 import org.gammf.proxima.dns.hierarchy.messages._
 import org.gammf.proxima.dns.utils.{ActorDNSEntry, ServiceAddress}
 import org.gammf.proxima.dns.utils.Role._
