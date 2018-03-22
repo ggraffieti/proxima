@@ -1,0 +1,134 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a simple API set of the front server of the Proxima project. These API are the only ones that clients need to know in order to use the Proxima service.",
+    "version": "1.0.0",
+    "title": "Proxima Front Server"
+  },
+  "host": "localhost:6041",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "data",
+      "description": "Everything about all the available ways to contact the Proxima data services."
+    }
+  ],
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/data": {
+      "get": {
+        "tags": [
+          "data"
+        ],
+        "summary": "Returns the requested data of the specified target.",
+        "description": "Returns the data.",
+        "operationId": "getData",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "targetID",
+            "in": "query",
+            "description": "The identifier of the target.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "operatorID",
+            "in": "query",
+            "description": "The identifier of the operator (the entity that wants to access the target data).",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "service",
+            "in": "query",
+            "description": "The service that indicates the data the operator wants to access",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "signature",
+            "in": "query",
+            "description": "The digital signature of the message, useful to evaluate the authorization degree of the operator.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/dataResponse"
+            }
+          },
+          "403": {
+            "description": "unauthorized"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "dataResponse": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "John"
+        },
+        "surname": {
+          "type": "string",
+          "example": "Doe"
+        },
+        "CF": {
+          "type": "string",
+          "example": "DOEJHN70P16F205Y"
+        },
+        "birthDate": {
+          "type": "string",
+          "example": "1970-09-16T00:00:00.000Z"
+        },
+        "bloodGroup": {
+          "type": "string",
+          "example": "A+"
+        },
+        "organDonor": {
+          "type": "string",
+          "example": "YES"
+        },
+        "medicalConditions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "example": "Heart Disease"
+          }
+        },
+        "drugAllergies": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "example": "Penicillan"
+          }
+        },
+        "otherAllergies": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "example": "Peanuts"
+          }
+        },
+        "medications": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "example": "Prozac"
+          }
+        }
+      }
+    }
+  }
+}
