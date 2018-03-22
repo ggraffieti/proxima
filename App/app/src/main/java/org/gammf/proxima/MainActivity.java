@@ -38,6 +38,10 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskListener
                                        final IBinder service) {
             LocalBinder binder = (LocalBinder) service;
             mHttpClientService = binder.getService();
+            if(!mHttpClientService.isProximaServerAvailable()) {
+                mHomeTextView.setText(R.string.home_message_no_connection);
+                mSearchButton.setEnabled(false);
+            }
         }
 
         @Override
@@ -137,11 +141,13 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskListener
         } else {
             Toast.makeText(this, R.string.unknown_error, Toast.LENGTH_SHORT).show();
         }
+        refreshView();
     }
 
     @Override
     public void onConnectionError() {
         Toast.makeText(this, R.string.connection_error, Toast.LENGTH_SHORT).show();
+        refreshView();
     }
 
     private void handleIntent(final Intent intent) {

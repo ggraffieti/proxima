@@ -20,9 +20,16 @@ import org.gammf.proxima.interfaces.HTTPClientServiceListener;
 import org.gammf.proxima.util.AppUtilities;
 import org.gammf.proxima.util.CommunicationUtilities;
 import org.gammf.proxima.util.KeyManager;
+import org.gammf.proxima.util.ServerParameters;
 import org.json.JSONObject;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+
 public class HTTPClientService extends Service {
+
+    private final static Integer TIMEOUT = 2000;
 
     private RequestQueue mRequestQueue;
     private String mRescuerIdentifier;
@@ -48,6 +55,19 @@ public class HTTPClientService extends Service {
         switch (role) {
             case RESCUER: mRescuerIdentifier = identifier; break;
             case PATIENT: mPatientIdentifier = identifier; break;
+        }
+    }
+
+    public boolean isProximaServerAvailable() {
+        try {
+            final Socket socket = new Socket();
+            final InetSocketAddress inetSocketAddress = new InetSocketAddress(ServerParameters.SERVER_IP,
+                                                                              Integer.decode(ServerParameters.SERVER_PORT));
+            socket.connect(inetSocketAddress, TIMEOUT);
+            socket.close();
+            return true;
+        } catch (java.io.IOException e) {
+            return false;
         }
     }
 
