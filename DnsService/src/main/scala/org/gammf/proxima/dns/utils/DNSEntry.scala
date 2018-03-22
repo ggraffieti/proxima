@@ -70,6 +70,7 @@ sealed trait ActorDNSEntry extends DNSEntry[ActorRef, Role, StringService] {
     * @return true if this entry is greater than the given object, false otherwise.
     */
   def >(that: EntryParam): Boolean
+
   /**
     * Greater or similar method. Checks if this entry is similar or greater than another object, based on its topic value.
     * @param that the object to be compared to this entry.
@@ -102,20 +103,26 @@ sealed trait ActorDNSEntry extends DNSEntry[ActorRef, Role, StringService] {
   */
 case class ActorDNSEntryImpl(override val reference: ActorRef, override val name: String, override val role: Role,
                              override val service: StringService, override var used: Boolean = false) extends ActorDNSEntry {
+
   override def equals(obj: Any): Boolean = obj match {
     case e: ActorDNSEntry => e.reference == reference && e.name == name && e.service == service
     case _ => false
   }
+
   override def ===(that: EntryParam): Boolean = role == that.role && service == that.service
+
   override def >(that: EntryParam): Boolean = role match {
     case INTERNAL_NODE if that.role != INTERNAL_NODE => service >= that.service
     case _ => service > that.service
   }
+
   override def >=(that: EntryParam): Boolean = this > that || this === that
+
   override def <(that: EntryParam): Boolean = that.role match {
     case INTERNAL_NODE if role != INTERNAL_NODE => service <= that.service
     case _ => service < that.service
   }
+
   override def <=(that: EntryParam): Boolean = this < that || this === that
 }
 
