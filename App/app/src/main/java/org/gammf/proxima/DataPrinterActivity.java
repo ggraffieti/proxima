@@ -15,6 +15,11 @@ import org.gammf.proxima.util.ModelUtilities;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Activity responsible for displaying the medical data of a certain patient. The data is passed inside the intent
+ * used to start the activity itself, as an extra JSONObject.
+ * The data is shown upon creation.
+ */
 public class DataPrinterActivity extends AppCompatActivity {
 
     private IPatientData mPatientData;

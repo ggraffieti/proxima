@@ -38,4 +38,5 @@
     <string name="unauthorized_error">You are not authorized to consult this patient data</string>
     <string name="unknown_error">Unknown error from server</string>
     <string name="home_message_no_connection">No internet connection</string>
+    <string name="mime_error">Check your mime type</string>
 </resources>

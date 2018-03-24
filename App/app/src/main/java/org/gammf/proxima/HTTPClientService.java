@@ -25,9 +25,11 @@ import org.json.JSONObject;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+/**
+ * Bounded service responsible for communicating with the proxima front server in order to retrieve the data
+ * related to a certain patient.
+ */
 public class HTTPClientService extends Service {
-
-    private final static Integer TIMEOUT = 2000;
 
     private RequestQueue mRequestQueue;
     private String mRescuerIdentifier;
@@ -49,6 +51,13 @@ public class HTTPClientService extends Service {
         }
     }
 
+
+    /**
+     * Sets the identifier for a certain role.
+     * The identifiers will be used when sending a request.
+     * @param role the role the identifier is referred to.
+     * @param identifier the identifier itself.
+     */
     public void setIdentifier(final Role role, final String identifier) {
         switch (role) {
             case RESCUER: mRescuerIdentifier = identifier; break;
@@ -56,19 +65,10 @@ public class HTTPClientService extends Service {
         }
     }
 
-    public boolean isProximaServerAvailable() {
-        try {
-            final Socket socket = new Socket();
-            final InetSocketAddress inetSocketAddress = new InetSocketAddress(ServerParameters.SERVER_IP,
-                                                                              Integer.decode(ServerParameters.SERVER_PORT));
-            socket.connect(inetSocketAddress, TIMEOUT);
-            socket.close();
-            return true;
-        } catch (java.io.IOException e) {
-            return false;
-        }
-    }
-
+    /**
+     * Sends a medical data request to the proxima front server.
+     * @param listener the listener to be notified upon the reception of a server response/error.
+     */
     public void sendDataRequest(final HTTPClientServiceListener listener) {
         try {
             final String url = CommunicationUtilities.buildMedicalDataUrl(mPatientIdentifier,

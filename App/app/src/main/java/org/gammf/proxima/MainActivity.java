@@ -18,11 +18,15 @@ import org.gammf.proxima.interfaces.AsyncTaskListener;
 import org.gammf.proxima.interfaces.HTTPClientServiceListener;
 import org.gammf.proxima.HTTPClientService.LocalBinder;
 
+import org.gammf.proxima.util.CommunicationUtilities;
 import org.gammf.proxima.util.NfcUtilities;
 import org.json.JSONObject;
 
 import javax.net.ssl.HttpsURLConnection;
 
+/**
+ * Main activity of the application, mainly responsible for managing user inputs and interactions.
+ */
 public class MainActivity extends AppCompatActivity implements AsyncTaskListener, HTTPClientServiceListener {
 
     private Button mSearchButton;
@@ -38,17 +42,16 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskListener
                                        final IBinder service) {
             LocalBinder binder = (LocalBinder) service;
             mHttpClientService = binder.getService();
-            if(!mHttpClientService.isProximaServerAvailable()) {
-                mHomeTextView.setText(R.string.home_message_no_connection);
-                mSearchButton.setEnabled(false);
-            }
         }
 
         @Override
-        public void onServiceDisconnected(final ComponentName arg0) {
-        }
+        public void onServiceDisconnected(final ComponentName arg0) {}
     };
 
+    /**
+     * App initialization. It checks for NFC support, sets up the home button listener and starts the {@link HTTPClientService}.
+     * @param savedInstanceState the saved instance state.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskListener
         mSearchButton = findViewById(R.id.homeButton);
         mHomeTextView = findViewById(R.id.homeTextView);
 
-        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        final NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         mIsSearching = false;
 
         if (nfcAdapter == null) {
@@ -85,6 +88,10 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskListener
         bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
+    /**
+     * Starts a new {@link NdefReaderTask} in order to read identifier contained in the intent.
+     * @param intent the intent containing the NFC tag data.
+     */
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -109,6 +116,11 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskListener
         unbindService(mServiceConnection);
     }
 
+    /**
+     * Stores the identifiers read from a {@link NdefReaderTask}.
+     * If both the identifiers are sets, it starts a request to the server.
+     * @param result the result of the async task.
+     */
     @Override
     public void onAsyncTaskCompletion(final String result) {
         switch (mCurrentRole) {
@@ -126,6 +138,10 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskListener
         }
     }
 
+    /**
+     * Starts a {@link DataPrinterActivity} in order to show the received data.
+     * @param jsonObject a {@link JSONObject} containing the server response.
+     */
     @Override
     public void onDataReceived(final JSONObject jsonObject) {
         final Intent intent = new Intent(this, DataPrinterActivity.class);
@@ -134,6 +150,10 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskListener
         mHomeTextView.setText(R.string.home_message_printing_data);
     }
 
+    /**
+     * Shows a toast containing the communication error.
+     * @param errorCode the response error code.
+     */
     @Override
     public void onError(final Integer errorCode) {
         if(errorCode == HttpsURLConnection.HTTP_FORBIDDEN) {
@@ -144,6 +164,9 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskListener
         refreshView();
     }
 
+    /**
+     * Shows a toast telling the user that no connection is present.
+     */
     @Override
     public void onConnectionError() {
         Toast.makeText(this, R.string.connection_error, Toast.LENGTH_SHORT).show();
@@ -159,12 +182,17 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskListener
     }
 
     private void refreshView() {
-        if(mIsSearching) {
-            mHomeTextView.setText(R.string.home_message_first_search);
-            mSearchButton.setText(R.string.home_button_text_stop_searching);
+        if(!CommunicationUtilities.isProximaServerAvailable()) {
+            mHomeTextView.setText(R.string.home_message_no_connection);
+            mSearchButton.setEnabled(false);
         } else {
-            mHomeTextView.setText(R.string.home_message_default);
-            mSearchButton.setText(R.string.home_button_text_default);
+            if (mIsSearching) {
+                mHomeTextView.setText(R.string.home_message_first_search);
+                mSearchButton.setText(R.string.home_button_text_stop_searching);
+            } else {
+                mHomeTextView.setText(R.string.home_message_default);
+                mSearchButton.setText(R.string.home_button_text_default);
+            }
         }
     }
 }

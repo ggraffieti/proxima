@@ -11,10 +11,19 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Utility class meant to contain model-related methods.
+ */
 public final class ModelUtilities {
 
     private ModelUtilities() {}
 
+    /**
+     * Uses to content of the JSONObject parameter to create a {@link IPatientData} object.
+     * @param jsonObject the JSONObject containing the patient data.
+     * @return the corresponding {@link IPatientData}.
+     * @throws JSONException if the JSONObject is malformed.
+     */
     public static IPatientData jsonToPatientData(final JSONObject jsonObject) throws JSONException {
         final PatientData.Builder builder = new PatientData.Builder(jsonObject.getString("name"),
                                                                     jsonObject.getString("surname"));

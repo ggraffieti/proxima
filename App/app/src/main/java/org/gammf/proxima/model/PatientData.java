@@ -2,7 +2,9 @@ package org.gammf.proxima.model;
 
 import java.util.List;
 
-
+/**
+ * Simple implementation of {@link IPatientData}, including a builder as inner class.
+ */
 public class PatientData implements IPatientData {
 
     private final String mName;
@@ -82,6 +84,9 @@ public class PatientData implements IPatientData {
         return mMedications;
     }
 
+    /**
+     * Builder that can be used to build a {@link PatientData} object.
+     */
     public static class Builder {
         private String mName;
         private String mSurname;

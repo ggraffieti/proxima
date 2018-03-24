@@ -1,6 +1,15 @@
 package org.gammf.proxima.util;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+
+/**
+ * Utility class, meant to contain class-independent/communication-related methods.
+ */
 public final class CommunicationUtilities {
+
+    private final static Integer TIMEOUT = 2000;
 
     private static final String SERVICE_NAME = "proxima.medical.firstAid";
     private static final String DATA_RESOURCE_NAME = "data";
@@ -11,6 +20,13 @@ public final class CommunicationUtilities {
 
     private CommunicationUtilities() {}
 
+    /**
+     * Creates the correct URL to use in order to retrieve medical data from the server.
+     * @param patientIdentifier the patient identifier, which will be set as a query parameter.
+     * @param rescuerIdentifier the rescuer identifier, which will be set as a query parameter.
+     * @param signature the RSA digital signature, which will be set as a query parameter.
+     * @return the URL.
+     */
     public static String buildMedicalDataUrl(final String patientIdentifier, final String rescuerIdentifier, final String signature) {
         return ServerParameters.PROTOCOL +"://" +
                 ServerParameters.SERVER_IP + ":" +
@@ -19,5 +35,22 @@ public final class CommunicationUtilities {
                                          + RESCUER_QUERY_PARAMETER + "=" + rescuerIdentifier + "&"
                                          + SERVICE_QUERY_PARAMETER + "=" + SERVICE_NAME + "&"
                                          + SIGNATURE_QUERY_PARAMETER + "=" + signature;
+    }
+
+    /**
+     * Checks is the proxima front server is reachable and available.
+     * @return true if the proxima front server is reachable and available, false otherwise.
+     */
+    public static boolean isProximaServerAvailable() {
+        try {
+            final Socket socket = new Socket();
+            final InetSocketAddress inetSocketAddress = new InetSocketAddress(ServerParameters.SERVER_IP,
+                    Integer.decode(ServerParameters.SERVER_PORT));
+            socket.connect(inetSocketAddress, TIMEOUT);
+            socket.close();
+            return true;
+        } catch (final IOException e) {
+            return false;
+        }
     }
 }
