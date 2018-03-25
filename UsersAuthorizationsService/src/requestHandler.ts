@@ -4,7 +4,7 @@ import {userAuthorizations} from "./userAuthorizationsModel";
 export class RequestHandler {
 
   private static BAD_REQUEST_ERROR_CODE = 400;
-  private static FORBIDDEN_ERROR_CODE = 403;
+  private static UNAUTHORIZED = 401;
   private static INTERNAL_ERROR_CODE = 500;
 
   public static handleRequest(req: express.Request, res: express.Response) {
@@ -16,10 +16,9 @@ export class RequestHandler {
         if (err) {
           RequestHandler.sendError(res, RequestHandler.INTERNAL_ERROR_CODE, 'Internal Error');
         } else if(!doc) {
-          RequestHandler.sendError(res, RequestHandler.FORBIDDEN_ERROR_CODE, 'Forbidden');
+          RequestHandler.sendError(res, RequestHandler.UNAUTHORIZED, 'Unautorized');
         } else {
           res.send("Authorized");
-          console.log(doc.toString());
         }
       });
     } else {
