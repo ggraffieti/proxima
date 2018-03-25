@@ -25,6 +25,10 @@ import org.gammf.proxima.util.IdentifiersManager;
 import org.gammf.proxima.util.NfcUtilities;
 import org.json.JSONObject;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 import javax.net.ssl.HttpsURLConnection;
 
 /**
@@ -34,6 +38,8 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskListener
 
     private Button mSearchButton;
     private TextView mHomeTextView;
+
+    private Boolean mIsServerAvailable;
 
     private Role mCurrentRole;
     private boolean mIsSearching;
@@ -89,6 +95,19 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskListener
 
         final Intent intent = new Intent(this, HTTPClientService.class);
         bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+
+        try {
+            Executors.newSingleThreadScheduledExecutor().schedule(new Runnable() {
+                @Override
+                public void run() {
+                    mIsServerAvailable = CommunicationUtilities.isProximaServerAvailable();
+                }
+            }, 0, TimeUnit.SECONDS).get();
+        } catch (final InterruptedException e) {
+            mIsServerAvailable = false;
+        } catch (final ExecutionException e) {
+            mIsServerAvailable = false;
+        }
     }
 
     /**
@@ -185,8 +204,8 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskListener
     }
 
     private void refreshView() {
-        if(!CommunicationUtilities.isProximaServerAvailable()) {
-            mHomeTextView.setText(R.string.home_message_no_connection);
+        if(!mIsServerAvailable) {
+            mHomeTextView.setText(R.string.home_message_no_server_available);
             mSearchButton.setEnabled(false);
         } else {
             if (mIsSearching) {

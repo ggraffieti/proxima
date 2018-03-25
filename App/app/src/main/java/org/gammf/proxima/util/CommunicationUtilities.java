@@ -1,15 +1,22 @@
 package org.gammf.proxima.util;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
 import java.net.Socket;
+import java.net.URL;
 
 /**
  * Utility class, meant to contain class-independent/communication-related methods.
  */
 public final class CommunicationUtilities {
 
-    private final static Integer TIMEOUT = 2000;
+    private final static Integer TIMEOUT = 1000;
 
     private static final String SERVICE_NAME = "proxima.medical.firstAid";
     private static final String DATA_RESOURCE_NAME = "data";
@@ -44,8 +51,7 @@ public final class CommunicationUtilities {
     public static boolean isProximaServerAvailable() {
         try {
             final Socket socket = new Socket();
-            final InetSocketAddress inetSocketAddress = new InetSocketAddress(ServerParameters.SERVER_IP,
-                    Integer.decode(ServerParameters.SERVER_PORT));
+            final InetSocketAddress inetSocketAddress = new InetSocketAddress(ServerParameters.SERVER_IP, ServerParameters.SERVER_PORT);
             socket.connect(inetSocketAddress, TIMEOUT);
             socket.close();
             return true;
