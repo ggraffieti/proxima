@@ -1,4 +1,4 @@
-package org.gammf.proxima;
+package org.gammf.proxima.android;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,6 +9,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.gammf.proxima.R;
 import org.gammf.proxima.model.IPatientData;
 import org.gammf.proxima.util.NfcUtilities;
 import org.gammf.proxima.util.ModelUtilities;

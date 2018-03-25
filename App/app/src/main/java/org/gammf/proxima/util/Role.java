@@ -1,4 +1,4 @@
-package org.gammf.proxima;
+package org.gammf.proxima.util;
 
 /**
  * Roles of the application domain.

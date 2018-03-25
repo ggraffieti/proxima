@@ -17,7 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".android.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -32,9 +32,9 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".HTTPClientService"/>
+        <service android:name=".android.HTTPClientService"/>
 
-        <activity android:name=".DataPrinterActivity">
+        <activity android:name=".android.DataPrinterActivity">
         </activity>
     </application>
 

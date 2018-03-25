@@ -1,9 +1,10 @@
 package org.gammf.proxima.interfaces;
 
+import org.gammf.proxima.android.HTTPClientService;
 import org.json.JSONObject;
 
 /**
- * Interface used for retrieving the results of the {@link org.gammf.proxima.HTTPClientService} server requests.
+ * Interface used for retrieving the results of the {@link HTTPClientService} server requests.
  */
 public interface HTTPClientServiceListener {
     /**

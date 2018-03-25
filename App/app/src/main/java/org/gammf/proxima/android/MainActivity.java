@@ -1,4 +1,4 @@
-package org.gammf.proxima;
+package org.gammf.proxima.android;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -14,9 +14,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.gammf.proxima.R;
+import org.gammf.proxima.util.Role;
 import org.gammf.proxima.interfaces.AsyncTaskListener;
 import org.gammf.proxima.interfaces.HTTPClientServiceListener;
-import org.gammf.proxima.HTTPClientService.LocalBinder;
+import org.gammf.proxima.android.HTTPClientService.LocalBinder;
 
 import org.gammf.proxima.util.CommunicationUtilities;
 import org.gammf.proxima.util.IdentifiersManager;

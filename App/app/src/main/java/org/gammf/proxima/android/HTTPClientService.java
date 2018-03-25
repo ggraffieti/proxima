@@ -1,4 +1,4 @@
-package org.gammf.proxima;
+package org.gammf.proxima.android;
 
 import android.app.Service;
 import android.content.Intent;
@@ -15,6 +15,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.gammf.proxima.R;
 import org.gammf.proxima.interfaces.HTTPClientServiceListener;
 import org.gammf.proxima.util.AppUtilities;
 import org.gammf.proxima.util.CommunicationUtilities;

@@ -1,4 +1,4 @@
-package org.gammf.proxima;
+package org.gammf.proxima.android;
 
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
