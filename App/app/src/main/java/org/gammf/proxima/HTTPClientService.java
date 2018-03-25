@@ -18,12 +18,9 @@ import com.android.volley.toolbox.Volley;
 import org.gammf.proxima.interfaces.HTTPClientServiceListener;
 import org.gammf.proxima.util.AppUtilities;
 import org.gammf.proxima.util.CommunicationUtilities;
+import org.gammf.proxima.util.IdentifiersManager;
 import org.gammf.proxima.util.KeyManager;
-import org.gammf.proxima.util.ServerParameters;
 import org.json.JSONObject;
-
-import java.net.InetSocketAddress;
-import java.net.Socket;
 
 /**
  * Bounded service responsible for communicating with the proxima front server in order to retrieve the data
@@ -32,8 +29,6 @@ import java.net.Socket;
 public class HTTPClientService extends Service {
 
     private RequestQueue mRequestQueue;
-    private String mRescuerIdentifier;
-    private String mPatientIdentifier;
 
     @Nullable
     @Override
@@ -51,29 +46,18 @@ public class HTTPClientService extends Service {
         }
     }
 
-
-    /**
-     * Sets the identifier for a certain role.
-     * The identifiers will be used when sending a request.
-     * @param role the role the identifier is referred to.
-     * @param identifier the identifier itself.
-     */
-    public void setIdentifier(final Role role, final String identifier) {
-        switch (role) {
-            case RESCUER: mRescuerIdentifier = identifier; break;
-            case PATIENT: mPatientIdentifier = identifier; break;
-        }
-    }
-
     /**
      * Sends a medical data request to the proxima front server.
      * @param listener the listener to be notified upon the reception of a server response/error.
      */
     public void sendDataRequest(final HTTPClientServiceListener listener) {
         try {
-            final String url = CommunicationUtilities.buildMedicalDataUrl(mPatientIdentifier,
-                                                                          mRescuerIdentifier,
-                                                                          AppUtilities.digitalSignature(mPatientIdentifier+mRescuerIdentifier));
+            final String patientIdentifier = IdentifiersManager.getPatientIdentifier();
+            final String rescuerIdentifier = IdentifiersManager.getRescuerIdentifier();
+
+            final String url = CommunicationUtilities.buildMedicalDataUrl(patientIdentifier,
+                                                                          rescuerIdentifier,
+                                                                          AppUtilities.digitalSignature(patientIdentifier+rescuerIdentifier));
 
             final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                 @Override

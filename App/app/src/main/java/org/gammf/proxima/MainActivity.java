@@ -19,6 +19,7 @@ import org.gammf.proxima.interfaces.HTTPClientServiceListener;
 import org.gammf.proxima.HTTPClientService.LocalBinder;
 
 import org.gammf.proxima.util.CommunicationUtilities;
+import org.gammf.proxima.util.IdentifiersManager;
 import org.gammf.proxima.util.NfcUtilities;
 import org.json.JSONObject;
 
@@ -125,14 +126,14 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskListener
     public void onAsyncTaskCompletion(final String result) {
         switch (mCurrentRole) {
             case RESCUER:
-                mHttpClientService.setIdentifier(mCurrentRole, result);
+                IdentifiersManager.setRescuerIdentifier(result);
                 mHomeTextView.setText(R.string.home_message_second_search);
                 mCurrentRole = Role.PATIENT;
                 break;
             case PATIENT:
-                mHttpClientService.setIdentifier(mCurrentRole, result);
-                mCurrentRole = Role.RESCUER;
+                IdentifiersManager.setPatientIdentifier(result);
                 mHomeTextView.setText(R.string.home_message_sending_request);
+                mCurrentRole = Role.RESCUER;
                 mHttpClientService.sendDataRequest(this);
                 break;
         }

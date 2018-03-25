@@ -14,14 +14,25 @@ import java.security.PrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 
-public class KeyManager {
+/**
+ * RSA private key manager. Provides methods to get the private key from the app assets.
+ */
+public final class KeyManager {
+
+    private static final String PRIVATE_KEY_FILE_NAME = "private_key.der";
 
     private static PrivateKey privateKey;
 
+    private KeyManager() {}
+
+    /**
+     * Reads the RSA private key from the assets.
+     * @param context the application context.
+     */
     public static void init(final Context context) {
         if(privateKey == null) {
             try {
-                final InputStream inputStream = context.getAssets().open("private_key.der");
+                final InputStream inputStream = context.getAssets().open(PRIVATE_KEY_FILE_NAME);
                 final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
                 int currentByte;
                 while ((currentByte = inputStream.read()) != -1) {
@@ -44,6 +55,11 @@ public class KeyManager {
         }
     }
 
+    /**
+     * Getter for the private key.
+     * @return the private key.
+     * @throws IllegalStateException if the key hasn't been read from the assets previously.
+     */
     public static PrivateKey getPrivateKey() throws IllegalStateException {
         if(privateKey != null) {
             return privateKey;
