@@ -1,15 +1,8 @@
 package org.gammf.proxima.util;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
-import java.net.MalformedURLException;
 import java.net.Socket;
-import java.net.URL;
 
 /**
  * Utility class, meant to contain class-independent/communication-related methods.

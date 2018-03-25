@@ -21,6 +21,7 @@ import org.gammf.proxima.util.AppUtilities;
 import org.gammf.proxima.util.CommunicationUtilities;
 import org.gammf.proxima.util.IdentifiersManager;
 import org.gammf.proxima.util.KeyManager;
+
 import org.json.JSONObject;
 
 /**
@@ -58,8 +59,7 @@ public class HTTPClientService extends Service {
 
             final String url = CommunicationUtilities.buildMedicalDataUrl(patientIdentifier,
                                                                           rescuerIdentifier,
-                                                                          AppUtilities.digitalSignature(patientIdentifier+rescuerIdentifier));
-
+                                                                          AppUtilities.digitalSignature(patientIdentifier+rescuerIdentifier)).replaceAll("\n", "");
             final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
@@ -69,6 +69,7 @@ public class HTTPClientService extends Service {
                 @Override
                 public void onErrorResponse(final VolleyError error) {
                     if(error.networkResponse == null) {
+                        error.printStackTrace();
                         listener.onConnectionError();
                     } else {
                         listener.onError(error.networkResponse.statusCode);

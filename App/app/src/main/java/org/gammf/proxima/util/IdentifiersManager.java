@@ -18,7 +18,6 @@ public final class IdentifiersManager {
         mRescuerIdentifier = identifier;
     }
 
-
     /**
      * Stores the patient identifier.
      * @param identifier the identifier.

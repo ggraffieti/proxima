@@ -28,11 +28,11 @@ public class NdefReaderTask extends AsyncTask<Tag, Void, String> {
      * @return the content contained in the tag.
      */
     @Override
-    protected String doInBackground(Tag... tags) {
-        final Ndef ndef = Ndef.get(tags[0]);
-        if (ndef == null) {
+    protected String doInBackground(final Tag... tags) {
+        if (tags == null || tags[0] == null) {
             return "";
         }
+        final Ndef ndef = Ndef.get(tags[0]);
 
         final NdefMessage ndefMessage = ndef.getCachedNdefMessage();
 
