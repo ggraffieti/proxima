@@ -1,7 +1,7 @@
 import * as express from "express";
 import * as request from "request-promise";
 import {RequestsCreator} from "./requestsUtils"
-import {OK, UNAUTHORIZED, BAD_REQUEST} from "./resStatusCodes"
+import {BAD_REQUEST, OK, UNAUTHORIZED} from "http-status-codes";
 
 /**
  * This class provides a set of static methods that could be used to entirely manage a web request, computing the
