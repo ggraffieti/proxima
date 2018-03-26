@@ -3,7 +3,19 @@ import * as request from "request-promise";
 import {RequestsCreator} from "./requestsUtils"
 import {OK, UNAUTHORIZED, BAD_REQUEST} from "./resStatusCodes"
 
+/**
+ * This class provides a set of static methods that could be used to entirely manage a web request, computing the
+ * appropriate response.
+ */
 export class RequestHandler {
+    /**
+     * This method takes care of analyzing a data request, computing an appropriate response and sending it to the
+     * original sender.
+     * @param {e.Request} req the data request, must be an HTTP(S) GET request, containing 'targetID', 'operatorID',
+     * 'service' and 'signature' as query parameters.
+     * @param {e.Response} res the data response, if data retrieving is successful (status code 200), it will contain the
+     * requested data of the target subject (in JSON format); otherwise, an unauthorized issue will be thrown (status code 401).
+     */
     public static handleDataRequest(req: express.Request, res: express.Response) {
         let targetID = req.query.targetID;
         let operatorID = req.query.operatorID;
