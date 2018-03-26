@@ -8,6 +8,7 @@ import {BAD_REQUEST, OK, UNAUTHORIZED} from "http-status-codes";
  * appropriate response.
  */
 export class RequestHandler {
+
     /**
      * This method takes care of analyzing a data request, computing an appropriate response and sending it to the
      * original sender.
@@ -29,7 +30,7 @@ export class RequestHandler {
         }
     }
 
-    private static computeResponse(targetID: String, operatorID: String, service: String, signature: String, mainRes: express.Response) {
+    private static computeResponse(targetID: string, operatorID: string, service: string, signature: string, mainRes: express.Response) {
         let serviceRequest = RequestsCreator.getInstance();
         request(serviceRequest.getUserAuthRequest(targetID, service))
             .then(res => res.statusCode == OK ?
