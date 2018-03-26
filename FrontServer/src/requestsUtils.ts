@@ -7,9 +7,9 @@ interface Service {
     path: String;
 }
 
-export class ServiceRequestUtils {
+export class RequestsCreator {
     private static REQUEST_TIMEOUT = 1000;
-    private static _SINGLETON: ServiceRequestUtils = new ServiceRequestUtils();
+    private static _SINGLETON: RequestsCreator = new RequestsCreator();
 
     private services: Service[];
 
@@ -31,7 +31,7 @@ export class ServiceRequestUtils {
         return {
             method: 'GET',
             uri: "http://" + srv.ip + ":" + srv.port + "/" + srv.path + "?targetID=" + targetID + "&service=" + service,
-            timeout: ServiceRequestUtils.REQUEST_TIMEOUT,
+            timeout: RequestsCreator.REQUEST_TIMEOUT,
             resolveWithFullResponse: true
         };
     }
@@ -41,7 +41,7 @@ export class ServiceRequestUtils {
         return {
             method: 'GET',
             uri: "http://" + srv.ip + ":" + srv.port + "/" + srv.path + "/" + service,
-            timeout: ServiceRequestUtils.REQUEST_TIMEOUT,
+            timeout: RequestsCreator.REQUEST_TIMEOUT,
             resolveWithFullResponse: true
         };
     }
@@ -52,7 +52,7 @@ export class ServiceRequestUtils {
             method: 'GET',
             uri: "http://" + address.ip + ":" + address.port + "/" + srv.path +
                  "?targetID=" + targetID + "&operatorID=" + operatorID + "&signature=" + signature,
-            timeout: ServiceRequestUtils.REQUEST_TIMEOUT,
+            timeout: RequestsCreator.REQUEST_TIMEOUT,
             resolveWithFullResponse: true
         };
     }

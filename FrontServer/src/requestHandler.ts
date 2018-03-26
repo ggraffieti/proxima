@@ -1,12 +1,10 @@
 import * as express from "express";
 import * as request from "request-promise";
-import {ServiceRequestUtils} from "./serviceRequestUtils"
-import {OK, FORBIDDEN, BAD_REQUEST} from "./resStatusCodes"
+import {RequestsCreator} from "./requestsUtils"
+import {OK, UNAUTHORIZED, BAD_REQUEST} from "./resStatusCodes"
 
 export class RequestHandler {
-    private static serviceRequest = ServiceRequestUtils.getInstance();
-
-    public static handleRequest(req: express.Request, res: express.Response) {
+    public static handleDataRequest(req: express.Request, res: express.Response) {
         let targetID = req.query.targetID;
         let operatorID = req.query.operatorID;
         let service = req.query.service;
@@ -20,28 +18,22 @@ export class RequestHandler {
     }
 
     private static computeResponse(targetID: String, operatorID: String, service: String, signature: String, mainRes: express.Response) {
-        request(this.serviceRequest.getUserAuthRequest(targetID, service))
-            .then(res => {
-                if (res.statusCode == OK) {
-                    return request(this.serviceRequest.getDNSRequest(service));
-                } else {
-                    return Promise.reject(FORBIDDEN);
-                }
-            }).then(res => {
-            if (res.statusCode == OK) {
-                return request(this.serviceRequest.getDataRequest(JSON.parse(res.body), targetID, operatorID, signature));
-            } else {
-                return Promise.reject(FORBIDDEN);
-            }
-        }).then(res => {
-            if (res.statusCode == OK) {
-                return mainRes.send(res.body);
-            } else {
-                return Promise.reject(FORBIDDEN);
-            }
-        }).catch(err => {
-            console.log(err);
-            mainRes.status(FORBIDDEN).send("Unauthorized");
-        })
+        let serviceRequest = RequestsCreator.getInstance();
+        request(serviceRequest.getUserAuthRequest(targetID, service))
+            .then(res => res.statusCode == OK ?
+                request(serviceRequest.getDNSRequest(service)) :
+                Promise.reject("User authorization denial"))
+            .then(res => res.statusCode == OK ?
+                request(serviceRequest.getDataRequest(JSON.parse(res.body), targetID, operatorID, signature)) :
+                Promise.reject("Cannot access data"))
+            .then(res => res.statusCode == OK ?
+                mainRes.send(res.body) :
+                Promise.reject("Operator unauthorized"))
+            .catch(err => this.handleErrorInDataRetrieving(err, mainRes));
+    }
+
+    private static handleErrorInDataRetrieving(err: any, res: express.Response) {
+        console.log(err);
+        res.sendStatus(UNAUTHORIZED);
     }
 }
