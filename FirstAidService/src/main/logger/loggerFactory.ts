@@ -8,7 +8,7 @@ export class LoggerFactory {
     return new LocalFileLogger(logAccesFilePath, logDenyFilePath); 
   }
 
-  public static remoteLogger() {
+  public static remoteLogger(): ILogger {
     return new RemoteLogger();
   }
 
