@@ -8,6 +8,7 @@ export class WorkShiftQueries {
     return new Promise((resolve, reject) => {
       workShifts.findOne({rescuerID: rescuerId}).exec((err, doc: IWeeklyWorkShiftModel) => {
         if (err || !doc) {
+          console.log("Error on work shift retrival from DB");
           reject(err);
         }
         else {

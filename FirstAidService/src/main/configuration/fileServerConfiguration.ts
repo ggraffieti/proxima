@@ -18,7 +18,7 @@ export class FileServerConfiguration implements IServerConfiguration {
     let tmpPortMap: {[serviceName: string]: number} = {};
     let configFile = fs.readFileSync(FileServerConfiguration.filePath, "utf8");
     configFile.split("\n").forEach((s) => {
-      var splitted = s.split(";");
+      var splitted = s.split("-");
       tmpIpMap[splitted[0]] = splitted[1].split(":")[0];
       tmpPortMap[splitted[0]] = +splitted[1].split(":")[1];
     });
