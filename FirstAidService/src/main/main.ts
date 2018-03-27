@@ -18,7 +18,7 @@ let keyManagerApp = express();
 dataApp.use(bodyParser.urlencoded({extended: false}));
 dataApp.use(bodyParser.json());
 
-//DnsRegistration.register();
+DnsRegistration.register();
 
 keyManagerApp.use(bodyParser.urlencoded({extended: false}));
 keyManagerApp.use(bodyParser.json());
