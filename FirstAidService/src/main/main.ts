@@ -11,13 +11,15 @@ import {AuthorizationChecker} from "./digitalSignature/authorizationChecker";
 import { PublicKeyQueries } from "./digitalSignature/publicKeyQueries";
 import { RemoteLogger } from "./logger/remoteLogger";
 import { DnsRegistration } from "./network/dnsRegistration";
-
+import { FileServerConfiguration } from "./configuration/fileServerConfiguration";
+ 
 let dataApp = express();
 let keyManagerApp = express();
 
 dataApp.use(bodyParser.urlencoded({extended: false}));
 dataApp.use(bodyParser.json());
 
+FileServerConfiguration.load();
 DnsRegistration.register();
 
 keyManagerApp.use(bodyParser.urlencoded({extended: false}));
