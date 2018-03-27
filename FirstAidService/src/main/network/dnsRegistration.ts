@@ -1,14 +1,19 @@
 import { NetworkManager } from "./networkManager";
+import { FileServerConfiguration } from "../configuration/fileServerConfiguration"
 
 export class DnsRegistration {
+
+  private static protocol = "http://";
+  private static dnsPath = "dns/address";
+  private static serviceOffered = "proxima.medica.firstAid";
   
   private constructor() { }
 
   public static register() {
-   NetworkManager.sendHttpPost("http://192.168.43.57:1406/dns/address", {
-     service: "proxima.medical.firstAid",
-     ip: "192.168.43.231",
-     port: 9876
+   NetworkManager.sendHttpPost(this.protocol + FileServerConfiguration.getInstance().dnsIp + FileServerConfiguration.getInstance().dnsPort + this.dnsPath, {
+     service: this.serviceOffered,
+     ip: FileServerConfiguration.getInstance().localIp,
+     port: FileServerConfiguration.getInstance().localPort
    }, (error, response, _) => {
      if (error || response.statusCode != 201) {
        console.log("error on DNS registration");
