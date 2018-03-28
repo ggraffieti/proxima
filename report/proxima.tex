@@ -595,6 +595,20 @@ I principali componenti del sistema che presentano rischi per una sua consegna n
 
 \chapter{Progettazione}
 
+\section{Servizio DNS}
+
+\subsection{Domain Name System}
+
+\subsection{Struttura gerarchica}
+\begin{figure}[h]
+	\hspace*{-0.8in}
+	\includegraphics{./img/dns-hierarchy.png}
+	\caption{Un esempio di struttura gerarchica, ad albero rovesciato, del sistema \emph{Proxima}. L'organizzazione non può che prescindere da un nodo radice, vari nodi interni che svolgono una funzione di \emph{routing} e una serie di nodi foglia, nei quali sono depositate tutte le informazioni necessarie per usufruire di un certo servizio all'interno del sistema. Il ramo dell'albero derivante dal nodo interno \emph{medical} è quello di interesse diretto per il progetto in esame. In questo caso, in via indicativa, sono stati inseriti due componenti che offrono entrambi un servizio di \emph{firstAid}, lasciando poi al \emph{Proxima DNS} il compito di gestire il \emph{load-balancing} delle richieste. Il ramo derivante dal nodo interno \emph{commercial} non rappresenta un dominio attualmente gestito dal sistema \emph{Proxima}, ma è stato inserito per rappresentare una gamma di servizi potenzialmente trattabili. Tali servizi potrebbero essere comodamente aggiunti, in maniera dinamica, al DNS, entrando a far parte del sistema \emph{Proxima}. }
+	\label{fig:dns-hierarchy}
+\end{figure}
+
+\subsection{Interfaccia di comunicazione}
+
 \chapter{Implementazione}
 
 \chapter{Testing} 
