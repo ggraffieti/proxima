@@ -600,25 +600,33 @@ All'interno del progetto, il \emph{Domain Name System} è un servizio, accessibi
 
 Il DNS potrà essere interrogato, fornendo l'indicazione del servizio desiderato, in modo da ricevere in risposta l'indirizzo di un componente che è in grado di erogare tale servizio. Inoltre, dovrà rendere possibile l'aggiunta e l'eliminazione dinamica di indirizzi, in modo da favorire la crescita e l'adattamento dei servizi trattati del sistema \emph{Proxima}.
 
-\subsection{Domain Name System}
+\subsection{Domain Name System} \label{original-dns}
 
 \subsection{Struttura gerarchica}
+Proprio come il \emph{Domain Name System} per gli indirizzi IP, descritto in \autoref{original-dns}, il DNS del sistema Proxima sarà organizzato in maniera gerarchica. In questo caso però, la risoluzione degli indirizzi non avverrà a partire dai nomi, ma dall'identificativo dei servizi. Ogni servizio è descritto a partire da una sequenza di domini sempre più specifici separati da un punto (ad esempio \emph{proxima.medical.firstAid}). Ciascun dominio può essere modellato come un nodo della gerarchia, ottenendo un quadro complessivo simile a quello raffigurato in \autoref{fig:dns-hierarchy}.
 
-\begin{figure}[h]
+Ogni componente del sistema Proxima è caratterizzato dal servizio che mette a disposizione e dall'indirizzo tramite il quale può essere contattato.
+
+\begin{figure}[H]
 	\hspace*{-0.8in}
 	\includegraphics{./img/dns-hierarchy.png}
 	\caption{Un esempio di struttura gerarchica, ad albero rovesciato, del sistema \emph{Proxima}. L'organizzazione non può che prescindere da un nodo radice, vari nodi interni che svolgono una funzione di \emph{routing} e una serie di nodi foglia, nei quali sono depositate tutte le informazioni necessarie per usufruire di un certo servizio all'interno del sistema. Il ramo dell'albero derivante dal nodo interno \emph{medical} è quello di interesse diretto per il progetto in esame. In questo caso, in via indicativa, sono stati inseriti due componenti che offrono entrambi un servizio di \emph{firstAid}, lasciando poi al \emph{Proxima DNS} il compito di gestire il \emph{load-balancing} delle richieste. Il ramo derivante dal nodo interno \emph{commercial} non rappresenta un dominio attualmente gestito dal sistema \emph{Proxima}, ma è stato inserito per rappresentare una gamma di servizi potenzialmente trattabili. Tali servizi potrebbero essere comodamente aggiunti, in maniera dinamica, al DNS, entrando a far parte del sistema \emph{Proxima}. }
 	\label{fig:dns-hierarchy}
 \end{figure}
 
-\subsection{Interfaccia di comunicazione}
-L'interazione con il servizio DNS, come precedentemente stabilito, dovrà essere \emph{RESTful}. Ciò impone la presenza di un server HTTP, il cui scopo sarà quello di soddisfare le richieste esterne giunte in corrispondenza di una determinata porta. Più nel dettaglio, ogni richiesta al DNS dovrà essere diretta alla porta 1406, con l'indicazione del path \emph{dns/address}, che mostra come ogni possibile operazione agisca su un determinato indirizzo di un servizio del sistema Proxima. 
-
-I metodi del protocollo HTTP gestiti dal server DNS sono i seguenti:
+Come si può evincere dallo schema in \autoref{fig:dns-hierarchy}, la gerarchia ad albero rovesciato è composta da tre differenti tipologie di nodi:
 \begin{itemize}
-	\item \textbf{GET}: messaggio che richiede lo stato di una certa risorsa, individuata tramite l'indicazione di un servizio nell'\emph{URL} della richiesta. Il server DNS risponderà con un messaggio contenente l'indirizzo di un componente che offre il servizio specificato. 
-	\item \textbf{POST}: messaggio che presuppone la richiesta di creazione di una risorsa, descritta nel body della richiesta. Nel caso specifico, la risorsa in questione è l'indirizzo di un componente del sistema Proxima. Il server DNS procederà alla creazione dell'indirizzo, rispondendo al client con un apposito \emph{URL}, utilizzabile per richiedere la nuova risorsa.
-	\item \textbf{DELETE}: messaggio che sollecita l'eliminazione di una risorsa, specificata nella richiesta. Il server DNS provvederà alla rimozione della risorsa, che non sarà più considerata per le future richieste di tipo GET.
+	\item \textbf{Root node}: è la radice dell'albero, nonché il nodo da cui devono transitare tutte le richieste inerenti al DNS.
+	\item \textbf{Internal node}:
+	\item \textbf{Leaf node}:
+\end{itemize}
+
+\subsection{Interfaccia di comunicazione}
+L'interazione con il servizio DNS, come precedentemente stabilito, dovrà essere \emph{RESTful}. Ciò impone la presenza di un server HTTP, il cui scopo sarà quello di soddisfare le richieste esterne giunte in corrispondenza di una determinata porta. Più nel dettaglio, ogni richiesta al DNS dovrà essere diretta alla porta 1406, con l'indicazione del path \emph{dns/address}, che mostra come ogni possibile operazione agisca su un determinato indirizzo di un servizio del sistema Proxima. Infatti il punto chiave di un'architettura REST consiste nel modello delle risorse che, nel caso specifico, sono proprio gli indirizzi dei vari servizi del sistema. Ogni richiesta verso il DNS sarà relativa ad una determinata risorsa, che potrà essere richiesta, creata o eliminata. I metodi del protocollo HTTP gestiti dal server DNS sono i seguenti:
+\begin{itemize}
+	\item \textbf{GET}: messaggio che richiede lo stato di una certa risorsa, individuata tramite l'indicazione di un servizio nell'\emph{URL} della richiesta. Il server DNS risponderà con un messaggio contenente l'indirizzo di un componente che offre il servizio specificato. \newline Si prevede che questa operazione sarà la più utilizzata, in quanto permetterà ad un componente esterno di contattare un servizio del sistema Proxima in modo disaccoppiato. Gli unici prerequisiti risultano essere la conoscenza del tipo di servizio offerto dal servizio Proxima e la raggiungibilità del DNS.
+	\item \textbf{POST}: messaggio che presuppone la richiesta di creazione di una risorsa, descritta nel body della richiesta. Nel caso specifico, la risorsa in questione è l'indirizzo di un componente del sistema Proxima. Il server DNS procederà alla creazione dell'indirizzo, rispondendo al client con un apposito \emph{URL}, utilizzabile per richiedere la nuova risorsa. \newline Questa operazione permette l'aggiunta dinamica di servizi al sistema Proxima, anche in una fase successiva al deployment. Infatti, sarà possibile inserire un nuovo servizio nel DNS in qualsiasi momento ed esso entrerà immediatamente a far parte del sistema, diventando raggiungibile da un qualsiasi componente richiedente tale servizio al DNS. Inoltre, per garantire un maggiore livello di autonomia, questa operazione potrebbe essere effettuata direttamente da ogni servizio Proxima, in una fase immediatamente successiva alla creazione. In questo modo ogni servizio che volesse entrare a far parte del sistema, dovrebbe semplicemente preoccuparsi di registrarsi al DNS indicando il servizio offerto e l'indirizzo utilizzabile per stabilire una comunicazione.
+	\item \textbf{DELETE}: messaggio che sollecita l'eliminazione di una risorsa, specificata nella richiesta. Il server DNS provvederà alla rimozione della risorsa, che non sarà più considerata per le future richieste di tipo GET. \newline Questa operazione può risultare utile per informare il DNS che un certo componente non è più disponibile ad offrire il servizio dichiarato, oppure che l'indirizzo precedentemente assegnatogli non è più valido.
 \end{itemize}
 Una più approfondita descrizione delle \emph{REST APIs} del server DNS è stata effettuata mediante l'ausilio del framework \emph{Swagger} \footnote{\url{https://swagger.io/}}. Essa è resa disponibile come file \emph{JSON} all'interno della directory \emph{api}, situata nella parte del progetto Proxima relativa al DNS.
 
