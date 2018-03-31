@@ -1,6 +1,7 @@
 import { ILogger } from "./ILogger";
 import { RemoteLogger } from "./remoteLogger";
 import { LocalFileLogger } from "./localFileLogger";
+import { FileServerConfiguration } from "../configuration/fileServerConfiguration";
 
 /**
  * A factory class that builds loggers.
@@ -24,7 +25,10 @@ export class LoggerFactory {
    * Returns a new instance of a RemoteLogger, that logs on a remote machine.
    */
   public static remoteLogger(): ILogger {
-    return new RemoteLogger();
+    return new RemoteLogger("http://" + 
+    FileServerConfiguration.getInstance().remoteLoggerIp + ":" +
+    FileServerConfiguration.getInstance().remoteLoggerPort +
+    "/proxima/medical/firstAid/");
   }
 
 }

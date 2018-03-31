@@ -9,19 +9,17 @@ import { FileServerConfiguration } from "../configuration/fileServerConfiguratio
  */
 export class RemoteLogger extends AbstractLogger {
 
-  private static loggerAddress: string = "http://" + 
-    FileServerConfiguration.getInstance().remoteLoggerIp + ":" +
-    FileServerConfiguration.getInstance().remoteLoggerPort +
-    "/proxima/medical/firstAid/";
+  private loggerAddress: string;
   private static logAccessUrl: string = "logAccess";
   private static locDeniedUrl: string = "logDeny";
 
-  public constructor() {
+  public constructor(address: string) {
     super();
+    this.loggerAddress = address;
   }
 
   public logDataAccess(rescuerID: string, patientID: string) {
-    NetworkManager.sendHttpPost(RemoteLogger.loggerAddress + RemoteLogger.logAccessUrl, {
+    NetworkManager.sendHttpPost(this.loggerAddress + RemoteLogger.logAccessUrl, {
       rescuerID: rescuerID,
       patientID: patientID
     }, (error, response, _) => {
@@ -32,7 +30,7 @@ export class RemoteLogger extends AbstractLogger {
   }
 
   public logDataAccessDenied(rescuerID: string, patientID: string) {
-    NetworkManager.sendHttpPost(RemoteLogger.loggerAddress + RemoteLogger.locDeniedUrl, {
+    NetworkManager.sendHttpPost(this.loggerAddress + RemoteLogger.locDeniedUrl, {
       rescuerID: rescuerID,
       patientID: patientID
     }, (error, response, _) => {
