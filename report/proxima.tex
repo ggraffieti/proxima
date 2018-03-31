@@ -623,7 +623,7 @@ Questo architettura gerarchica prevede una suddivisione delle informazioni relat
 
 Nel contesto dei microservizi, adottato come riferimento per il progetto in esame, ogni nodo della struttura gerarchica potrebbe, in una visione estrema, essere considerato come un microservizio, contattabile dai nodi situati in un livello superiore della gerarchia in caso di necessità
 
-\subsection{Interfaccia di comunicazione}
+\subsection{Interfaccia di comunicazione} \label{dns-communication}
 L'interazione con il servizio DNS, come precedentemente stabilito, dovrà essere \emph{RESTful}. Ciò impone la presenza di un server HTTP, il cui scopo sarà quello di soddisfare le richieste esterne giunte in corrispondenza di una determinata porta. Più nel dettaglio, ogni richiesta al DNS dovrà essere diretta alla porta 1406, con l'indicazione del path \emph{dns/address}, che mostra come ogni possibile operazione agisca su un determinato indirizzo di un servizio del sistema Proxima. Infatti il punto chiave di un'architettura REST consiste nel modello delle risorse che, nel caso specifico, sono proprio gli indirizzi dei vari servizi del sistema. Ogni richiesta verso il DNS sarà relativa ad una determinata risorsa, che potrà essere richiesta, creata o eliminata. I metodi del protocollo HTTP gestiti dal server DNS sono i seguenti:
 \begin{itemize}
 	\item \textbf{GET}: messaggio che richiede lo stato di una certa risorsa, individuata tramite l'indicazione di un servizio nell'\emph{URL} della richiesta. Il server DNS risponderà con un messaggio contenente l'indirizzo di un componente che offre il servizio specificato. \newline Si prevede che questa operazione sarà la più utilizzata, in quanto permetterà ad un componente esterno di contattare un servizio del sistema Proxima in modo disaccoppiato. Gli unici prerequisiti risultano essere la conoscenza del tipo di servizio offerto dal servizio Proxima e la raggiungibilità del DNS.
@@ -633,10 +633,34 @@ L'interazione con il servizio DNS, come precedentemente stabilito, dovrà essere
 Una maggiormente approfondita descrizione delle \emph{REST APIs} del server DNS è stata effettuata mediante l'ausilio del framework \emph{Swagger} \footnote{\url{https://swagger.io/}}. Essa è resa disponibile come file \emph{JSON} all'interno della directory \emph{api}, situata nella parte del progetto Proxima relativa al DNS.
 
 \subsection{Comportamento}
+In \autoref{dns-communication} sono state individuate tutte le modalità di interazione con il servizio DNS, sotto forma di metodi HTTP. Dall'analisi di tali operazioni si possono discernere le tre funzionalità principali che il servizio DNS dovrà essere in grado di fornire, ovvero le operazioni di creazione e cancellazione di uno specifico indirizzo, oltre alla restituzione di un indirizzo corrispondente ad un determinato servizio.
+
 \subsubsection{Richiesta dell'indirizzo di un servizio}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics{./img/dns-get.png}
+	\caption{Un esempio di sviluppo della struttura gerarchica del DNS. Per semplicità si è scelto di considerare solamente l'ambito di interesse specifico del progetto, ovvero il primo soccorso, tralasciando altri possibili domini applicativi del sistema Proxima.}
+	\label{fig:dns-get}
+\end{figure}
+
 \subsubsection{Aggiunta dell'indirizzo di un servizio}
+
+\begin{figure}[H]
+	\hspace*{-0.8in}
+	\includegraphics{./img/dns-post.png}
+	\caption{Nella parte sinistra è raffigurato un esempio di sviluppo della struttura gerarchica del DNS relativa al primo soccorso. Nella parte destra è mostrata l'evoluzione della struttura nel caso in cui un nuovo indirizzo relativo al campo di primo soccorso venisse aggiunto al sistema. Si può notare l'introduzione di un nodo interno (\emph{firstAid}), oltre che della nuova foglia. Questo comportamento deriva dal fatto che al raggiungimento di un certo valore di soglia prefissato è opportuno che la gestione di nodi simili (stesso servizio) sia delegata ad un nuovo nodo interno. Nel caso raffigurato, il valore della soglia è posto a 3. }
+	\label{fig:dns-post}
+\end{figure}
+
 \subsubsection{Eliminazione dell'indirizzo di un servizio}
 
+\begin{figure}[H]
+	\centering
+	\includegraphics{./img/dns-delete.png}
+	\caption{Nella parte sinistra è raffigurato un esempio di sviluppo della struttura gerarchica del DNS relativa al primo soccorso. Nella parte destra è mostrata l'evoluzione della struttura nel caso in cui un indirizzo esistente venga eliminato dal sistema (il nodo foglia \emph{firstAid} con indirizzo \emph{192.168.0.2:1111}). }
+	\label{fig:dns-delete}
+\end{figure}
 
 \chapter{Implementazione}
 
