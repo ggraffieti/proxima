@@ -14,6 +14,15 @@ export class DataRequestHandler extends RequestHandler {
     super();
   }
 
+  /**
+   * Handle the request of medical data, by a operator.
+   * This method authorizes the operator by the checking of digital signature, checks if the 
+   * operator work shift if coherent, and retrieve patient data. If the operator is not authorized 
+   * returns an unauthorized HTTP error (401). The data access request is always logged in a secure
+   * manner, in order to mantain an official document that contains all the requests made to the service. 
+   * @param {express.Request} req the request object wrapping all the data sent by the client.
+   * @param {express.Response} res the response object used for send a response to the client
+   */
   public static handleDataRequest(req: Request, res: Response) {
     DataRequestHandler.prepareResponse(res);
 
@@ -30,16 +39,13 @@ export class DataRequestHandler extends RequestHandler {
 
       AuthorizationChecker.verifyDigitalSignature(operatorID, targetID, signature)
       .then((_) => {
-          console.log("verify digital signature OK");
           return WorkShiftQueries.rescuerAuthorization(operatorID);
       })
       .then((auth) => {
         if (auth) {
-          console.log("Work Shift OK");
           return MedicalDataQueries.getPatientData(targetID)
         }
         else {
-          console.log("Work Shift NOOOOOO");
           return Promise.reject("false work schedule");
         }
       })
@@ -47,8 +53,7 @@ export class DataRequestHandler extends RequestHandler {
         res.send(data);
         DataRequestHandler.logger.logDataAccess(operatorID, targetID);
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((err) => { // use err wisely
         DataRequestHandler.sendUnauthorizedError(res);
         DataRequestHandler.logger.logDataAccessDenied(operatorID, targetID);
       });
