@@ -1,9 +1,18 @@
 import { AbstractLogger } from "./abstractLogger";
 import { NetworkManager } from "../network/networkManager";
+import { FileServerConfiguration } from "../configuration/fileServerConfiguration";
 
+/**
+ * Represents a remote logger, that log in a remote machine, via network. 
+ * If a log is not correctly sent (network error, logger down...) this class
+ * automatically resend the log message every second, until it is correctly received.
+ */
 export class RemoteLogger extends AbstractLogger {
 
-  private static loggerAddress: string = "http://localhost:6666/proxima/medical/firstAid/"
+  private static loggerAddress: string = "http://" + 
+    FileServerConfiguration.getInstance().remoteLoggerIp + ":" +
+    FileServerConfiguration.getInstance().remoteLoggerPort +
+    "/proxima/medical/firstAid/";
   private static logAccessUrl: string = "logAccess";
   private static locDeniedUrl: string = "logDeny";
 
@@ -17,7 +26,6 @@ export class RemoteLogger extends AbstractLogger {
       patientID: patientID
     }, (error, response, _) => {
       if (error || response.statusCode != 200) {
-        console.log("try to relog");
         this.tryToRelog(() => this.logDataAccess(rescuerID, patientID));
       }
     });
