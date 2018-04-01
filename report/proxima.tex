@@ -601,21 +601,35 @@ All'interno del progetto, il \emph{Domain Name System} è un servizio, accessibi
 Il DNS potrà essere interrogato, fornendo l'indicazione del servizio desiderato, in modo da ricevere in risposta l'indirizzo di un componente che è in grado di erogare tale servizio. Inoltre, dovrà rendere possibile l'aggiunta e l'eliminazione dinamica di indirizzi, in modo da favorire la crescita e l'adattamento dei servizi trattati del sistema \emph{Proxima}.
 
 \subsection{Domain Name System} \label{original-dns}
+Il servizio di DNS del sistema Proxima trae ispirazione dall'omonimo Domain Name System utilizzato globalmente per la risoluzione di nomi dei nodi della rete Internet in indirizzi IP. Di seguito sono riassunte le caratteristiche del DNS\footnote{Paul Albitz, Cricket Liu, {\em DNS and BIND, 5th Edition}, O'Reilly Media, 2009.} ritenute rilevanti per il progetto in esame.
+\begin{description}
+	\item[Domain Name Space]: è il grande albero rovesciato che rappresenta il database distribuito del DNS, contenente tutte le informazioni degli host di rete. L'albero è caratterizzato dall'assegnazione di etichette ad ogni nodo, con l'unica eccezione della radice alla quale viene conferita un'etichetta nulla. In questo modo è possibile attribuire un nome di dominio ad ogni nodo, come la sequenza delle etichette nel percorso dal nodo stesso fino alla radice, separate da punto. Un dominio può essere definito come un sottoalbero del \emph{Domain Name Space}, a cui viene assegnato il nome di dominio del nodo situato più in alto.
+	\item \textbf{Delegation}: meccanismo che permette di raggiungere uno dei principali obiettivi posti nella fase di design del DNS, ovvero la decentralizzazione dell'amministrazione. I domini sono tra loro indipendenti e la loro gestione può essere delegata ad organizzazioni differenti. Inoltre, un'organizzazione che amministra un dominio può suddividerlo in sotto-domini, ognuno dei quali può essere ulteriormente delegato.
+	\item \textbf{Name resolution}: processo di recupero dei dati dal \emph{Domain Name Space}. La successione dei passi che portano allo svolgimento di tale processo è riassunta in \autoref{fig:dns-resolution}.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=0.60]{./img/dns-resolution.png}
+		\caption{Processo di risoluzione DNS per l'indirizzo di un host di rete. Il client (\emph{resolver}) effettua una query al server DNS locale (o \emph{name server} locale), che si preoccupa poi, in assenza di \emph{cache}, di contattare prima la radice e poi la sequenza di \emph{name server} referenziati necessari per recuperare l'indirizzo richiesto dal client.}
+		\label{fig:dns-resolution}
+	\end{figure}
+\end{description}
 
 \subsection{Struttura gerarchica} \label{dns-hierarchy}
-Proprio come il \emph{Domain Name System} per gli indirizzi IP, descritto in \autoref{original-dns}, il DNS del sistema Proxima sarà organizzato in maniera gerarchica, con una struttura ad albero rovesciato. In questo caso, però, la risoluzione degli indirizzi non avverrà a partire dai nomi, ma dall'identificativo dei servizi. Ogni servizio è descritto a partire da una sequenza di domini sempre più specifici separati da un punto (ad esempio \emph{proxima.medical.firstAid}). Ogni componente del sistema Proxima è caratterizzato dal servizio che mette a disposizione e dall'indirizzo tramite il quale può essere contattato. La separazione in domini del servizio permette la costruzione di un modello strutturato, nel quale solamente gli elementi situati nel settore inferiori dell'albero sono a conoscenza dell'informazione vera e propria, ovvero l'indirizzo del servizio. I nodi superiori della gerarchia possono, invece, rappresentare i domini che descrivono il servizio, consentendo di ottenere un quadro complessivo simile a quello raffigurato in \autoref{fig:dns-hierarchy}.
+Proprio come il \emph{Domain Name System} per gli indirizzi IP, descritto in \autoref{original-dns}, il DNS del sistema Proxima sarà organizzato in maniera gerarchica, con una struttura ad albero rovesciato. In questo caso, però, la risoluzione degli indirizzi non avverrà a partire dai nomi, ma dall'identificativo dei servizi. Ogni servizio è descritto a partire da una sequenza di domini sempre più specifici separati da un punto. Il nome di dominio di un certo nodo viene composto come la sequenza di etichette nel percorso dalla radice dell'albero fino al nodo stesso e non viceversa, come invece illustrato in \autoref{original-dns} (ad esempio \emph{proxima.medical.firstAid}). 
+
+Ogni componente del sistema Proxima è caratterizzato dal servizio che mette a disposizione e dall'indirizzo tramite il quale può essere contattato. La separazione in domini del servizio permette la costruzione di un modello strutturato, nel quale solamente gli elementi situati nel settore inferiore dell'albero siano a conoscenza dell'informazione vera e propria, ovvero l'indirizzo del servizio. I nodi superiori della gerarchia possono, invece, rappresentare i domini che descrivono il servizio, consentendo di ottenere un quadro complessivo simile a quello raffigurato in \autoref{fig:dns-hierarchy}.
 
 \begin{figure}[H]
-	\hspace*{-0.8in}
-	\includegraphics{./img/dns-hierarchy.png}
-	\caption{Un esempio di struttura gerarchica, ad albero rovesciato, del sistema \emph{Proxima}. L'organizzazione non può che prescindere da un nodo radice, vari nodi interni che svolgono una funzione di \emph{routing} e una serie di nodi foglia, nei quali sono depositate tutte le informazioni necessarie per usufruire di un certo servizio all'interno del sistema. Il ramo dell'albero derivante dal nodo interno \emph{medical} è quello di interesse diretto per il progetto in esame. In questo caso, in via indicativa, sono stati inseriti due componenti che offrono entrambi un servizio di \emph{firstAid}, lasciando poi al \emph{Proxima DNS} il compito di gestire il \emph{load-balancing} delle richieste. Il ramo derivante dal nodo interno \emph{commercial} non rappresenta un dominio attualmente gestito dal sistema \emph{Proxima}, ma è stato inserito per rappresentare una gamma di servizi potenzialmente trattabili. Tali servizi potrebbero essere comodamente aggiunti, in maniera dinamica, al DNS, entrando a far parte del sistema \emph{Proxima}. }
+	\centering
+	\includegraphics[scale=0.60]{./img/dns-hierarchy.png}
+	\caption{Un esempio di struttura gerarchica, ad albero rovesciato, del sistema. Il sotto-albero derivante dal nodo interno \emph{firstAid} è quello di interesse diretto per il progetto in esame. Il sotto-albero derivante dal nodo interno \emph{commercial} non rappresenta un dominio attualmente gestito dal sistema Proxima, ma è stato inserito per rappresentare una gamma di servizi che potrebbero potenzialmente essere aggiunti, in maniera dinamica, al DNS, entrando a far parte del sistema. }
 	\label{fig:dns-hierarchy}
 \end{figure}
 
 Come si può evincere dallo schema in \autoref{fig:dns-hierarchy}, la gerarchia ad albero rovesciato è composta da tre differenti tipologie di nodi:
 \begin{itemize}
 	\item \textbf{Root node}: è la radice dell'albero, nonché il nodo da cui dovranno transitare tutte le richieste inerenti al DNS. Ad essa è associato il dominio più generale del sistema in esame, ovvero \emph{proxima}, dato che tale dominio dovrà essere condiviso da tutti i servizi del mondo Proxima. Può avere un numero arbitrario di figli che, in linea teorica, potrebbero essere sia nodi interni che foglie dell'albero. Per mantenere una visione il più possibile strutturata dei servizi, sarebbe opportuno evitare un legame diretto fra questo nodo e le foglie, delegando la gestione degli indirizzi dei servizi a nodi più specifici.
-	\item \textbf{Internal node}: è un nodo interno dell'albero, discendente da un nodo padre (che potrebbe essere un nodo radice o un nodo interno). È caratterizzato dal legame con almeno un nodo figlio (che potrebbe essere sia un nodo foglia, sia un ulteriore nodo interno). Questo nodo può essere considerato come un punto di \emph{routing}, in quanto è in grado di dirottare una certa richiesta di indirizzo verso il nodo più appropriato, che potrebbe essere una foglia che è in grado di soddisfare direttamente la richiesta, oppure un nodo interno tramite il quale sarà poi possibile giungere alla foglia desiderata. Ogni nodo interno è relativo ad una particolare sequenza di domini più o meno specifica e si occupa della gestione di tutti i componenti che offrono i servizi appartenenti al dominio di competenza.
+	\item \textbf{Internal node}: è un nodo interno dell'albero, discendente da un nodo padre (che potrebbe essere un nodo radice o un nodo interno). È caratterizzato dal legame con almeno un nodo figlio (che potrebbe essere sia un nodo foglia, sia un ulteriore nodo interno). Questo nodo può essere considerato come un punto di \emph{routing}, in quanto è in grado di dirottare una certa richiesta di indirizzo verso il nodo più appropriato, che potrebbe essere una foglia che è in grado di soddisfare direttamente la richiesta, oppure un nodo interno tramite il quale sarà poi possibile giungere alla foglia desiderata. Ogni nodo interno è relativo ad un particolare dominio più o meno specifico e si occupa della gestione di tutti i componenti che offrono i servizi appartenenti al dominio di competenza.
 	\item \textbf{Leaf node}: è un nodo foglia dell'albero, discendente da un nodo padre (presumibilmente un nodo interno, ma anche un nodo radice in alcuni casi). È uno dei nodi terminali dell'albero, in quanto non può avere figli ed è il custode del contenuto informativo del servizio di competenza. Infatti, ogni nodo foglia è caratterizzato da una corrispondenza diretta verso uno ed un solo componente del sistema Proxima, rappresentato per mezzo del servizio che offre, oltre all'indirizzo utilizzabile per stabilire una comunicazione con esso.
 \end{itemize}
 
@@ -636,39 +650,37 @@ Una maggiormente approfondita descrizione delle \emph{REST APIs} del server DNS 
 In \autoref{dns-communication} sono state individuate tutte le modalità di interazione con il servizio DNS, sotto forma di metodi HTTP. Dall'analisi di tali operazioni si possono discernere le tre funzionalità principali che il servizio DNS dovrà essere in grado di fornire, ovvero le operazioni di creazione e cancellazione di uno specifico indirizzo, oltre alla restituzione di un indirizzo corrispondente ad un determinato servizio.
 
 \subsubsection{Richiesta dell'indirizzo di un servizio}
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.60]{./img/dns-get.png}
+	\caption{Un esempio di sviluppo della struttura gerarchica del DNS. Per semplicità si è scelto di considerare solamente l'ambito di interesse specifico del progetto, ovvero il primo soccorso, tralasciando altri possibili domini applicativi del sistema Proxima.}
+	\label{fig:dns-get}
+\end{figure}
 In un determinato momento del ciclo di esecuzione del sistema Proxima, il DNS sarà provvisto degli indirizzi di un insieme di servizi. Ad esempio, per quanto riguarda l'ambito del primo soccorso, la situazione potrebbe essere simile a quella raffigurata in \autoref{fig:dns-get}. Per garantire scalabilità e disponibilità del sistema generale è ragionevole pensare che un medesimo servizio possa essere offerto da più componenti separati, caratterizzati da un proprio indirizzo individuale. Ognuno di questi componenti dovrà necessariamente essere registrato al DNS, in modo da essere rintracciabile all'interno del sistema Proxima. 
 
 Una richiesta dell'indirizzo di un componente in grado di offrire un determinato servizio si riduce ad una ricerca sull'albero DNS di una foglia che sia associata al servizio desiderato. Nel caso si verifichi la presenza di più foglie compatibili con la richiesta (come nel caso in \autoref{fig:dns-get} per il primo soccorso), dovrà essere il DNS stesso a garantire un meccanismo di \emph{load balancing}, in modo da distribuire il carico delle richieste in maniera equa fra i componenti disponibili. Una soluzione semplice ma efficacie consiste nell'implementazione di una politica di \emph{scheduling round-robin}, in cui i componenti possono essere alternati in maniera regolare, evitando il sovraccarico dei singoli nodi.
 
+\subsubsection{Aggiunta dell'indirizzo di un servizio}
 \begin{figure}[H]
 	\centering
-	\includegraphics{./img/dns-get.png}
-	\caption{Un esempio di sviluppo della struttura gerarchica del DNS. Per semplicità si è scelto di considerare solamente l'ambito di interesse specifico del progetto, ovvero il primo soccorso, tralasciando altri possibili domini applicativi del sistema Proxima.}
-	\label{fig:dns-get}
-\end{figure}
-
-\subsubsection{Aggiunta dell'indirizzo di un servizio}
-La struttura gerarchica descritta in \autoref{dns-hierarchy} rende molto semplice l'aggiunta dell'indirizzo di un componente che offre un certo servizio. Infatti sarà sufficiente l'aggiunta di una foglia rappresentante il nuovo indirizzo all'albero DNS esistente. 
-
-In \autoref{fig:dns-post} è raffigurato un esempio della struttura DNS prima e dopo l'aggiunta di un nuovo componente appartenente al dominio del primo soccorso al sistema. Si può notare l'introduzione di un nodo interno (\emph{firstAid}), oltre che della nuova foglia. Questo comportamento deriva dal fatto che al raggiungimento di un certo valore di soglia prefissato è opportuno che la gestione di nodi simili (stesso servizio) sia delegata ad un nuovo nodo interno. Nel caso raffigurato, il valore della soglia è posto a 3.
-\begin{figure}[H]
-	\hspace*{-0.8in}
-	\includegraphics{./img/dns-post.png}
+	\includegraphics[scale=0.60]{./img/dns-post.png}
 	\caption{Nella parte sinistra è raffigurato un esempio di sviluppo della struttura gerarchica del DNS relativa al primo soccorso. Nella parte destra è mostrata l'evoluzione della struttura nel caso in cui un nuovo indirizzo relativo al campo di primo soccorso venisse aggiunto al sistema. }
 	\label{fig:dns-post}
 \end{figure}
+La struttura gerarchica descritta in \autoref{dns-hierarchy} rende molto semplice l'aggiunta dell'indirizzo di un componente che offre un certo servizio. Infatti sarà sufficiente l'aggiunta di una foglia rappresentante il nuovo indirizzo all'albero DNS esistente. 
+
+In \autoref{fig:dns-post} è raffigurato un esempio della struttura DNS prima e dopo l'aggiunta di un nuovo componente appartenente al dominio del primo soccorso al sistema. Si può notare l'introduzione di un nodo interno (\emph{firstAid}), oltre che della nuova foglia. Questo comportamento deriva dal fatto che al raggiungimento di un certo valore di soglia prefissato è opportuno che la gestione di nodi simili (stesso servizio) sia delegata ad un nuovo nodo interno. Nel caso raffigurato, il valore della soglia è posto a 3.
 
 \subsubsection{Eliminazione dell'indirizzo di un servizio}
-Se all'interno dell struttura DNS, ogni componente è rappresentato come una foglia dell'albero, la cancellazione di un'indirizzo si riduce all'eliminazione della foglia ad esso corrispondente. 
-
-In \autoref{fig:dns-delete} è mostrato un esempio della struttura DNS prima e dopo l'eliminazione di un componente appartenente al dominio del primo soccorso dal sistema. Si può notare che, nel caso specifico, il servizio di primo soccorso rimarrà comunque garantito all'interno del sistema Proxima, in quanto persiste il riferimento ad un altro componente che offre il medesimo servizio. Nel caso così non fosse il servizio non sarebbe più erogabile.
-
 \begin{figure}[H]
 	\centering
-	\includegraphics{./img/dns-delete.png}
+	\includegraphics[scale=0.60]{./img/dns-delete.png}
 	\caption{Nella parte sinistra è raffigurato un esempio di sviluppo della struttura gerarchica del DNS relativa al primo soccorso. Nella parte destra è mostrata l'evoluzione della struttura nel caso in cui un indirizzo esistente venga eliminato dal sistema (il nodo foglia \emph{firstAid} con indirizzo \emph{192.168.0.2:1111}). }
 	\label{fig:dns-delete}
 \end{figure}
+Se all'interno dell struttura DNS, ogni componente è rappresentato come una foglia dell'albero, la cancellazione di un'indirizzo si riduce all'eliminazione della foglia ad esso corrispondente. 
+
+In \autoref{fig:dns-delete} è mostrato un esempio della struttura DNS prima e dopo l'eliminazione di un componente appartenente al dominio del primo soccorso dal sistema. Si può notare che, nel caso specifico, il servizio di primo soccorso rimarrà comunque garantito all'interno del sistema Proxima, in quanto persiste il riferimento ad un altro componente che offre il medesimo servizio. Nel caso così non fosse il servizio non sarebbe più erogabile.
 
 \chapter{Implementazione}
 
