@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements AsyncTaskListener
      */
     @Override
     public void onError(final Integer errorCode) {
-        if(errorCode == HttpsURLConnection.HTTP_FORBIDDEN) {
+        if(errorCode == HttpsURLConnection.HTTP_UNAUTHORIZED) {
             Toast.makeText(this, R.string.unauthorized_error, Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, R.string.unknown_error, Toast.LENGTH_SHORT).show();
