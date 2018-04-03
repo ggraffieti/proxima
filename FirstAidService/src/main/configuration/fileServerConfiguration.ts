@@ -10,7 +10,7 @@ import { IServerConfiguration } from "./serverConfiguration"
 export class FileServerConfiguration implements IServerConfiguration {
 
   private static filePath = "resources/serverConfiguration.prox";
-  private static SINGLETON: IServerConfiguration;
+  private static SINGLETON: IServerConfiguration = FileServerConfiguration.load();
 
   private constructor(public localIp: string, public localPort: number, public dnsIp: string, public dnsPort: number, public remoteLoggerIp: string, public remoteLoggerPort: number) {}
 
@@ -27,7 +27,7 @@ export class FileServerConfiguration implements IServerConfiguration {
    * 
    * NOTE: this method HAVE TO be called BEFORE any use of this class.
    */
-  public static load() {
+  private static load(): IServerConfiguration {
     let tmpIpMap: {[serviceName: string]: string} = {};
     let tmpPortMap: {[serviceName: string]: number} = {};
     let configFile = fs.readFileSync(FileServerConfiguration.filePath, "utf8");
@@ -37,7 +37,7 @@ export class FileServerConfiguration implements IServerConfiguration {
       tmpPortMap[splitted[0]] = +splitted[1].split(":")[1];
     });
     
-    FileServerConfiguration.SINGLETON = new FileServerConfiguration(ip.address(), 9876, tmpIpMap["dns"], tmpPortMap["dns"], tmpIpMap["logger"], tmpPortMap["logger"]);
+    return new FileServerConfiguration(ip.address(), 9876, tmpIpMap["dns"], tmpPortMap["dns"], tmpIpMap["logger"], tmpPortMap["logger"]);
   }
 
 }
