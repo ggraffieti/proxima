@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import * as rootPath from "app-root-path";
 
 /**
  * Represents the address of a component, composed of IP address and port number.
@@ -37,7 +38,7 @@ interface RequestInfo {
  * This class adopts the Singleton pattern, avoiding multiple instances during the execution.
  */
 export class RequestsCreator {
-    private static FILE_PATH = "../servicesAddresses.json";
+    private static FILE_PATH = rootPath + '/res/servicesAddresses.json';
     private static REQUEST_TIMEOUT = 1000;
     private static _SINGLETON: RequestsCreator = new RequestsCreator();
 
