@@ -1,3 +1,7 @@
+/**
+ * Represents a weekly work shift, for every day of the week and for every worker is associated a 
+ * shift, representing the working time of the rescuer.
+ */
 export interface IWeeklyWorkShift {
 
   /**
