@@ -3,7 +3,7 @@
         {
             "name": "usersAuthorizationsService",
             "address": {
-                "ip": "localhost",
+                "ip": "192.168.43.5",
                 "port": 8436
             },
             "path": "authorize"
@@ -11,7 +11,7 @@
         {
             "name": "dnsService",
             "address": {
-                "ip": "localhost",
+                "ip": "192.168.43.57",
                 "port": 1406
             },
             "path": "dns/address"
