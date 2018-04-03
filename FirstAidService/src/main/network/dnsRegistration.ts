@@ -1,6 +1,11 @@
 import { NetworkManager } from "./networkManager";
 import { FileServerConfiguration } from "../configuration/fileServerConfiguration"
 
+/**
+ * A static, non instantiable class that manages DNS registration. 
+ * The DNS is a core part of the proxima system, and every service have to be registered on it.
+ * If the service is not registered in the DNS no one can contact it. 
+ */
 export class DnsRegistration {
 
   private static protocol = "http://";
@@ -9,6 +14,11 @@ export class DnsRegistration {
   
   private constructor() { }
 
+  /**
+   * Register the service on the DNS.
+   * If an error occurred (no network, or dns server down) this method retries the registration after
+   * one second.
+   */
   public static register() {
    NetworkManager.sendHttpPost(this.protocol + FileServerConfiguration.getInstance().dnsIp + ":" + FileServerConfiguration.getInstance().dnsPort + this.dnsPath, {
      service: this.serviceOffered,
