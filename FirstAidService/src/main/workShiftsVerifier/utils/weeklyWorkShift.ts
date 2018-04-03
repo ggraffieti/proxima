@@ -14,10 +14,7 @@ export class WeeklyWorkShift implements IWeeklyWorkShift {
   }
 
   public checkShift(dayOfWeek: number, time: number) {
-    console.log("check shift right now!");
-    console.log(this);
     var daily = this.getDailyWorkShift(dayOfWeek);
-    console.log("daily WS: " + daily);
     daily.forEach((e) => console.log(e.isInside(time)));
     return daily.some((shift: IWorkShift) => shift.isInside(time));
   }

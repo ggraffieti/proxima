@@ -17,7 +17,6 @@ export class WorkShiftQueries {
    * @param rescuerId the id of the rescuer that performs the request.
    */
   public static rescuerAuthorization(rescuerId: string): Promise<boolean> {
-    console.log("RID: " + rescuerId);
     return new Promise((resolve, reject) => {
       workShifts.findOne({rescuerID: rescuerId}).exec((err, doc: IWeeklyWorkShiftModel) => {
         if (err || !doc) {
