@@ -1,6 +1,9 @@
 import { IWeeklyWorkShift } from "./IWeeklyWorkShift";
 import { IWorkShift } from "./IWorkShift";
 
+/**
+ * Simple implementation of IWeeklyWorkShift interface.
+ */
 export class WeeklyWorkShift implements IWeeklyWorkShift {
 
   public constructor(private rescuer: string, private monday: IWorkShift[] = [], private tuesday: IWorkShift[] = [], private wednesday: IWorkShift[] = [], private thursday: IWorkShift[] = [], private friday: IWorkShift[] = [], private saturday: IWorkShift[] = [], private sunday: IWorkShift[] = []) {
