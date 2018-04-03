@@ -16,12 +16,17 @@ export class DnsRegistration {
      port: FileServerConfiguration.getInstance().localPort
    }, (error, response, _) => {
      if (error || response.statusCode != 201) {
+       this.retryDnsRegistration(); // retry registration after 1 second
        console.log("error on DNS registration");
      }
      else {
        console.log("service correctly registered on proxima DNS");
      }
    })
+  }
+
+  private static retryDnsRegistration() {
+    setTimeout(DnsRegistration.register, 1000);
   }
 
 }
