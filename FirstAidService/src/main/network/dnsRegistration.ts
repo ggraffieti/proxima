@@ -4,19 +4,19 @@ import { FileServerConfiguration } from "../configuration/fileServerConfiguratio
 export class DnsRegistration {
 
   private static protocol = "http://";
-  private static dnsPath = "dns/address";
-  private static serviceOffered = "proxima.medica.firstAid";
+  private static dnsPath = "/dns/address";
+  private static serviceOffered = "proxima.medical.firstAid";
   
   private constructor() { }
 
   public static register() {
-   NetworkManager.sendHttpPost(this.protocol + FileServerConfiguration.getInstance().dnsIp + FileServerConfiguration.getInstance().dnsPort + this.dnsPath, {
+   NetworkManager.sendHttpPost(this.protocol + FileServerConfiguration.getInstance().dnsIp + ":" + FileServerConfiguration.getInstance().dnsPort + this.dnsPath, {
      service: this.serviceOffered,
      ip: FileServerConfiguration.getInstance().localIp,
      port: FileServerConfiguration.getInstance().localPort
    }, (error, response, _) => {
      if (error || response.statusCode != 201) {
-       this.retryDnsRegistration(); // retry registration after 1 second
+       this.retryDnsRegistration(() => this.register()); // retry registration after 1 second
        console.log("error on DNS registration");
      }
      else {
@@ -25,8 +25,8 @@ export class DnsRegistration {
    })
   }
 
-  private static retryDnsRegistration() {
-    setTimeout(DnsRegistration.register, 1000);
+  private static retryDnsRegistration(dnsRegistrationFunction: () => void) {
+    setTimeout(dnsRegistrationFunction, 1000);
   }
 
 }
