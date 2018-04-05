@@ -7,18 +7,19 @@ import { WeeklyWorkShift } from "./workShiftsVerifier/utils/weeklyWorkShift";
 import { WorkShift } from "./workShiftsVerifier/utils/workShift";
 import * as crypto from "crypto";
 import * as fs from "fs";
+import { FileServerConfiguration } from "./configuration/fileServerConfiguration";
 import {AuthorizationChecker} from "./digitalSignature/authorizationChecker";
 import { PublicKeyQueries } from "./digitalSignature/publicKeyQueries";
-import { RemoteLogger } from "./logger/remoteLogger";
 import { DnsRegistration } from "./network/dnsRegistration";
 
+ 
 let dataApp = express();
 let keyManagerApp = express();
 
 dataApp.use(bodyParser.urlencoded({extended: false}));
 dataApp.use(bodyParser.json());
 
-//DnsRegistration.register();
+DnsRegistration.register();
 
 keyManagerApp.use(bodyParser.urlencoded({extended: false}));
 keyManagerApp.use(bodyParser.json());
@@ -36,6 +37,9 @@ keyManagerApp.listen(9877, () => {
 
 dataApp.listen(9876, () => {
   console.log("HTTP First Aid Service - listen on port 9876");
+  //  var x = FileServerConfiguration.getInstance();
+
+  //  console.log(x.localIp + ":" + x.localPort + " - " + x.dnsIp + ":" + x.dnsPort + " - " + x.remoteLoggerIp + ":" + x.remoteLoggerPort);
 
   // sorry for this comment section, but is useful for now, because contains some useful testing code
 

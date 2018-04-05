@@ -1,30 +1,36 @@
 import { AbstractLogger } from "./abstractLogger";
 import { NetworkManager } from "../network/networkManager";
+import { FileServerConfiguration } from "../configuration/fileServerConfiguration";
 
+/**
+ * Represents a remote logger, that log in a remote machine, via network. 
+ * If a log is not correctly sent (network error, logger down...) this class
+ * automatically resend the log message every second, until it is correctly received.
+ */
 export class RemoteLogger extends AbstractLogger {
 
-  private static loggerAddress: string = "http://localhost:6666/proxima/medical/firstAid/"
+  private loggerAddress: string;
   private static logAccessUrl: string = "logAccess";
   private static locDeniedUrl: string = "logDeny";
 
-  public constructor() {
+  public constructor(address: string) {
     super();
+    this.loggerAddress = address;
   }
 
   public logDataAccess(rescuerID: string, patientID: string) {
-    NetworkManager.sendHttpPost(RemoteLogger.loggerAddress + RemoteLogger.logAccessUrl, {
+    NetworkManager.sendHttpPost(this.loggerAddress + RemoteLogger.logAccessUrl, {
       rescuerID: rescuerID,
       patientID: patientID
     }, (error, response, _) => {
       if (error || response.statusCode != 200) {
-        console.log("try to relog");
         this.tryToRelog(() => this.logDataAccess(rescuerID, patientID));
       }
     });
   }
 
   public logDataAccessDenied(rescuerID: string, patientID: string) {
-    NetworkManager.sendHttpPost(RemoteLogger.loggerAddress + RemoteLogger.locDeniedUrl, {
+    NetworkManager.sendHttpPost(this.loggerAddress + RemoteLogger.locDeniedUrl, {
       rescuerID: rescuerID,
       patientID: patientID
     }, (error, response, _) => {
