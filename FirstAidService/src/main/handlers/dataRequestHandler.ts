@@ -53,7 +53,7 @@ export class DataRequestHandler extends RequestHandler {
         res.send(data);
         DataRequestHandler.logger.logDataAccess(operatorID, targetID);
       })
-      .catch((err) => { // use err wisely
+      .catch((_) => { // use err wisely
         DataRequestHandler.sendUnauthorizedError(res);
         DataRequestHandler.logger.logDataAccessDenied(operatorID, targetID);
       });
