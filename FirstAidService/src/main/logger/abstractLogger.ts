@@ -12,7 +12,7 @@ export abstract class AbstractLogger implements ILogger {
    * @param rescuerID the id of the rescuer.
    * @param patientID the id of the patient.
    */
-  protected formatLog(rescuerID: string, patientID: string) {
+  protected formatLog(rescuerID: string, patientID: string): string {
     return "[" + new Date() + "] rescuer: " + rescuerID + " acceded patient " + patientID + " medical data";
   } 
 }
