@@ -29,6 +29,13 @@ sealed trait Service[A] {
   def size(): Int
 
   /**
+    * Returns a [[Service]] containing the elements between the specified indexes.
+    * @param minIndex the lower bound index.
+    * @param maxIndex the upper bound index.
+    */
+  def getInBetween(minIndex: Int, maxIndex: Int): Service[A]
+
+  /**
     * Greater method. Checks if this service is greater than some other service.
     * @param that the other service to be compared to this service.
     * @return true if this service contains more domains than the given service, false otherwise.
@@ -110,10 +117,12 @@ object :: {
   * @tparam A the generic service type class.
   */
 trait ServiceImpl[A] extends Service[A] {
+
   override def main : Option[A] = this match {
     case m ::_ => Some(m)
     case _ => None
   }
+
   override def subdomains: Option[Service[A]] = this match {
     case _ :: s => Some(s)
     case _ => None
@@ -137,6 +146,16 @@ trait ServiceImpl[A] extends Service[A] {
     }
     getSize(this, 0)
   }
+
+  override def getInBetween(minIndex: Int, maxIndex: Int): Service[A] = {
+    def getElems(l: Service[A], i: Int, res: Service[A]): Service[A] = l match {
+      case _ :: s if i < minIndex => getElems(s, i+1, res)
+      case m :: s if i <= maxIndex => getElems(s, i+1, res :+ m)
+      case _ => res
+    }
+    getElems(this, 0, Service())
+  }
+
   override def equals(obj: Any): Boolean = obj match {
     case service: Service[A] => this match {
       case _ if size != service.size => false
@@ -145,24 +164,33 @@ trait ServiceImpl[A] extends Service[A] {
     }
     case _ => false
   }
+
   override def >(service: Service[A]): Boolean = this match {
     case _ if size >= service.size => false
     case m :: s => m == service.main.get && s > service.subdomains.get
     case _ => true
   }
+
   override def >=(service: Service[A]): Boolean = this > service || this == service
+
   override def <(service: Service[A]): Boolean = service > this
+
   override def <=(service: Service[A]): Boolean = service >= this
+
   override def :+(element: A): Service[A] = this match {
     case m :: s => m :: (s :+ element)
     case _ => element :: EmptyService()
   }
+
   override def +:(element: A): Service[A] = element :: this
+
   override def ++(service: Service[A]): Service[A] = this match {
     case m :: s => m :: (s ++ service)
     case _ => service
   }
+
   override def ::(m: A): Service[A] = ActualService(m, this)
+
   override def toString: String = this match {
     case m :: s if s != EmptyService() => m + "." + s.toString
     case m :: _ => m + ""
@@ -170,14 +198,29 @@ trait ServiceImpl[A] extends Service[A] {
 }
 
 object Service {
-  def apply[A](services :A*): Service[A] = {
+  /**
+    * Apply method to build a [[Service]] object.
+    * @param domains the domains of the service.
+    * @tparam A the generic type of the domains of the service.
+    * @return an object of type [[Service]].
+    */
+  def apply[A](domains :A*): Service[A] = {
     var service: Service[A] = EmptyService()
-    for (i <- services.length -1 to 0 by -1) service = services(i) :: service
+    for (i <- domains.length -1 to 0 by -1) service = domains(i) :: service
     service
   }
+
+  /**
+    * The type of a Service in which the domains are represented as strings.
+    */
   type StringService = Service[String]
 }
 
+/**
+  * Represents the address of a component offering a service.
+  * @param ip the IP address of the component.
+  * @param port the port number of the component.
+  */
 case class ServiceAddress(ip: String, port: Int) {
   override def toString: String = ip + ":" + port
 }

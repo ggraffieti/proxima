@@ -1,6 +1,7 @@
 package org.gammf.proxima.dns.hierarchy
 
 import akka.actor.ActorRef
+import org.gammf.proxima.dns.general.messages.HierarchyNode
 import org.gammf.proxima.dns.utils.ActorDNSEntry
 import org.gammf.proxima.dns.utils.Role.Role
 import org.gammf.proxima.dns.utils.Service.StringService
@@ -28,6 +29,6 @@ package object messages {
     RedirectionRequestMessage(reference = entry.reference, name = entry.name, role = entry.role, service = entry.service)
 
   implicit def entryList2HierarchyNodeList(list: List[(Int, ActorDNSEntry)]): List[HierarchyNode] =
-    list.map(node => HierarchyNode(level = node._1, reference = node._2.reference.toString, name = node._2.name.toString,
-      role = node._2.role.toString, service = node._2.service.toString))
+    list.map(node => HierarchyNode(level = node._1, reference = node._2.reference.toString, name = node._2.name,
+      role = node._2.role, service = node._2.service))
 }

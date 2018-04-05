@@ -29,7 +29,7 @@ class DNSNodesCreatorActorTest extends TestKit(ActorSystem("ProximaDNS")) with I
   "A DNS nodes creator actor" must {
     "reply to an AddressCreationRequestMessage with an AddressCreationResponseMessage" in {
       creator ! AddressCreationRequestMessage(service = FIRST_AID_SERVICE, ipAddress = FIRST_AID_IP, port = FIRST_AID_PORT)
-      expectMsg(AddressCreationResponseMessage(true))
+      expectMsg(AddressCreationResponseMessage())
     }
     "create the leaf node specified in the AddressCreationRequestMessage" in {
       creator ! AddressCreationRequestMessage(service = FIRST_AID_SERVICE, ipAddress = FIRST_AID_IP, port = FIRST_AID_PORT)
