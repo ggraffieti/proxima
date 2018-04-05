@@ -1,7 +1,7 @@
 import { AbstractConsoleLogger } from "./abstractConsoleLogger";
  
 /**
- * A logger that log in a local file.
+ * A logger that log in the console.
  */
 export class ConsoleLogger extends AbstractConsoleLogger { 
 
