@@ -692,6 +692,25 @@ Se all'interno dell struttura DNS, ogni componente è rappresentato come una fog
 
 In \autoref{fig:dns-delete} è mostrato un esempio della struttura DNS prima e dopo l'eliminazione di un componente appartenente al dominio del primo soccorso dal sistema. Si può notare che, nel caso specifico, il servizio di primo soccorso rimarrà comunque garantito all'interno del sistema \emph{Proxima}, in quanto persiste il riferimento ad un altro componente che offre il medesimo servizio. Nel caso così non fosse il servizio non sarebbe più erogabile.
 
+\section{Front server}
+Il front server è un punto di aggregazione dei microservizi del mondo Proxima e fornisce un'interfaccia di accesso al sistema. Rappresenta uno strato intermedio situato fra i microservizi e l'esterno, svolgendo il ruolo di \emph{user inteface}, senza includere la \emph{business logic} del sistema. Ogni richiesta proveniente dall'applicazione Android dovrà essere diretta verso questo componente il quale, dopo averla elaborata tramite il supporto dei microservizi necessari, produrrà un'adeguata risposta.
+
+\subsection{Interfaccia di comunicazione} \label{frontserver-api}
+L'interazione con il front server dovrà essere \emph{RESTful}. Inoltre, essendo il front server l'interfaccia del sistema Proxima contattabile dall'esterno, esso dovrà offrire delle garanzie di sicurezza riguardo alla crittografia delle comunicazioni. Ciò impone la presenza di un server HTTPS, il cui scopo sarà quello di soddisfare le richieste esterne giunte in corrispondenza di una determinata porta. Più nel dettaglio, ogni richiesta al front server dovrà essere diretta alla porta 6041, con l'indicazione del path \emph{data}, che mostra come ogni possibile operazione agisca sui dati degli utenti del sistema Proxima. 
+
+Il solo metodo HTTP che il front server è in grado di gestire è GET. Un messaggio di questo tipo rappresenta la richiesta dei dati di un determinato utente relativi ad un certo servizio. Tale messaggio dovrà contenere, oltre all'identificativo dell'utente target e al servizio, anche l'identificativo dell'operatore richiedente, identificato univocamente dalla sua firma digitale. Nel caso l'operatore risulti autorizzato alla lettura dei dati richiesti, una risposta contenente gli stessi sarà restituita. Una descrizione più approfondita delle \emph{REST APIs} del front server è stata effettuata mediante l'ausilio del framework \emph{Swagger}\footnote{\url{https://swagger.io/}}. Essa è resa disponibile online al link \url{https://app.swaggerhub.com/apis/gmp/ProximaFrontServer/1.0.0}.
+
+\subsection{Comportamento}
+Il comportamento del front server sarà caratterizzato da una costante fase di attesa di richieste esterne. Le fasi che permettono di processare con successo una richiesta GET, descritta in \autoref{frontserver-api}, sono le seguenti.
+\begin{enumerate}
+	\item \textbf{Verifica della validità della richiesta}: è necessario controllare che la richiesta contenga i parametri necessari al sistema per portare a termine il processo di recupero dei dati.
+	\item \textbf{Controllo del permesso dell'utente}: prima di procedere al recupero dei dati è necessario verificare che l'utente abbia dato il consenso al trattamento dei dati per lo specifico servizio. L'osservanza di tale vincolo può essere verificata tramite l'interrogazione del servizio \emph{UsersAuthorizationsService}.
+	\item \textbf{Recupero del riferimento del servizio richiesto}: è necessario venire a conoscenza del riferimento del servizio richiesto, in modo da poterlo contattare. Tramite una richiesta al servizio DNS è possibile recuperare tale riferimento.
+	\item \textbf{Richiesta dei dati}: è necessario richiedere i dati al servizio preposto, il cui riferimento è stato recuperato al passo precedente.
+	\item \textbf{Invio della risposta}: infine i dati recuperati sono inoltrati al richiedente.
+\end{enumerate}
+I passi appena descritti rappresentano l'intera gestione di una richiesta terminata con successo. Nel caso, però, la richiesta fosse malformata o il richiedente dovesse risultare non autorizzato alla lettura dei dati, i corrispondenti errori, identificati rispettivamente come \emph{Bad Request} e \emph{Unauthorized}, dovranno essere segnalati al richiedente.
+
 \chapter{Implementazione}
 \section{Servizio DNS}
 L'implementazione del servizio DNS è completamente basata sulle direttive espresse nella fase di progettazione in \autoref{design-dns}. 
