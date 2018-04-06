@@ -832,7 +832,34 @@ leggibili e comprensibili, sia in fase di realizzazione che di esecuzione.
 
 Per la quasi totalità delle componenti software dell'applicazione Android sono state sviluppate delle apposite classi di testing in modo da convalidarne il funzionamento. Più nello specifico, per le classi \emph{android-independent} è stato fatto affidamento al framework \emph{JUnit}\footnote{\url{https://junit.org/junit4/}} per la scrittura dei relativi test, situati all'interno della cartella \texttt{test}. Per quanto riguarda invece le classi \emph{android-related} (come \emph{Activitis, Services, \dots}) è stato fatto ricorso alla scrittura di \emph{instrumented tests} attraverso la libreria \emph{Espresso}\footnote{\url{https://developer.android.com/training/testing/espresso/index.html}}, che ha comodamente permesso di verificare il corretto funzionamento delle interfacce utente così come il funzionamento delle componenti in background. Questa seconda categoria di test è situata all'interno della cartella \texttt{androidTest}. Purtroppo non è stato creato un test automatizzato per la classe \emph{org.gammf.proxima.NdefReaderTask} per via dell'impossibilità di simulare la lettura di un tag NFC.
 
-\chapter{Deployment (?)}
+\chapter{Deployment}
+
+In questo capitolo verrà trattato il \emph{deployment} del sistema nella sua interezza, considerando le varie alternative presenti per i vari componenti che lo compongono.
+
+\section{Microservizi}
+
+La suddivisione del sistema in microservizi apre diverse possibilità per il \emph{deployment} del sistema stesso:
+\begin{itemize}
+	\item \textbf{Distribuzione dei microservizi}: ogni microservizio può potenzialmente essere installato su di una macchina diversa, in modo da garantire il massimo disaccoppiamento tra i microservizi stessi. La gestione degli indirizzi delle macchine non sarebbe un problema, in quanto facilmente gestiti dal servizio DNS.
+	\item \textbf{Replicazione dei microservizi}: qualora necessario, si potrebbe decidere di replicare uno o più servizi, procedendo ad installarli sulla stessa macchina o su una macchina differente. Alla creazione, una replica, per entrare a far parte del sistema, dovrebbe semplicemente registrarsi (tramite una richiesta POST) al servizio DNS. Questo approccio porterebbe ad una migliore gestione delle richieste volte ai servizi di interesse, bilanciando il carico delle stesse. Inoltre, la presenza di repliche migliorerebbe notevolmente le caratteristiche di \emph{fault-tollerance} e \emph{availabilty} del sistema. Infatti, un malfunzionamento di un componente non inciderebbe sul funzionamento del sistema nel caso fosse presente almeno un altro componente che offrisse il medesimo servizio. Anche qui, l'utilizzo di questo approccio non creerebbe problemi per la gestione degli indirizzi, per via della presenza del servizio DNS.
+\end{itemize}
+
+In un'ottica più generale, l'aggiunta di nuovi servizi al sistema risulta essere facile ed immediata: come accennato in precedenza, il servizio appena creato dovrebbe solo registrarsi al servizio di DNS.
+
+Per garantire un maggior livello di sicurezza all'interno del sistema, è opportuno che solamente il \emph{front server} sia contattabile dall'esterno. I microservizi saranno quindi mantenuti all'interno dei confini di una rete privata non accessibile da Internet. In questo modo, un utente che desidera fruire del servizio sarà vincolato a contattare il \emph{front server}, il quale potrà invece interrogare i microservizi necessari per esaudire la richiesta dell'utente.
+
+Come ultima nota, la distribuzione del servizio DNS avverrà tramite un file JAR (\emph{Java ARchive}).
+ 
+\section{Front server}
+
+
+
+\section{Applicazione Android}
+
+L'applicazione Android verrà distribuita tramite un file in formato \emph{apk}. Idealmente essa dovrebbe essere fruibile ai soli soccorritori autorizzati. Quindi, la soluzione più intuitiva consiste nell'installazione manuale nell'\emph{apk} nei singoli dispositivi del personale autorizzato. Siccome da requisito è prevista anche la fornitura dei dispositivi, essi potrebbero essere distribuiti con l'applicazione preinstallata. Questo approccio presenta però il seguente problema: non essendo l'applicazione su sistemi di distribuzione di uso comune (come \emph{Google Play Store}\footnote{\url{https://play.google.com/store/apps?hl=it}}) viene reso non praticabile l'aggiornamento automatico dell'applicazione stessa.
+Ovviamente, un aggiornamento manuale dell'applicazione su tutti i dispositivi è da escludere. Per questo motivo si è deciso inizialmente di effettuare il deployment dell'applicazione su \emph{Google Play Store}. Nonostante l'applicazione, in questo modo, sia potenzialmente utilizzabile da chiunque, qualunque soggetto non autorizzato non sarebbe in grado di svolgere alcuna operazione di rilievo con essa. Per rendere l'applicazione effettivamente fruibile ai soli soccorritori autorizzati, si potrebbe creare un microservizio in grado di fornire la versione più aggiornata dell'applicazione ai quei dispositivi che la richiedono, a patto che su questi sia installata una versione precedente dell'applicazione stessa.
+
+L'unico problema di rilievo riguarda la chiave privata del soccorritore, che, al primo avvio dell'applicazione, dovrà essere inserita manualmente da un ente autorizzato. 
 
 \chapter{Manutenzione}
 
