@@ -102,8 +102,8 @@ public class HurlStackManager {
                             } else {
                                 originalTrustManager.checkClientTrusted(certs, authType);
                             }
-                        } catch (CertificateException e) {
-                            Log.d("HTTPS", "Error in trust manager");
+                        } catch (final CertificateException e) {
+                            e.printStackTrace();
                         }
                     }
 
@@ -114,8 +114,8 @@ public class HurlStackManager {
                             } else {
                                 originalTrustManager.checkServerTrusted(certs, authType);
                             }
-                        } catch (CertificateException e) {
-                            Log.d("HTTPS", "Error in trust manager");
+                        } catch (final CertificateException e) {
+                            e.printStackTrace();
                         }
                     }
                 }

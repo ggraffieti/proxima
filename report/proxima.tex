@@ -301,11 +301,11 @@ Si individuano due funzionalità principali del sistema che dovranno essere sogg
 	\item \textbf{Gestione dell'accesso ai dati}: un soccorritore non autorizzato non deve poter ricevere alcun dato medico. Le informazioni che definiscono l'autorizzazione o meno di un certo soccorritore sono quelle contenute all'interno della banca dati (come stabilito in \autoref{glossary}). 
 \end{description}
 
-\chapter{Analisi del problema}
+\chapter{Analisi del problema} \label{problem_analysis}
 
 In questo capitolo saranno analizzate nel dettaglio le problematiche derivanti, direttamente o indirettamente, dai requisiti. Verrà quindi effettuato uno studio di fattibilità per determinare se sussistono i presupposti necessari alla realizzazione del sistema, proponendo soluzioni plausibili.
 
-\section{Analisi del sistema generale}
+\section{Analisi del sistema generale} \label{general_system_analysis}
 Come anticipato nella \autoref{goal}, lo scopo del progetto non è soltanto quello di soddisfare i requisiti esposti nel \autoref{requirements}, ma di costruire la base di tutto il sistema, sopra la quale saranno implementati i servizi, tra i quali quello di gestione delle emergenze mediche esposto in precedenza. Il sistema \emph{Proxima} dovrà quindi fornire una base, sopra la quale potranno essere costruiti servizi e componenti. Esso agirà quindi da \emph{middleware}, e dovrà fornire ai servizi ed agli utenti le seguenti funzionalità:
 \begin{itemize}
 	\item Servizio di identificazione. Esso sarà la base del sistema, attraverso cui tutte le funzionalità potranno essere implementate. L'identificazione dovrà essere univoca, e offerta come servizio a chiunque voglia interagire con il sistema. Sarà ovviamente compito del sistema stesso gestire l'accesso ai dati, che dovrà essere garantito solo a chi autorizzato. I vari servizi non dovranno essere accessibili in modo diretto, ma solamente attraverso il sistema \emph{Proxima}.
@@ -548,7 +548,7 @@ I meccanismi di autenticazione appena citati potrebbero anche essere combinati t
 
 In accordo con il committente, si è deciso di optare per una soluzione che combina i vantaggi di lettore e identificatore. L'autenticazione avverrà a due livelli, il soccorritore si autenticherà nel sistema tramite il suo identificatore, mentre il lettore confermerà l'identità del soccorritore tramite la chiave segreta.  
 
-\section{Architettura logica}
+\section{Architettura logica} \label{logic_architecture}
 L'analisi delle problematiche, svolta in \autoref{issues}, congiuntamente allo studio di fattibilità in \autoref{feasibility}, ha portato alla definizione di un'architettura logica, in grado di descrivere struttura, interazione e comportamento del sistema.
 
 Dallo studio di fattibilità è emersa una variazione particolarmente rilevante rispetto ai requisiti espressi in \autoref{requirements}. In accordo con il committente, si è infatti deciso di adottare il protocollo NFC per la trasmissione dell'identificativo da identificatore a lettore. Di conseguenza l'identificatore diviene un tag NFC, all'interno del quale è memorizzato l'identificativo del paziente. Il tag è passivo (non alimentato) e può essere attivato dal lettore nel momento in cui il soccorritore necessita l'identificativo del paziente.
@@ -577,7 +577,9 @@ QActor, sviluppato dal professore Antonio Natali. Sulla base dei requisiti e del
 	\item \textbf{Man-in-the-middle model}: estensione del \emph{Connection model} con l'introduzione delle problematiche di \emph{sniffing} e \emph{replay attack}. Se i dati medici transitassero in chiaro fra \emph{Data contro} e \emph{Rescuer}, un \emph{man-in-the-middle} potrebbe intercettarli e visualizzarli e/o modificarli a piacere. Per evitare questa problematica, nel modello si è simulato l'utilizzo di crittografia attraverso uno dei più semplici algoritmi crittografici, ovvero il \emph{cifrario di Cesare}. Per semplicità, la crittografia è stata considerata solamente nella comunicazione fra \emph{Data control} e \emph{Rescuer}, ma allo stesso modo potrebbe essere applicata anche alle altre comunicazioni.
 \end{itemize}
 
-I modelli realizzati costituiscono una linea guida per la fase di progettazione, racchiudendo l'architettura logica emersa dall'analisi del problema. I modelli sono stati opportunamente testati, in modo da garantire una corretta rappresentazione dei requisiti analizzati. I test implementati in questo stadio dovranno essere verificati anche nelle successive fasi di progettazione e implementazione.
+I modelli realizzati costituiscono una linea guida per la fase di progettazione, racchiudendo l'architettura logica emersa dall'analisi del problema. Questi pongono l'enfasi sull'interazione dei componenti, tralasciando alcuni aspetti marginali. Uno di questi è il \emph{logging} degli accessi ai dati medici, che potrebbe essere affrontato con le soluzioni proposte in \autoref{security_issues}. Questa mansione potrebbe essere assegnata al componente \emph{Data Control} od eventualmente ad un componente dedicato. 
+
+I modelli sono stati opportunamente testati, in modo da garantire una corretta rappresentazione dei requisiti analizzati. I test implementati in questo stadio dovranno essere verificati anche nelle successive fasi di progettazione e implementazione.
 
 \section{Analisi dei rischi}
 In questa sezione verranno analizzati i rischi principali del progetto, ovvero le parti più complesse dello stesse, per le quali non ci sono soluzioni banali o standardizzate. In modo particolare si farà riferimento al rischio di una consegna del sistema ritardata, che non rispetta quindi i tempi prefissati. 
@@ -595,9 +597,108 @@ I principali componenti del sistema che presentano rischi per una sua consegna n
 
 \chapter{Progettazione}
 
+In questa sezione verranno descritte le scelte progettuali adottate per la realizzazione del progetto in esame. Ogni scelta sarà fatta considerando come punto di partenza l'architettura logica individuata in \autoref{logic_architecture}, tenendo conto però dell'analisi del sistema generale svolta in \autoref{general_system_analysis}.
+
+\section{Raffinamento del modello d'analisi}
+
+In fase di analisi del problema, svolta nel \autoref{problem_analysis}, sono stati individuati i principali componenti facenti parte del sistema. Per quanto riguarda \emph{Patient}, \emph{Rescuer} e \emph{Data} non è necessario alcun lavoro di raffinamento in quanto risultano esser stati adeguatamente modellati nella fase precedente. Ciò non vale per il componente \emph{Data Control}, le cui funzionalità necessitano un'estensione per soddisfare i vincoli imposti dalla realizzazione di un sistema generale, e non limitato al solo caso di primo soccorso.
+
+Oltre al controllo degli accessi alla banca dati, il componente \emph{Data Control} dovrà presentare le seguenti funzionalità:
+\begin{itemize}
+	\item \textbf{Tracciamento degli accessi}: come da requisito, ogni accesso autorizzato ai dati medici dovrà essere registrato, in modo da poter esser consultabile in un secondo momento.
+	\item \textbf{Gestione dei permessi}: come accennato in \autoref{general_system_analysis}, sarà necessario regolare l'accesso ai dati dell'utente anche in relazione ai permessi che lo stesso può concedere o negare per un determinato servizio.
+\end{itemize}
+
+\section{Architettura a microservizi}
+
+\subsection{Stile architetturale a microservizi}
+
+I microservizi sono dei servizi piccoli ed autonomi che cooperano per il raggiungimento di un obiettivo comune. In merito a quanto appena detto nella sezione precedente, l'utilizzo di uno stile architetturale a microservizi si rivela essere vantaggioso sotto diversi punti di vista\footnote{Sam Newman, {\em Building Microservices}, O'Reilly Media, 2014}:
+\begin{itemize}
+	\item \textbf{Eterogeneità tecnologica}: essendo lo sviluppo di ogni microservizio indipendente dagli altri, è possibile adottare per ognuno di questi una tecnologia differente. Questo fattore permette di sviluppare il singolo microservizio avvalendosi degli strumenti tecnologici più opportuni, piuttosto che basarsi su una tecnologia \emph{one-size-fits-all}, che risulterebbe un compromesso per la realizzazione dell'intero sistema.
+	\item \textbf{Resilienza}: essendo le funzionalità del sistema generale ripartite tra i microservizi che lo compongono, un eventuale fallimento di un certo microservizio non comprometterebbe il funzionamento complessivo del sistema.
+	\item \textbf{Scalabilità}: nel caso di un sistema strutturato in modo monolitico, la scalabilità viene ottenuta scalando il sistema nel suo complesso; in una struttura a microservizi, invece, è possibile concentrasi sulla scalabilità dei singoli servizi che ne necessitano, rendendo la scalabilità stessa più granulare.
+	\item \textbf{Facilità di deployment}: nel caso di un sistema monolitico ogni piccolo cambiamento porterebbe alla necessità di un nuovo deployment dell'intero sistema, con tutti i relativi costi dovuti all'inattività dello stesso. In un sistema a microservizi, ogni cambiamento è circoscritto ad un singolo microservizio, senza intaccare il sistema nel suo complesso. Conseguentemente, sarà necessario rieseguire il deployment solo dei microservizi interessati.
+	\item \textbf{Facilità nell'organizzazione del lavoro}: nel caso di un sistema monolitico, l'organizzazione del lavoro risulta più complessa, data la dimensione notevole del team di sviluppo e le conseguenti questioni date dalla difficoltà coordinative e comunicative. Al contrario, la suddivisione del progetto in microservizi rende l'organizzazione del lavoro più semplice dato che il team sarà suddiviso in sotto-team e, ad ognuno di essi, assegnato un microservizio.
+	\item \textbf{Composability}: nel caso di un sistema monolitico, il riuso di alcune delle sue funzionalità può risultare complicato o addirittura, in alcuni casi, impraticabile, data la forte dipendenza che vi è tra di esse. In un sistema a microservizi, la riusabilità è elevata, dato che ogni microservizio è un componente totalmente indipendente dagli altri.
+	\item \textbf{Modularità}: nel caso di un sistema monolitico, la rimozione o la re-implementazione di un certa funzionalità può risultare essere un'attività estremamente costosa. In un sistema a microservizi, questo operazione interesserebbe il singolo microservizio responsabile della funzionalità di interesse. Una suo rimozione o re-implementazione sarebbe sicuramente meno costoso e più immediata.
+\end{itemize}
+
+
+\subsection{\emph{Splitting the monolith}}
+
+Il componente \emph{DataControl} individuato in fase di analisi risulta essere un monolite, che può essere suddiviso nei seguenti microservizi:
+
+\begin{itemize}
+	\item \textbf{FirstAidService}: servizio finalizzato alla gestione dei dati medici e al controllo degli accessi ad essi. 
+	\item \textbf{Logger}: servizio finalizzato alla registrazione di ogni singolo accesso autorizzato ai dati medici.
+	\item \textbf{UsersAuthorizationsService}: servizio finalizzato alla gestione dei permessi conferiti dall'utente per la visualizzazione dei propri dati ai vari servizi del sistema. 
+\end{itemize}
+
+Il sistema sarà quindi composto, escludendo l'applicazione Android, dai microservizi appena descritti. Si rivela necessaria l'aggiunta di un \emph{front server} per l'aggregazione dei microservizi e per fornire un'interfaccia di accesso al sistema.
+
+\subsection{Servizio DNS}
+
+Nel contesto del progetto in esame, il numero di microservizi risulta essere limitato a quelli descritti nella sezione precedente. L'interazione tra questi risulta banale, presupponendo che il \emph{Front Server} si assuma il compito di interrogare i vari microservizi per soddisfare le richieste giunte dall'applicazione Android.
+
+Nonostante ciò, in un'ottica futura nella quale il sistema risulta essere diffuso su una zona geografica più ampia si presenterebbero le seguenti problematiche:
+\begin{itemize}
+	\item \textbf{Scalabilità orizzontale}: nel caso un determinato microservizio presentasse un carico di richieste notevole, sarebbe ragionevole decidere di replicare il servizio stesso in modo che il carico di lavoro fosse suddiviso fra componenti fisici separati. In tal caso, chi avesse necessità di interagire con il microservizio in esame dovrebbe non solo possedere un riferimento a tutte le sue repliche ma anche un criterio per scegliere con quale replica interagire. Su larga scala, questa problematica potrebbe risultare estremamente difficile da affrontare.
+	\item \textbf{Molteplicità dei servizi}: allo stato attuale, l'unico servizio rilevante per il sistema risulta essere quello del primo soccorso. Si prevede che in futuro una moltitudine di servizi eterogenei entrerà a far parte del sistema, rendendo la struttura a microservizi più articolata e complessa. In quest'ottica è inammissibile pensare che, ad esempio, il \emph{front server} disponga di un riferimenti ad ognuno di essi. 
+\end{itemize}
+
+Sulla base di queste considerazioni, è necessario un componente avente il compito di gestire in maniera dinamica i riferimenti dei vari microservizi in base al tipo di servizio offerto all'interno del sistema. 
+
+Un problema simile si riscontra anche nel sistema distribuito più grande e diffuso al mondo: \emph{Internet}. Difatti, Internet può essere considerato come un sistema distribuito dove ogni host di rete reifica un microservizio (sito web, posta elettronica, trasferimento file, \dots). La domanda sorge spontanea: che meccanismo utilizza Internet per garantire un mapping dinamico tra \emph{hostname} e relativo indirizzo? Un ulteriore sistema distribuito, il DNS (\emph{Domain Name System}), il cui compito è appunto quello di associare ad un \emph{hostname} strutturato un certo indirizzo fisico.
+
+Per rimediare alle problematiche sopra descritte sarà necessario includere all'interno del sistema un servizio dedito a mappare i nomi dei servizi in riferimenti, utilizzabili per contattare i servizi stessi.
+
+\section{Servizio di autorizzazioni degli utenti}
+
+\section{Applicazione Android e Identificatori} \label{design_app}
+
+L'applicazione Android sul dispositivo dei soccorritori dovrà essere realizzata in modo che il suo utilizzo risulti il più facile ed intuitivo possibile, siccome ne è previsto l'uso anche in situazioni di emergenza. Per far ciò, sarà necessario guidare il soccorritore in tutti i passi necessari al recupero dei dati del paziente, in modo che ciò avvenga nel minor tempo possibile e nel rispetto dei vincoli di sicurezza imposti dai requisiti.
+
+In questa fase di progettazione, l'applicazione potrebbe essere modellata in termini di schermate, dove per schermata s'intende un componente dell'applicazione avente un compito ben preciso, in grado di gestire l'interazione con l'utente ed eventualmente guidarlo nell'utilizzo dell'applicazione stessa. In virtù di quanto detto, l'applicazione sarà quindi composta dalle seguenti schermate:
+\begin{itemize}
+	\item \textbf{Schermata iniziale}: schermata mostrata al soccorritore all'avvio dell'applicazione. Dovrà essere composta, sostanzialmente, da un bottone, che avrà il compito di iniziare od interrompere la ricerca degli identificatori quando premuto. Oltre al bottone, dovrà essere presente un messaggio guida per l'utente, che espliciti in maniera chiara e concisa lo scopo del bottone stesso.
+	\item \textbf{Schermata d'autenticazione}: schermata nella quale il soccorritore sarà invitato, tramite un messaggio guida, ad avvicinare il dispositivo al proprio identificatore, in modo che possa autenticarsi nel sistema per poter accedere ai dati medici di un determinato paziente.
+	\item \textbf{Schermata del paziente}: schermata nella quale il soccorritore sarà invitato, tramite un messaggio guida, ad avvicinare il dispositivo all'identificatore del paziente, in modo che se ne possa conoscere l'identificativo, necessario al recupero dei dati.
+	\item \textbf{Schermata dati}: schermata dedita alla mera visualizzazione dei dati medici recuperati dalla banca dati. I dati in questione dovranno essere mostrati nel modo più conveniente per il soccorritore, in modo che questo non debba interagire con il dispositivo Android per visualizzarli (e.g.: \emph{touch}, \emph{swipe}, \dots) qualora non sia necessario.   
+\end{itemize}
+
+Oltre alle schermate elencate, l'applicazione sarà composta da due ulteriori componenti essenziali, sebbene non direttamente responsabili dell'interazione con il soccorritore:
+\begin{itemize}
+	\item \textbf{Lettore identificatori}: componente avente il solo scopo di effettuare la lettura degli identificatori NFC dopo l'avvio della ricerca da parte del soccorritore.
+	\item \textbf{Client HTTPS}: componente finalizzato alla gestione della comunicazione con il front server di Proxima. Il suo compito sarà quindi quello di inviare richieste per il recupero dei dati medici qualora necessario e di ricevere le relative risposte.  
+\end{itemize}
+
+Essendo NFC una serie di protocolli estremamente corposa e ramificata, il componente dedito alla lettura degli identificatori merita una discussione nel dettaglio. In commercio è possibile reperire i più svariati tag NFC, ognuno dei quali si appoggia su una delle tecnologie derivanti dall'insieme di protocolli. Ogni tecnologia definisce quindi, in modo indipendente dalle altre, il formato con il quale i dati vengo letti o scritti da/su un certo tag. Per via della presenza di questa diversità, è necessario scegliere sin da subito su quale formato, e quindi su quale tecnologia, fare affidamento per la lettura degli identificativi.
+
+Dopo un'analisi delle tecnologie esistenti, è stato scelto di fare affidamento ad una che preveda il supporto per NDEF (\emph{NFC default exchange format}), un formato proposto da \emph{NFC forum}\footnote{\url{https://nfc-forum.org/}} per promuovere la standardizzazione delle tecnologie NFC, in modo da assicurare interoperabilità tra dispositivi e servizi. NDEF è stato scelto proprio per quanto appena detto e per il fatto che risulta essere un dei formati nativamente supportati da Android\footnote{\url{https://developer.android.com/guide/topics/connectivity/nfc/nfc.html}}.
+
+Sulla base di queste considerazioni, abbiamo scelto di adoperare dei tag Mifare Classic da 1KB di memoria, una quantità sufficiente per i nostri scopi.
 \chapter{Implementazione}
 
+\section{Applicazione Android}
+
+In questa sezione verranno brevemente discusse le più rilevanti scelte implementative relative all'applicazione Android. In modo da soddisfare tutti i requisiti seguendo al contempo le \emph{guidelines} illustrate in \autoref{design_app}, l'applicazione è stata strutturata in 4 componenti principali:
+\begin{enumerate}
+	\item \textbf{MainActivity}: una delle due activity dell'applicazione, responsabile della gestione dell'interazione con l'utente. Più nel dettaglio, il suo scopo è quello di abilitare l'avvio e l'interruzione della ricerca di identificatori vicini al dispositivo e guidare il soccorritore nella procedura necessaria al recupero dei dati medici dalla banca dati (\autoref{design_app} - schermate 1, 2, 3). Inoltre, questa activity funge da \emph{listener} per i broadcast generati dal sistema Android alla rilevazione di un tag NFC. La lettura dei tag stessi è delegata ad un componente apposito, descritto in seguito.
+	\item \textbf{DataPrinterActivity}: activity avente il solo compito di visualizzare i dati medici una volta recuperati dalla banca dati (\autoref{design_app} - schermata 4). La visualizzazione dei dati medici stessi è stata strutturata cercando di sfruttare per intero il display del dispositivo, in modo che il soccorritore possa consultare ciò di cui più necessita nel minor tempo possibile. 
+	\item \textbf{NdefReaderTask}: AsyncTask dedito alla lettura del contenuto dei tag NFC rilevati dal dispositivo. Come accennato in precedenza, la lettura viene eseguita facendo riferimento al formato NDEF (\emph{NFC default exchange format}). Essendo tale operazione delegata a questo componente, l'activity in foreground risulta essere reattiva anche durante la lettura stessa.
+	\item \textbf{HTTPClientService}: servizio \emph{bounded} alla \emph{MainActivity}, responsabile dell'interazione con il front server. Il suo compito è quindi quello di inviare richieste ben formattate al server e di notificare la \emph{MainActivity} a fronte della ricezione di risposte. Il servizio in esame fa affidamento alla libreria \emph{Volley} per l'invio di richieste e la ricezione di risposte su HTTPS.
+\end{enumerate}
+
+Sia chiave pubblica del front server che chiave privata del soccorritore sono contenute all'interno della cartella \emph{assets} del progetto, e caricate a runtime di conseguenza. In una versione non prototipale dell'applicazione, sarebbe d'obbligo migliorare la gestione, perlomeno, della chiave privata, facendo in modo che non sia facilmente accessibile tramite \emph{tool} di de-compilazione. 
+
+Infine, siccome in ambiente Android non è nativamente possibile considerare le letture di tag NFC solo dopo, come nel nostro caso, la pressione di un pulsante, la \emph{MainActivity} è stata strutturata in modo da rendere possibile questo filtraggio.  
+
 \chapter{Testing} 
+
+\section{Applicazione Android}
+
+Per la quasi totalità delle componenti software dell'applicazione Android sono state sviluppate delle apposite classi di testing in modo da convalidarne il funzionamento. Più nello specifico, per le classi \emph{android-independent} è stato fatto affidamento al framework \emph{JUnit}\footnote{\url{https://junit.org/junit4/}} per la scrittura dei relativi test, situati all'interno della cartella \texttt{test}. Per quanto riguarda invece le classi \emph{android-related} (come \emph{Activitis, Services, \dots}) è stato fatto ricorso alla scrittura di \emph{instrumented tests} attraverso la libreria \emph{Espresso}\footnote{\url{https://developer.android.com/training/testing/espresso/index.html}}, che ha comodamente permesso di verificare il corretto funzionamento delle interfacce utente così come il funzionamento delle componenti in background. Questa seconda categoria di test è situata all'interno della cartella \texttt{androidTest}. Purtroppo non è stato creato un test automatizzato per la classe \emph{org.gammf.proxima.NdefReaderTask} per via dell'impossibilità di simulare la lettura di un tag NFC.
 
 \chapter{Deployment (?)}
 
