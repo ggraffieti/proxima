@@ -597,6 +597,7 @@ I principali componenti del sistema che presentano rischi per una sua consegna n
 
 \chapter{Progettazione}
 
+<<<<<<< HEAD
 In questa sezione verranno descritte le scelte progettuali adottate per la realizzazione del progetto in esame. Ogni scelta sarà fatta considerando come punto di partenza l'architettura logica individuata in \autoref{logic_architecture}, tenendo conto però dell'analisi del sistema generale svolta in \autoref{general_system_analysis}.
 
 \section{Raffinamento del modello d'analisi}
@@ -678,7 +679,123 @@ Essendo NFC una serie di protocolli estremamente corposa e ramificata, il compon
 Dopo un'analisi delle tecnologie esistenti, è stato scelto di fare affidamento ad una che preveda il supporto per NDEF (\emph{NFC default exchange format}), un formato proposto da \emph{NFC forum}\footnote{\url{https://nfc-forum.org/}} per promuovere la standardizzazione delle tecnologie NFC, in modo da assicurare interoperabilità tra dispositivi e servizi. NDEF è stato scelto proprio per quanto appena detto e per il fatto che risulta essere un dei formati nativamente supportati da Android\footnote{\url{https://developer.android.com/guide/topics/connectivity/nfc/nfc.html}}.
 
 Sulla base di queste considerazioni, abbiamo scelto di adoperare dei tag Mifare Classic da 1KB di memoria, una quantità sufficiente per i nostri scopi.
+=======
+\section{Servizio DNS} \label{design-dns}
+All'interno del progetto, il \emph{Domain Name System} è un servizio, accessibile via web tramite il protocollo HTTP, che rende disponibile un modo per individuare tutti i servizi offerti dal sistema \emph{Proxima}. In particolare, effettua un \emph{mapping} fra un servizio, individuato da una stringa strutturata, e una serie di indirizzi tramite i quali è possibile contattare dei componenti il cui scopo è mettere a disposizione tale servizio. 
+
+Il DNS potrà essere interrogato, fornendo l'indicazione del servizio desiderato, in modo da ricevere in risposta l'indirizzo di un componente che è in grado di erogare tale servizio. Inoltre, dovrà rendere possibile l'aggiunta e l'eliminazione dinamica di indirizzi, in modo da favorire la crescita e l'adattamento dei servizi trattati del sistema \emph{Proxima}.
+
+\subsection{Domain Name System} \label{original-dns}
+Il servizio di DNS del sistema \emph{Proxima} trae ispirazione dall'omonimo Domain Name System utilizzato globalmente per la risoluzione di nomi dei nodi della rete Internet in indirizzi IP. Di seguito sono riassunte le caratteristiche del DNS\footnote{Paul Albitz, Cricket Liu, {\em DNS and BIND, 5th Edition}, O'Reilly Media, 2009.} ritenute rilevanti per il progetto in esame.
+\begin{description}
+	\item[Domain Name Space]: è il grande albero rovesciato che rappresenta il database distribuito del DNS, contenente tutte le informazioni degli host di rete. L'albero è caratterizzato dall'assegnazione di etichette ad ogni nodo, con l'unica eccezione della radice alla quale viene conferita un'etichetta nulla. In questo modo è possibile attribuire un nome di dominio ad ogni nodo, come la sequenza delle etichette nel percorso dal nodo stesso fino alla radice, separate da punto. Un dominio può essere definito come un sottoalbero del \emph{Domain Name Space}, a cui viene assegnato il nome di dominio del nodo situato più in alto.
+	\item \textbf{Delegation}: meccanismo che permette di raggiungere uno dei principali obiettivi posti nella fase di design del DNS, ovvero la decentralizzazione dell'amministrazione. I domini sono tra loro indipendenti e la loro gestione può essere delegata ad organizzazioni differenti. Inoltre, un'organizzazione che amministra un dominio può suddividerlo in sotto-domini, ognuno dei quali può essere ulteriormente delegato.
+	\item \textbf{Name resolution}: processo di recupero dei dati dal \emph{Domain Name Space}. La successione dei passi che portano allo svolgimento di tale processo è riassunta in \autoref{fig:dns-resolution}.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=0.60]{./img/dns-resolution.png}
+		\caption{Processo di risoluzione DNS per l'indirizzo di un host di rete. Il client (\emph{resolver}) effettua una query al server DNS locale (o \emph{name server} locale), che si preoccupa poi, in assenza di \emph{cache}, di contattare prima la radice e poi la sequenza di \emph{name server} referenziati necessari per recuperare l'indirizzo richiesto dal client.}
+		\label{fig:dns-resolution}
+	\end{figure}
+\end{description}
+
+\subsection{Struttura gerarchica e modello ad attori} 
+\subsubsection{Struttura gerarchica}\label{dns-hierarchy}
+Proprio come il \emph{Domain Name System} per gli indirizzi IP, descritto in \autoref{original-dns}, il DNS del sistema Proxima sarà organizzato in maniera gerarchica, con una struttura ad albero rovesciato. In questo caso, però, la risoluzione degli indirizzi non avverrà a partire dai nomi, ma dall'identificativo dei servizi. Ogni servizio è descritto a partire da una sequenza di domini sempre più specifici separati da un punto. Il nome di dominio di un certo nodo viene composto come la sequenza di etichette nel percorso dalla radice dell'albero fino al nodo stesso e non viceversa, come invece illustrato in \autoref{original-dns} (ad esempio \emph{proxima.medical.firstAid}). 
+
+Ogni componente del sistema \emph{Proxima} è caratterizzato dal servizio che mette a disposizione e dall'indirizzo tramite il quale può essere contattato. La separazione in domini del servizio permette la costruzione di un modello strutturato, nel quale solamente gli elementi situati nel settore inferiore dell'albero siano a conoscenza dell'informazione vera e propria, ovvero l'indirizzo del servizio. I nodi superiori della gerarchia possono, invece, rappresentare i domini che descrivono il servizio, consentendo di ottenere un quadro complessivo simile a quello raffigurato in \autoref{fig:dns-hierarchy}.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.7]{./img/dns-hierarchy.png}
+	\caption{Un esempio di struttura gerarchica, ad albero rovesciato, del sistema. Il sotto-albero derivante dal nodo interno \emph{firstAid} è quello di interesse diretto per il progetto in esame. Il sotto-albero derivante dal nodo interno \emph{commercial} non rappresenta un dominio attualmente gestito dal sistema \emph{Proxima}, ma è stato inserito per rappresentare una gamma di servizi che potrebbero potenzialmente essere aggiunti, in maniera dinamica, al DNS, entrando a far parte del sistema. }
+	\label{fig:dns-hierarchy}
+\end{figure}
+
+Come si può evincere dallo schema in \autoref{fig:dns-hierarchy}, la gerarchia ad albero rovesciato è composta da tre differenti tipologie di nodi:
+\begin{itemize}
+	\item \textbf{Root node}: è la radice dell'albero, nonché il nodo da cui dovranno transitare tutte le richieste inerenti al DNS. Ad essa è associato il dominio più generale del sistema in esame, ovvero \emph{proxima}, dato che tale dominio dovrà essere condiviso da tutti i servizi del mondo \emph{Proxima}. Può avere un numero arbitrario di figli che, in linea teorica, potrebbero essere sia nodi interni che foglie dell'albero. Per mantenere una visione il più possibile strutturata dei servizi, sarebbe opportuno evitare un legame diretto fra questo nodo e le foglie, delegando la gestione degli indirizzi dei servizi a nodi più specifici.
+	\item \textbf{Internal node}: è un nodo interno dell'albero, discendente da un nodo padre (che potrebbe essere un nodo radice o un nodo interno). È caratterizzato dal legame con almeno un nodo figlio (che potrebbe essere sia un nodo foglia, sia un ulteriore nodo interno). Questo nodo può essere considerato come un punto di \emph{routing}, in quanto è in grado di dirottare una certa richiesta di indirizzo verso il nodo più appropriato, che potrebbe essere una foglia che è in grado di soddisfare direttamente la richiesta, oppure un nodo interno tramite il quale sarà poi possibile giungere alla foglia desiderata. Ogni nodo interno è relativo ad un particolare dominio più o meno specifico e si occupa della gestione di tutti i componenti che offrono i servizi appartenenti al dominio di competenza.
+	\item \textbf{Leaf node}: è un nodo foglia dell'albero, discendente da un nodo padre (presumibilmente un nodo interno, ma anche un nodo radice in alcuni casi). È uno dei nodi terminali dell'albero, in quanto non può avere figli ed è il custode del contenuto informativo del servizio di competenza. Infatti, ogni nodo foglia è caratterizzato da una corrispondenza diretta verso uno ed un solo componente del sistema \emph{Proxima}, rappresentato per mezzo del servizio che offre, oltre all'indirizzo utilizzabile per stabilire una comunicazione con esso.
+\end{itemize}
+
+Questo architettura gerarchica prevede una suddivisione delle informazioni relative ai servizi fra nodi diversi, che potrebbero anche risiedere su componenti fisici separati. Non è prevista la presenza di un nodo universale che condensi al suo interno tutte le informazioni dell'intero sistema \emph{Proxima}, ma si mira alla definizione di un insieme di nodi complementari, che singolarmente hanno una conoscenza limitata della totalità dei servizi, ma presi nel loro insieme garantiscono tutte le funzionalità del servizio DNS desiderato, fornendo anche ampie garanzie di scalabilità.
+
+Nel contesto dei microservizi, adottato come riferimento per il progetto in esame, ogni nodo della struttura gerarchica potrebbe, in una visione estrema, essere considerato come un microservizio, contattabile dai nodi situati in un livello superiore della gerarchia in caso di necessità.
+
+\subsubsection{Modello ad attori} \label{dns-actormodel}
+Durante la fase di definizione della struttura gerarchica del servizio DNS, si è posta l'enfasi sulla suddivisione del carico di lavoro tra una moltitudine di nodi attivi e indipendenti. Ognuno di essi è caratterizzato dall'\emph{encapsulation} di uno stato interno e dalla capacità di contattare gli altri nodi della gerarchia, in modo da costruire un sistema collettivo che sia grado di far fronte alle richieste esterne, garantendo scalabilità al crescere del numero dei componenti del sistema \emph{Proxima}. L'analisi di queste prerogative porta ad individuare nel modello ad attori la scelta più appropriata per l'implementazione del servizio.
+
+Si prevede la costruzione di un sistema ad attori nel quale ogni nodo della gerarchia sarà mappato in un corrispondente attore. Se ne deriva la definizione degli attori \emph{DNSRootActor}, \emph{DNSInternalNodeActor} e \emph{DNSLeafNodeActor} che corrispondono rispettivamente a nodo radice, nodo interno e nodo foglia della gerarchia DNS, ognuno relativo ad un dominio del sistema Proxima. I primi due attori condividono la funzionalità di \emph{routing}, necessaria per conservare un riferimento agli attori figli, in modo da poterli contattare in caso di necessità. Ad ogni \emph{DNSLeafNodeActor} sarà invece assegnato l'indirizzo di un determinato componente, oltre al servizio da esso offerto. La comunicazione fra gli attori della gerarchia segue la modalità \emph{message passing}, tratto distintivo del modello ad attori.
+
+L'attore \emph{DNSRootActor} dovrà essere attivo e raggiungibile in ogni momento successivo al deployment del servizio, mentre i nodi interni e le foglie della gerarchia potranno essere creati dinamicamente solo in caso di necessità, seguendo un approccio \emph{by-need}. Questo vincolo pone il problema di costruzione della gerarchia DNS in maniera incrementale durante tutta la fase di esecuzione del sistema. Si prevede, dunque, la presenza di un attore \emph{DNSNodesCreatorActor}, il cui unico scopo consisterà nella creazione di attori \emph{DNSInternalNodeActor} e \emph{DNSLeafNodeActor}, quando adeguatamente sollecitato. Ognuno di questi attori potrà essere creato in un qualsiasi momento durante l'esecuzione del sistema e dovrà inserirsi immediatamente all'interno della gerarchia DNS preesistente. 
+
+\subsection{Interfaccia di comunicazione} \label{dns-communication}
+L'interazione con il servizio DNS, come precedentemente stabilito, dovrà essere \emph{RESTful}. Ciò impone la presenza di un server HTTP, il cui scopo sarà quello di soddisfare le richieste esterne giunte in corrispondenza di una determinata porta. Più nel dettaglio, ogni richiesta al DNS dovrà essere diretta alla porta 1406, con l'indicazione del path \emph{dns/address}, che mostra come ogni possibile operazione agisca su un determinato indirizzo di un servizio del sistema \emph{Proxima}. Infatti il punto chiave di un'architettura REST consiste nel modello delle risorse che, nel caso specifico, sono proprio gli indirizzi dei vari servizi del sistema. Ogni richiesta verso il DNS sarà relativa ad una determinata risorsa, che potrà essere richiesta, creata o eliminata. I metodi del protocollo HTTP gestiti dal server DNS sono i seguenti:
+\begin{itemize}
+	\item \textbf{GET}: messaggio che richiede lo stato di una certa risorsa, individuata tramite l'indicazione di un servizio nell'\emph{URL} della richiesta. Il server DNS risponderà con un messaggio contenente l'indirizzo di un componente che offre il servizio specificato. \newline Si prevede che questa operazione sarà la più utilizzata, in quanto permetterà ad un componente esterno di contattare un servizio del sistema \emph{Proxima} in modo disaccoppiato. Gli unici prerequisiti risultano essere la conoscenza del tipo di servizio offerto dal servizio \emph{Proxima} e la raggiungibilità del DNS.
+	\item \textbf{POST}: messaggio che presuppone la richiesta di creazione di una risorsa, descritta nel body della richiesta. Nel caso specifico, la risorsa in questione è l'indirizzo di un componente del sistema \emph{Proxima}. Il server DNS procederà alla creazione dell'indirizzo, rispondendo al client con un apposito \emph{URL}, utilizzabile per richiedere la nuova risorsa. \newline Questa operazione permette l'aggiunta dinamica di servizi al sistema \emph{Proxima}, anche in una fase successiva al deployment. Infatti, sarà possibile inserire un nuovo servizio nel DNS in qualsiasi momento ed esso entrerà immediatamente a far parte del sistema, diventando raggiungibile da un qualsiasi componente richiedente tale servizio al DNS. Inoltre, per garantire un maggiore livello di autonomia, questa operazione potrebbe essere effettuata direttamente da ogni servizio \emph{Proxima}, in una fase immediatamente successiva alla creazione. In questo modo ogni servizio che volesse entrare a far parte del sistema, dovrebbe semplicemente preoccuparsi di registrarsi al DNS indicando il servizio offerto e l'indirizzo utilizzabile per stabilire una comunicazione.
+	\item \textbf{DELETE}: messaggio che sollecita l'eliminazione di una risorsa, specificata nella richiesta. Il server DNS provvederà alla rimozione della risorsa, che non sarà più considerata per le future richieste di tipo GET. \newline Questa operazione può risultare utile per informare il DNS che un certo componente non è più disponibile ad offrire il servizio dichiarato, oppure che l'indirizzo precedentemente assegnatogli non è più valido.
+\end{itemize}
+Una maggiormente approfondita descrizione delle \emph{REST APIs} del server DNS è stata effettuata mediante l'ausilio del framework \emph{Swagger}\footnote{\url{https://swagger.io/}}. Essa è resa disponibile online al link \url{https://app.swaggerhub.com/apis/gmp/ProximaDNSService/1.0.0}.
+
+Lo scopo del server sarà quello di restare in ascolto sulla porta predefinita, demandando alla gerarchia DNS il compito di soddisfare tutte le richieste ricevute. Si rivela opportuna la definizione di un attore \emph{BridgeActor}, in grado di frapporsi fra server e gerarchia interna. In particolare, il compito di questo attore è quello di mappare una richiesta giunta dal server in un corrispondente messaggio comprensibile alla gerarchia interna ed effettuare successivamente il processo inverso, convertendo la risposta elaborata dalla gerarchia interna in un messaggio accessibile al server.
+
+\subsection{Comportamento}
+In \autoref{dns-communication} sono state individuate tutte le modalità di interazione con il servizio DNS, sotto forma di metodi HTTP. Dall'analisi di tali operazioni si possono discernere le tre funzionalità principali che il servizio DNS dovrà essere in grado di fornire, ovvero le operazioni di creazione e cancellazione di uno specifico indirizzo, oltre alla restituzione di un indirizzo corrispondente ad un determinato servizio.
+
+\subsubsection{Richiesta dell'indirizzo di un servizio}
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.7]{./img/dns-get.png}
+	\caption{Un esempio di sviluppo della struttura gerarchica del DNS. Per semplicità si è scelto di considerare solamente l'ambito di interesse specifico del progetto, ovvero il primo soccorso, tralasciando altri possibili domini applicativi del sistema \emph{Proxima}.}
+	\label{fig:dns-get}
+\end{figure}
+In un determinato momento del ciclo di esecuzione del sistema \emph{Proxima}, il DNS sarà provvisto degli indirizzi di un insieme di servizi. Ad esempio, per quanto riguarda l'ambito del primo soccorso, la situazione potrebbe essere simile a quella raffigurata in \autoref{fig:dns-get}. Per garantire scalabilità e disponibilità del sistema generale è ragionevole pensare che un medesimo servizio possa essere offerto da più componenti separati, caratterizzati da un proprio indirizzo individuale. Ognuno di questi componenti dovrà necessariamente essere registrato al DNS, in modo da essere rintracciabile all'interno del sistema \emph{Proxima}. 
+
+Una richiesta dell'indirizzo di un componente in grado di offrire un determinato servizio si riduce ad una ricerca sull'albero DNS di una foglia che sia associata al servizio desiderato. Nel caso si verifichi la presenza di più foglie compatibili con la richiesta (come nel caso in \autoref{fig:dns-get} per il primo soccorso), dovrà essere il DNS stesso a garantire un meccanismo di \emph{load balancing}, in modo da distribuire il carico delle richieste in maniera equa fra i componenti disponibili. Una soluzione semplice ma efficacie consiste nell'implementazione di una politica di \emph{scheduling round-robin}, in cui i componenti possono essere alternati in maniera regolare, evitando il sovraccarico dei singoli nodi.
+
+\subsubsection{Aggiunta dell'indirizzo di un servizio}
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.7]{./img/dns-post.png}
+	\caption{Nella parte sinistra è raffigurato un esempio di sviluppo della struttura gerarchica del DNS relativa al primo soccorso. Nella parte destra è mostrata l'evoluzione della struttura nel caso in cui un nuovo indirizzo relativo al campo di primo soccorso venisse aggiunto al sistema. }
+	\label{fig:dns-post}
+\end{figure}
+La struttura gerarchica descritta in \autoref{dns-hierarchy} rende molto semplice l'aggiunta dell'indirizzo di un componente che offre un certo servizio. Infatti sarà sufficiente l'aggiunta di una foglia rappresentante il nuovo indirizzo all'albero DNS esistente. 
+
+In \autoref{fig:dns-post} è raffigurato un esempio della struttura DNS prima e dopo l'aggiunta di un nuovo componente appartenente al dominio del primo soccorso al sistema. Si può notare l'introduzione di un nodo interno (\emph{firstAid}), oltre che della nuova foglia. Questo comportamento deriva dal fatto che al raggiungimento di un certo valore di soglia prefissato è opportuno che la gestione di nodi simili (stesso servizio) sia delegata ad un nuovo nodo interno. Nel caso raffigurato, il valore della soglia è posto a 3.
+
+\subsubsection{Eliminazione dell'indirizzo di un servizio}
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.7]{./img/dns-delete.png}
+	\caption{Nella parte sinistra è raffigurato un esempio di sviluppo della struttura gerarchica del DNS relativa al primo soccorso. Nella parte destra è mostrata l'evoluzione della struttura nel caso in cui un indirizzo esistente venga eliminato dal sistema (il nodo foglia \emph{firstAid} con indirizzo \emph{192.168.0.2:1111}). }
+	\label{fig:dns-delete}
+\end{figure}
+Se all'interno dell struttura DNS, ogni componente è rappresentato come una foglia dell'albero, la cancellazione di un'indirizzo si riduce all'eliminazione della foglia ad esso corrispondente. 
+
+In \autoref{fig:dns-delete} è mostrato un esempio della struttura DNS prima e dopo l'eliminazione di un componente appartenente al dominio del primo soccorso dal sistema. Si può notare che, nel caso specifico, il servizio di primo soccorso rimarrà comunque garantito all'interno del sistema \emph{Proxima}, in quanto persiste il riferimento ad un altro componente che offre il medesimo servizio. Nel caso così non fosse il servizio non sarebbe più erogabile.
+
+>>>>>>> c266ccd49816788bfa70f0e72b6bfd1f96e268c5
 \chapter{Implementazione}
+\section{Servizio DNS}
+L'implementazione del servizio DNS è completamente basata sulle direttive espresse nella fase di progettazione in \autoref{design-dns}. 
+
+Per lo sviluppo del sistema ad attori, si è fatto uso del
+framework \emph{Akka}\footnote{\url{https://akka.io/}}, e degli strumenti da esso forniti. Questa scelta è motivata sia dalle elevate performance (circa 50 milioni di messaggi processati al secondo, oltre alla possibilità di creare fino a 2.5 milioni di attori per GB di heap), sia dalle garanzie offerte dal framework in merito allo sviluppo di sistemi distribuiti e scalabili. In particolare si è fatto uso della libreria \emph{akka-actor} per la costruzione del sistema ad attori della gerarchia DNS, con l'ausilio di \emph{akka-http} (oltre ad \emph{akka-stream}) per implementare con semplicità ed efficacia il server HTTP del servizio. Per quanto riguarda il linguaggio di programmazione, si è scelto di utilizzare \emph{Scala}\footnote{\url{https://www.scala-lang.org/}}, in quanto è il linguaggio adottato per la maggiore nel processo di sviluppo del framework \emph{Akka}, e permette di sfruttarne tutto il 
+potenziale.
+
+Seguendo le scelte progettuali, descritte in \autoref{dns-actormodel}, si è deciso di procedere con la definizione dei trait \emph{DNSNodeActor} e \emph{DNSRouterActor}, attraverso la composizione dei quali è stato poi possibile definire le classi di attori \emph{DNSRootActor}, \emph{DNSInternalNodeActor} e \emph{DNSLeafNodeActor}. Il trait \emph{DNSNodeActor} rappresenta un nodo della gerarchia (nodo interno o foglia) e si contrappone alla radice, definita, invece, in maniera indipendente. Questa tipologia di attore, nel momento immediatamente successivo alla creazione, prevede l'inserimento nella gerarchia DNS preesistente, tramite l'invio di un messaggio di registrazione alla radice. Il trait \emph{DNSRouterActor} rappresenta un nodo in grado di svolgere una funzione di routing all'interno della gerarchia. Questa tipologia di attore è in grado di gestire la registrazione di un nuovo nodo all'interno della gerarchia, oltre ad instradare le richieste di indirizzi verso le foglie adibite.
+
+Sfruttando la definizione dei trait appena illustrati, le classi di attori corrispondenti ai nodi della gerarchia DNS sono state così composte:
+\begin{itemize}
+	\item \textbf{DNSRootActor}: specializzazione del trait \emph{DNSRouterActor}.
+	\item \textbf{DNSInternalNodeActor}: mixin dei trait \emph{DNSNodeActor} e \emph{DNSRouterActor}, in modo da ottenere un duplice comportamento all'interno della gerarchia.
+	\item \textbf{DNSLeafNodeActor}: specializzazione del trait \emph{DNSNodeActor}, dotato della logica di gestione di un indirizzo di un particolare componente del sistema Proxima.
+\end{itemize}
+
+L'implementazione del resto del sistema si è rivelata fluida e in linea rispetto a quanto proposto nella fase di progettazione. L'unica eccezione riguarda la creazione automatica dei nodi interni della gerarchia. Per garantire ciò si è rivelata necessaria la definizione di un attore \emph{DNSControllerActor}, che, periodicamente, possa controllare lo stato della gerarchia e, se necessario, ordinare la creazione di uno o più nodi interni al \emph{DNSNodesCreatorActor}.
 
 \section{Applicazione Android}
 
@@ -695,6 +812,13 @@ Sia chiave pubblica del front server che chiave privata del soccorritore sono co
 Infine, siccome in ambiente Android non è nativamente possibile considerare le letture di tag NFC solo dopo, come nel nostro caso, la pressione di un pulsante, la \emph{MainActivity} è stata strutturata in modo da rendere possibile questo filtraggio.  
 
 \chapter{Testing} 
+\section{Servizio DNS}
+L'implementazione del servizio DNS è stata accompagnata dalla costante definizione di test, finalizzati soprattutto alla verifica della correttezza dei singoli attori definiti. È stato adottato l'approccio di \emph{unit testing}, attraverso il quale ogni attore soggetto a test è stato isolato dal resto del sistema e testato singolarmente tramite dei meccanismi offerti dalla libreria \emph{akka-testkit}. Essa ha permesso di interrogare gli attori a tempo di esecuzione e definire delle asserzioni sulla base dei messaggi con essi scambiati, attraverso dei costrutti di libreria come \emph{expectMsg}, oltre ai classici \emph{assert}. 
+
+Oltre agli attori del sistema, anche il server DNS è stato opportunamente testato mediante l'ausilio della libreria \emph{akka-http-testkit}, che ha permesso, in modo molto semplice e immediato, la simulazione di richieste HTTP, in modo da poter valutare la correttezza del comportamento del server in reazione ai messaggi esterni.
+
+In generale, ogni test è stato architettato grazie all'utilizzo della libreria \emph{scalatest}, che, tramite la composizione di trait diversi (ad esempio \emph{WordSpecLike} e \emph{Matchers}) ha dato la possibilità di utilizzare frasi di senso compiuto, unite a parole chiave (es: \emph{must} oppure \emph{in}), per costruire dei test facilmente
+leggibili e comprensibili, sia in fase di realizzazione che di esecuzione.
 
 \section{Applicazione Android}
 

@@ -8,7 +8,7 @@ import {Request, Response} from "express";
 export abstract class RequestHandler {
 
   private static SERVER_ERROR_CODE = 500;
-  private static UNAUTHORIZED_ERROR_CODE = 403;
+  private static UNAUTHORIZED_ERROR_CODE = 401;
   private static BAD_REQUEST_ERROR_CODE = 400;
 
   /**
@@ -21,7 +21,7 @@ export abstract class RequestHandler {
   }
 
   /**
-   * Send an HTTP unauthorized error (403), in the given connection and with an optional error message
+   * Send an HTTP unauthorized error (401), in the given connection and with an optional error message
    * @param {Response} res the response object used for send a response to the client
    * @param {string} errorMessage an optional error message.
    */

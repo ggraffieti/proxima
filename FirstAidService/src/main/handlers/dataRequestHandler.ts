@@ -3,15 +3,29 @@ import {RequestHandler} from "./abstractRequestHandler";
 import { AuthorizationChecker } from "../digitalSignature/authorizationChecker";
 import { WorkShiftQueries } from "../workShiftsVerifier/workShiftsQueries";
 import { MedicalDataQueries } from "../medicalData/medicalDataQueries";
+import { ILogger } from "../logger/ILogger";
+import { LoggerFactory } from "../logger/loggerFactory";
 
 export class DataRequestHandler extends RequestHandler {
+
+  private static logger: ILogger = LoggerFactory.remoteLogger();
 
   private constructor() {
     super();
   }
 
+  /**
+   * Handle the request of medical data, by a operator.
+   * This method authorizes the operator by the checking of digital signature, checks if the 
+   * operator work shift if coherent, and retrieve patient data. If the operator is not authorized 
+   * returns an unauthorized HTTP error (401). The data access request is always logged in a secure
+   * manner, in order to mantain an official document that contains all the requests made to the service. 
+   * @param {express.Request} req the request object wrapping all the data sent by the client.
+   * @param {express.Response} res the response object used for send a response to the client
+   */
   public static handleDataRequest(req: Request, res: Response) {
     DataRequestHandler.prepareResponse(res);
+
     let operatorID: string = req.query.operatorID;
     let targetID: string = req.query.targetID;
     let signature: string = req.query.signature;
@@ -20,27 +34,28 @@ export class DataRequestHandler extends RequestHandler {
       console.log("handleDataRequest");
       console.log("operator: " + operatorID);
 
-      signature = signature.split(" ").join("+");
+      // In URL the character '+' is an alias for whitespace, so node, automatically replaces + with whitespaces. We need to undo this replacement manually.
+      signature = signature.split(" ").join("+"); 
 
       AuthorizationChecker.verifyDigitalSignature(operatorID, targetID, signature)
       .then((_) => {
-          console.log("verify digital signature OK");
           return WorkShiftQueries.rescuerAuthorization(operatorID);
       })
       .then((auth) => {
         if (auth) {
-          console.log("Work Shift OK");
           return MedicalDataQueries.getPatientData(targetID)
         }
         else {
-          console.log("Work Shift NOOOOOO");
           return Promise.reject("false work schedule");
         }
       })
-      .then((data) => res.send(data))
-      .catch((err) => {
-        console.log(err);
+      .then((data) => {
+        res.send(data);
+        DataRequestHandler.logger.logDataAccess(operatorID, targetID);
+      })
+      .catch((_) => { // use err wisely
         DataRequestHandler.sendUnauthorizedError(res);
+        DataRequestHandler.logger.logDataAccessDenied(operatorID, targetID);
       });
     }
     else {

@@ -22,7 +22,7 @@ class DNSServerTest extends WordSpec with Matchers with Eventually with Scalates
         case _ => sender ! ExternalAddressResponseErrorMessage()
       }
       case ExternalAddressCreationRequestMessage(service, ip, port) => addressCreation = Some((service, ip, port))
-        sender ! ExternalAddressCreationResponseMessage(true)
+        sender ! ExternalAddressCreationResponseMessage()
       case ExternalDeletionRequestMessage(service, ip, port) => addressDeletion = Some((service, ip, port))
         sender ! ExternalDeletionResponseMessage()
     }

@@ -1,6 +1,9 @@
 import { IWeeklyWorkShift } from "./IWeeklyWorkShift";
 import { IWorkShift } from "./IWorkShift";
 
+/**
+ * Simple implementation of IWeeklyWorkShift interface.
+ */
 export class WeeklyWorkShift implements IWeeklyWorkShift {
 
   public constructor(private rescuer: string, private monday: IWorkShift[] = [], private tuesday: IWorkShift[] = [], private wednesday: IWorkShift[] = [], private thursday: IWorkShift[] = [], private friday: IWorkShift[] = [], private saturday: IWorkShift[] = [], private sunday: IWorkShift[] = []) {
@@ -11,10 +14,7 @@ export class WeeklyWorkShift implements IWeeklyWorkShift {
   }
 
   public checkShift(dayOfWeek: number, time: number) {
-    console.log("check shift right now!");
-    console.log(this);
     var daily = this.getDailyWorkShift(dayOfWeek);
-    console.log("daily WS: " + daily);
     daily.forEach((e) => console.log(e.isInside(time)));
     return daily.some((shift: IWorkShift) => shift.isInside(time));
   }

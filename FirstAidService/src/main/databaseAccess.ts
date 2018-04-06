@@ -1,5 +1,10 @@
 import * as mongoose from "mongoose";
 
+/**
+ * A class that manage the access to database(s).
+ * This class can be instantiate only once, so the pattern singleton is used, in order to 
+ * fulfill this property.
+ */
 export class DatabaseAccess {
 
   private static SINGLETON = new DatabaseAccess();
@@ -9,6 +14,9 @@ export class DatabaseAccess {
   private keyDataUrl = 'mongodb://localhost:27017/proximaRescuersKeys';
   private keyDataConnection;
 
+  /**
+   * gets the instance of the singleton class.
+   */
   public static getInstance() {
     return DatabaseAccess.SINGLETON;
   }
@@ -27,10 +35,17 @@ export class DatabaseAccess {
     this.keyDataConnection.on('error', console.error.bind(console, 'connection error: '));
   }
 
+  /**
+   * Returns the connection to the medical data collection, where are stored medical data and rescuers
+   * work shifts.
+   */
   public getMedicalDataConnection(): mongoose.Connection {
     return this.medicalDataConnection;
   }
 
+  /**
+   * Returns the connection to the public keys collection, whitch contains public keys of rescuers.
+   */
   public getKeyDataConnection(): mongoose.Connection {
     return this.keyDataConnection;
   }

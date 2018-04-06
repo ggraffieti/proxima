@@ -1,6 +1,9 @@
 import * as fs from "fs";
 import { AbstractLogger } from "./abstractLogger";
  
+/**
+ * A logger that log in a local file.
+ */
 export class LocalFileLogger extends AbstractLogger {
 
   private dataAccessFile;
@@ -9,6 +12,13 @@ export class LocalFileLogger extends AbstractLogger {
   private dataAccessStream: fs.WriteStream;
   private dataAccessDeniedStream: fs.WriteStream; 
 
+  /**
+   * Build a new LocalFileLogger, that log data in the given files.
+   * @param dataAccessFile Path to the file where authorized data access will be logged. If the file 
+   * does not exists, it will be created automatically.
+   * @param dataAccessDeniedFile Path to the file where unauthorized data access will be logged.
+   * If the file does not exists, it will be created automatically.
+   */
   public constructor(dataAccessFile: string, dataAccessDeniedFile: string) {
     super();
     this.dataAccessFile = dataAccessFile;
