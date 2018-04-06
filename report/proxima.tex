@@ -593,9 +593,7 @@ I principali componenti del sistema che presentano rischi per una sua consegna n
 	\item \textbf{Cambiamenti nelle API utilizzate}: essa è una problematica nascosta, ma che può portare a gravi ritardi nella consegna. Non esistono progetti software in cui non si fa uso di librerie esterne o parti di codice sviluppate e mantenute da terzi. Un esempio può essere dato dalla \emph{Java Virtual Machine (JVM)}. I cambiamenti di tali dipendenze, sopratutto se non viene mantenuta la piena retro-compatibilità, può portare a gravi ritardi, dovuti allo studio e alla implementazione \emph{ex-novo} di intere parti del progetto. Tale problematica non può essere gestita dal team di sviluppo, ma è dipendente solamente da fattori esterni, per cui non può essere del tutto prevista e prevenuta.
 \end{itemize}
 
-\chapter{Piano di lavoro}
-
-\chapter{Progettazione}
+\chapter{Design architetturale}
 
 In questa sezione verranno descritte le scelte progettuali adottate per la realizzazione del progetto in esame. Ogni scelta sarà fatta considerando come punto di partenza l'architettura logica individuata in \autoref{logic_architecture}, tenendo conto però dell'analisi del sistema generale svolta in \autoref{general_system_analysis}.
 
@@ -659,6 +657,11 @@ I componenti del sistema dovranno interagire in modo da mantenere il più alto l
 
 I dati degli utenti gestiti dagli appositi microservizi (ad esempio, \emph{FirstAidService}) possono essere considerati come le risorsi principali del sistema. Su tali risorse possono essere effettuate diverse operazioni, come la lettura, la creazione, la modifica e la cancellazione. Uno stile architetturale che si rivela adeguato per la trattazione della questione relativa all'interazione fra i servizi è REST (\emph{REpresentational State Transfer})\footnote{Jim Webber, Ian Robinson, Savas Parastatidis, {\em REST in Practice: Hypermedia and Systems Architecture}, O'Reilly Media, 2010}. L'utilizzo di questo approccio è atto a favorire interoperabilità tra i componenti e \emph{openness} del sistema, in quanto l'interfaccia alla quale eventuali nuovi componenti devono conformarsi è nota, essendo alla base dello scambio di dati per il Web.
 In merito a quanto detto, i componenti del sistema interagiranno utilizzando i classici verbi HTTP. Ad esempio, ad una richiesta GET corrisponderà una risposta contente lo stato di risorsa identificata da un determinato URL. Una richiesta POST determinerà invece la creazione di una risorsa.
+
+
+\chapter{Piano di lavoro}
+
+\chapter{Design di dettaglio}
 
 \section{Servizio di autorizzazioni degli utenti}
 
