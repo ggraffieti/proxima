@@ -597,7 +597,6 @@ I principali componenti del sistema che presentano rischi per una sua consegna n
 
 \chapter{Progettazione}
 
-<<<<<<< HEAD
 In questa sezione verranno descritte le scelte progettuali adottate per la realizzazione del progetto in esame. Ogni scelta sarà fatta considerando come punto di partenza l'architettura logica individuata in \autoref{logic_architecture}, tenendo conto però dell'analisi del sistema generale svolta in \autoref{general_system_analysis}.
 
 \section{Raffinamento del modello d'analisi}
@@ -654,6 +653,13 @@ Un problema simile si riscontra anche nel sistema distribuito più grande e diff
 
 Per rimediare alle problematiche sopra descritte sarà necessario includere all'interno del sistema un servizio dedito a mappare i nomi dei servizi in riferimenti, utilizzabili per contattare i servizi stessi.
 
+\section{Interazione tra i componenti}
+
+I componenti del sistema dovranno interagire in modo da mantenere il più alto livello di disaccoppiamento, vista l'architettura a microservizi. Inoltre la modalità di interazione tra i componenti del sistema dovrà essere di tipo \emph{request-response}: se un componente necessita di una certa funzionalità della quale non è in possesso, invierà una richiesta ad un componente in grado di fornire tale servizio, il quale risponderà di conseguenza nel modo appropriato. Sulla base di queste considerazioni si è deciso di fare affidamento sul protocollo HTTP (\emph{HyperText Transfer Protocol}).
+
+I dati degli utenti gestiti dagli appositi microservizi (ad esempio, \emph{FirstAidService}) possono essere considerati come le risorsi principali del sistema. Su tali risorse possono essere effettuate diverse operazioni, come la lettura, la creazione, la modifica e la cancellazione. Uno stile architetturale che si rivela adeguato per la trattazione della questione relativa all'interazione fra i servizi è REST (\emph{REpresentational State Transfer})\footnote{Jim Webber, Ian Robinson, Savas Parastatidis, {\em REST in Practice: Hypermedia and Systems Architecture}, O'Reilly Media, 2010}. L'utilizzo di questo approccio è atto a favorire interoperabilità tra i componenti e \emph{openness} del sistema, in quanto l'interfaccia alla quale eventuali nuovi componenti devono conformarsi è nota, essendo alla base dello scambio di dati per il Web.
+In merito a quanto detto, i componenti del sistema interagiranno utilizzando i classici verbi HTTP. Ad esempio, ad una richiesta GET corrisponderà una risposta contente lo stato di risorsa identificata da un determinato URL. Una richiesta POST determinerà invece la creazione di una risorsa.
+
 \section{Servizio di autorizzazioni degli utenti}
 
 \section{Applicazione Android e Identificatori} \label{design_app}
@@ -679,7 +685,7 @@ Essendo NFC una serie di protocolli estremamente corposa e ramificata, il compon
 Dopo un'analisi delle tecnologie esistenti, è stato scelto di fare affidamento ad una che preveda il supporto per NDEF (\emph{NFC default exchange format}), un formato proposto da \emph{NFC forum}\footnote{\url{https://nfc-forum.org/}} per promuovere la standardizzazione delle tecnologie NFC, in modo da assicurare interoperabilità tra dispositivi e servizi. NDEF è stato scelto proprio per quanto appena detto e per il fatto che risulta essere un dei formati nativamente supportati da Android\footnote{\url{https://developer.android.com/guide/topics/connectivity/nfc/nfc.html}}.
 
 Sulla base di queste considerazioni, abbiamo scelto di adoperare dei tag Mifare Classic da 1KB di memoria, una quantità sufficiente per i nostri scopi.
-=======
+
 \section{Servizio DNS} \label{design-dns}
 All'interno del progetto, il \emph{Domain Name System} è un servizio, accessibile via web tramite il protocollo HTTP, che rende disponibile un modo per individuare tutti i servizi offerti dal sistema \emph{Proxima}. In particolare, effettua un \emph{mapping} fra un servizio, individuato da una stringa strutturata, e una serie di indirizzi tramite i quali è possibile contattare dei componenti il cui scopo è mettere a disposizione tale servizio. 
 
@@ -777,7 +783,6 @@ Se all'interno dell struttura DNS, ogni componente è rappresentato come una fog
 
 In \autoref{fig:dns-delete} è mostrato un esempio della struttura DNS prima e dopo l'eliminazione di un componente appartenente al dominio del primo soccorso dal sistema. Si può notare che, nel caso specifico, il servizio di primo soccorso rimarrà comunque garantito all'interno del sistema \emph{Proxima}, in quanto persiste il riferimento ad un altro componente che offre il medesimo servizio. Nel caso così non fosse il servizio non sarebbe più erogabile.
 
->>>>>>> c266ccd49816788bfa70f0e72b6bfd1f96e268c5
 \chapter{Implementazione}
 \section{Servizio DNS}
 L'implementazione del servizio DNS è completamente basata sulle direttive espresse nella fase di progettazione in \autoref{design-dns}. 
