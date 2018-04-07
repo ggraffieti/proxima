@@ -700,7 +700,7 @@ L'interazione con il front server dovrà essere \emph{RESTful}. Inoltre, essendo
 
 Il solo metodo HTTP che il front server è in grado di gestire è GET. Un messaggio di questo tipo rappresenta la richiesta dei dati di un determinato utente relativi ad un certo servizio. Tale messaggio dovrà contenere, oltre all'identificativo dell'utente target e al servizio, anche l'identificativo dell'operatore richiedente, identificato univocamente dalla sua firma digitale. Nel caso l'operatore risulti autorizzato alla lettura dei dati richiesti, una risposta contenente gli stessi sarà restituita. Una descrizione più approfondita delle \emph{REST APIs} del front server è stata effettuata mediante l'ausilio del framework \emph{Swagger}\footnote{\url{https://swagger.io/}}. Essa è resa disponibile online al link \url{https://app.swaggerhub.com/apis/gmp/ProximaFrontServer/1.0.0}.
 
-\subsection{Comportamento}
+\subsection{Comportamento} \label{frontserver-behaviour}
 Il comportamento del front server sarà caratterizzato da una costante fase di attesa di richieste esterne. Le fasi che permettono di processare con successo una richiesta GET, descritta in \autoref{frontserver-api}, sono le seguenti.
 \begin{enumerate}
 	\item \textbf{Verifica della validità della richiesta}: è necessario controllare che la richiesta contenga i parametri necessari al sistema per portare a termine il processo di recupero dei dati.
@@ -729,6 +729,11 @@ Sfruttando la definizione dei trait appena illustrati, le classi di attori corri
 \end{itemize}
 
 L'implementazione del resto del sistema si è rivelata fluida e in linea rispetto a quanto proposto nella fase di progettazione. L'unica eccezione riguarda la creazione automatica dei nodi interni della gerarchia. Per garantire ciò si è rivelata necessaria la definizione di un attore \emph{DNSControllerActor}, che, periodicamente, possa controllare lo stato della gerarchia e, se necessario, ordinare la creazione di uno o più nodi interni al \emph{DNSNodesCreatorActor}.
+
+\section{Front server}
+L'implementazione del front server è stata effettuata mediante l'ausilio di \emph{Nodejs}\footnote{\url{https://nodejs.org}}, che in collaborazione con il framework \emph{express}\footnote{\url{http://expressjs.com}}, permette la creazione di un server in pochissimi passi. Inoltre si è considerato il modello ad eventi non bloccante di \emph{Nodejs} come un'ottima architettura per l'implementazione del front server, che dovrà dimostrarsi sempre reattivo, anche a fronte di un carico di richieste elevato. Il linguaggio scelto per la scrittura è \emph{Typescript}\footnote{\url{https://www.typescriptlang.org}}, che, rispetto a \emph{Javascript}, permette di utilizzare le astrazioni tipiche dei linguaggi ad oggetti.
+
+La gestione di una richiesta GET sul path \emph{data} è affidata alla classe \emph{RequestHandler}. Il punto cruciale risiede nel fatto che il front server non è in grado di elaborare e soddisfare la richiesta in totale autonomia, ma necessita della consulenza di altri tre servizi, come descritto in \autoref{frontserver-behaviour}. L'interrogazione dei servizi non può essere svolta in parallelo, in quanto è necessaria la risposta di uno di essi prima di poter contattare il servizio successivo. Un comportamento del genere in \emph{Nodejs} è supportato tramite l'assegnazione di una \emph{callback} ad ogni richiesta, in modo da specificare le azioni da eseguire nel momento in cui giungerà la corrispondente risposta. Per evitare di sprofondare nel cosiddetto \emph{callback hell}, si è deciso di sfruttare il meccanismo delle \emph{promises} e in particolare il \emph{promises chaining}. In questo modo è possibile ottenere un effetto di "appiattimento" del codice, definendo una catena di \emph{promises} e assegnando un \emph{handler} a ciascuna di esse, tramite il metodo \emph{then}.
 
 \chapter{Testing} 
 \section{Servizio DNS}
