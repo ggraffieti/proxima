@@ -592,6 +592,23 @@ I principali componenti del sistema che presentano rischi per una sua consegna n
 \end{itemize}
 
 \chapter{Piano di lavoro}
+\section{Processo di sviluppo}
+Il processo complessivo di sviluppo del sistema può essere suddiviso in cinque fasi, strettamente collegate tra loro, in quanto ognuna di esse costituisce l'input di quella successiva. Lo svolgimento di ogni fase richiede competenze e specializzazioni differenti e potrebbe potenzialmente essere affidato a figure diverse del team di sviluppo. Le fasi in questione possono essere riassunte schematicamente come di seguente.
+\begin{itemize}
+	\item \textbf{Analisi dei requisiti}: studio del dominio del progetto e comprensione delle richieste del committente.
+	\item \textbf{Analisi del problema}: definizione delle problematiche e studio di fattibilità del progetto, per poi giungere alla definizione formale di una prima architettura logica del sistema. 
+	\item \textbf{Progettazione}: definizione dell'architettura del sistema.
+	\item \textbf{Progettazione di dettaglio}: definizione dettagliata di tutti i componenti del sistema.
+	\item \textbf{Implementazione}: realizzazione effettiva del sistema.
+\end{itemize}
+
+Nel nostro caso, sia per quanto riguarda la mancanza di figure specializzate in una determinata fase e sia per coinvolgere ogni membro del team nell'intero processo di sviluppo, si è deciso di effettuare insieme le prime tre fasi, che hanno portato alla definizione di un'architettura del sistema. Essa è descritta mediante l'indicazione dei componenti che la compongono e delle modalità di interazione fra gli stessi. Nella fase di progettazione si è scelto di adottare un approccio a microservizi, che consente di suddividere il sistema in sottoparti indipendenti e di procedere in parallelo alla progettazione ed implementazione di ciascuna di esse.
+
+\section{Suddivisione del lavoro}
+I componenti individuati nella definizione dell'architettura sono sei. Siccome il team è formato da tre membri, non è stato possibile effettuare un assegnamento uno-ad-uno dei componenti, ma ogni membro del team è stato incaricato di occuparsi della progettazione di dettaglio e dell'implementazione di due componenti del sistema. Si è considerato opportuno considerare con una priorità maggiore i microservizi più rilevanti del sistema, rimandando ad un secondo momento la realizzazione dei componenti di interfaccia del sistema (applicazione Android e front server) e dei componenti ritenuti meno complessi (\emph{Logger}). Ad ogni membro del team sarà, quindi, assegnato un componente preso tra \emph{UsersAuthorizationsService}, servizio DNS e \emph{FirstAidService}. Questa scelta è stata dettata dal fatto che i componenti appena menzionati risultano indipendenti e il loro funzionamento potrà essere verificato e testato senza la necessità del supporto di altri componenti. Ciò non sarebbe valido per l'applicazione Android, che necessiterebbe della disponibilità dell'intera infrastruttura per svolgere il suo corretto funzionamento, e nemmeno per il front server, che non sarebbe in grado di processare con successo alcuna richiesta senza l'apporto dei microservizi del sistema. 
+
+Dopo aver implementato i primi tre servizi del sistema, dovrebbe risultare banale la realizzazione del front server, il quale si limiterà ad aggregare i microservizi già disponibili, così come non si considera eccessivo il costo delle fasi di progettazione ed implementazione del \emph{Logger}. Si valuta, invece, più complesso il lavoro necessario per lo sviluppo dell'applicazione Android.
+
 
 \chapter{Progettazione}
 
