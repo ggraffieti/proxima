@@ -651,7 +651,7 @@ Un problema simile si riscontra anche nel sistema distribuito più grande e diff
 
 Per rimediare alle problematiche sopra descritte sarà necessario includere all'interno del sistema un servizio dedito a mappare i nomi dei servizi in riferimenti, utilizzabili per contattare i servizi stessi.
 
-\section{Interazione tra i componenti}
+\section{Interazione tra i componenti} \label{components_interaction}
 
 I componenti del sistema dovranno interagire in modo da mantenere il più alto livello di disaccoppiamento, vista l'architettura a microservizi. Inoltre la modalità di interazione tra i componenti del sistema dovrà essere di tipo \emph{request-response}: se un componente necessita di una certa funzionalità della quale non è in possesso, invierà una richiesta ad un componente in grado di fornire tale servizio, il quale risponderà di conseguenza nel modo appropriato. Sulla base di queste considerazioni si è deciso di fare affidamento sul protocollo HTTP (\emph{HyperText Transfer Protocol}).
 
@@ -663,7 +663,19 @@ In merito a quanto detto, i componenti del sistema interagiranno utilizzando i c
 
 \chapter{Design di dettaglio}
 
-\section{Servizio di autorizzazioni degli utenti}
+\section{Servizio di autorizzazioni degli utenti} \label{users_authorizations_design}
+
+All'interno del sistema \emph{Proxima}, il servizio di autorizzazioni degli utenti offre un modo per stabilire qualora un determinato utente abbia previamente autorizzato un certo servizio all'utilizzo dei propri dati. Per lo sviluppo del prototipo, si presuppone l'esistenza di un database, contenente l'elenco dei servizi autorizzati per singolo utente. Il servizio farà quindi affidamento alle informazioni contenute nel database per svolgere la propria mansione. Si noti che lo scopo del servizio in questione si limita alla funzionalità sopra descritta, e non quindi alla modifica, rimozione od aggiunta di nuovi permessi. 
+
+\subsection{Interfaccia di comunicazione}
+
+Sulla base di quanto detto in \autoref{components_interaction}, l'interazione con il servizio dovrà essere \emph{RESTful}. Sarà presente quindi un server HTTP che avrà il compito di gestire le richieste inviate al servizio. Più nel dettaglio, il server starà in ascolto su porta 8436 con path \emph{/authorize}. Ogni richiesta al servizio dovrà essere effettuata tenendo conto delle specifiche appena descritte. Non essendoci, oltre alla gestione delle richieste, altre mansioni da ricoprire, la struttura del servizio combacerà con quella del server HTTP, il cui comportamento sarà soddisfare le richieste ricevute consultando il database contenente le autorizzazioni degli utenti.
+
+Il servizio gestirà un solo metodo del protocollo HTTP, ovvero il metodo GET, con il quale sarà possibile stabilire se un determinato utente abbia autorizzato un certo servizio all'utilizzo dei propri dati. Identificativo del paziente e nome strutturato del servizio d'interesse dovranno essere inseriti all'intero dell'URL della richiesta, in corrispondenza, rispettivamente, dei parametri \emph{targetID} e \emph{service}. Una descrizione dettagliata dell'API può essere reperita al seguente indirizzo \url{https://app.swaggerhub.com/apis/gmp/ProximaUsersAuthorizationsService/1.0.0}
+
+\subsection{Database}
+
+Le autorizzazioni concesse dai singoli utenti ai vari servizi del sistema \emph{Proxima} saranno contenute all'interno di un database \emph{NoSQL}. L'utilizzo di un database non relazionale garantirà una buona facilità di utilizzo e un'ottima flessibilità per eventuali sviluppi futuri.
 
 \section{Applicazione Android e Identificatori} \label{design_app}
 
@@ -787,6 +799,13 @@ Se all'interno dell struttura DNS, ogni componente è rappresentato come una fog
 In \autoref{fig:dns-delete} è mostrato un esempio della struttura DNS prima e dopo l'eliminazione di un componente appartenente al dominio del primo soccorso dal sistema. Si può notare che, nel caso specifico, il servizio di primo soccorso rimarrà comunque garantito all'interno del sistema \emph{Proxima}, in quanto persiste il riferimento ad un altro componente che offre il medesimo servizio. Nel caso così non fosse il servizio non sarebbe più erogabile.
 
 \chapter{Implementazione}
+
+\section{Servizio di autorizzazioni degli utente}
+
+Il server HTTP, ovvero il servizio in questione, descritto in \autoref{users_authorizations_design} è stato sviluppato in \emph{Node}\footnote{\url{https://nodejs.org/it/}}, facendo affidamento al framework \emph{Espress}\footnote{\url{http://expressjs.com/it/}} ed al linguaggio \emph{Typescript}\footnote{\url{https://www.typescriptlang.org/}}. Oltre al fatto che le tecnologie citate risultano essere fortemente consolidate e supportate, questa scelta è stata fatta principalmente per due motivazioni, quali facilità di sviluppo e largo supporto per l'interazione con database non relazionali.
+
+Per il database finalizzato al contenimento delle autorizzazioni di ogni singolo utente è stato fatto affidamento a \emph{MongoDB}\footnote{\url{https://www.mongodb.com/it}}, essendo questa una delle tecnologie di punta per la creazione e gestione di database non relazionali. Più nel dettaglio, il database contiene una sola collezione, \emph{usersauthorizations}, nella quale ogni documento memorizza l'elenco dei servizi i quali un determinato utente ha autorizzato per l'utilizzo dei propri dati.   
+
 \section{Servizio DNS}
 L'implementazione del servizio DNS è completamente basata sulle direttive espresse nella fase di progettazione in \autoref{design-dns}. 
 
