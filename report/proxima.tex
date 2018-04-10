@@ -871,7 +871,7 @@ Come ultima nota, la distribuzione del servizio DNS avverrà tramite un file JAR
  
 \section{Front server}
 
-
+L'interfacciamento al sistema \emph{Proxima} può avvenire solamente per mezzo del componente \emph{front server}, al quale saranno indirizzate tutte le richieste provenienti dagli utenti. Esso può essere quindi visto come collo di bottiglia del sistema e avrà il duplice scopo di rimanere reattivo anche a fronte di un carico elevato di richieste e, allo stesso tempo, contattare i vari microservizi interni al sistema per elaborare le risposte corrispondenti. In condizioni reali d'utilizzo del sistema, è ragionevole presupporre che il carico di lavoro sul componente in questione sarà elevato, dato che il sistema sarà utilizzato a livello nazionale ed eventualmente esteso con ulteriori servizi. Sulla base di questa considerazione, si valuta come ideale una soluzione che prevede un deployment del componente su cloud. Questo approccio garantisce un servizio continuo ed elastico, con un'allocazione di risorse dinamica sulla base del carico di richieste. Inoltre, essa consente un risparmio economico notevole, in quanto non sarebbe necessario procedere all'acquisto di un server dedicato in grado di garantire prestazioni elevate.
 
 \section{Applicazione Android}
 
