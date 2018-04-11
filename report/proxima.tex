@@ -111,7 +111,7 @@ Ogni componente del sistema, sia esso un dispositivo computazionale o una person
 
 Attraverso il deployment del sistema proposto saranno aperti vari nuovi scenari, tra cui
 \begin{itemize}
-	\item  Stravolgimento dell'interazione uomo-macchina, che non sarà più guidata da espliciti comandi, ma totalmente trasparente all'utente. Ad esempio, una casa intelligente può rilevare la presenza del proprietario nelle vicinanze, ed interagendo con il suo avatar virtuale può ricevere i dati di come il proprietario vuole interagire con essa (accensione luci in alcune stanze, accensione riscaldamento, apertura porte o finestre\dots) senza che il proprietario debba fisicamente fare alcuna azione
+	\item Stravolgimento dell'interazione uomo-macchina, che non sarà più guidata da espliciti comandi, ma totalmente trasparente all'utente. Ad esempio, una casa intelligente può rilevare la presenza del proprietario nelle vicinanze, ed interagendo con il suo avatar virtuale può ricevere i dati di come il proprietario vuole interagire con essa (accensione luci in alcune stanze, accensione riscaldamento, apertura porte o finestre\dots) senza che il proprietario debba fisicamente fare alcuna azione
 	\item Totale personalizzazione dell'interazione tra persona e dispositivo computazionale, che potrà essere imparata dal sistema in automatico tramite metodi di \emph{learning}.
 	\item Metodi di pagamento automatico, senza l'obbligo del possesso di carte o moneta. Il dispositivo di pagamento rileverà in automatico le merci ed il compratore, e comunicando con i rispettivi avatar virtuali procederà al pagamento della merce. L'avatar del compratore potrà richiedere la conferma della persona reale prima di procedere. Sui mezzi pubblici non sarà più necessario l'acquisto del biglietto, ma semplicemente il mezzo, interagendo con gli avatar dei passeggeri, addebiterà il prezzo del bigliett all'ingresso nel mezzo.
 	\item Scambio di dati tra persone fisiche, ad esempio dati medici o giudiziari. L'avatar di un medico contatterà l'avatar del paziente, che fornirà ad esso i dati medici, mostrati poi al medico nel mondo reale. In maniera simile un agente di polizia potrà ricevere i dati giudiziari di persone sospette, ad esempio per controlli negli aeroporti. 
@@ -155,7 +155,7 @@ Il sistema dovrà definire una politica di accesso ai dati contenuti nella banca
 \section{Glossario} \label{glossary}
 In questa sezione verranno esplorati ed esplicati i concetti chiave usati dal committente durante la fase di raccolta dei requisiti. 
 \begin{itemize}
-	\item \textbf{Soccorritore}: medico o infermiere che presta soccorso ai pazienti sia in ospedale, che anche all'esterno in caso di emergenze. Nella definizione di soccorritore data dal committente, non è incluso il personale che non è adibito ad un intervento invasivo diretto sul paziente (personale volontario e non senza abilitazioni mediche/infermieristiche). Ad esempio, a bordo di un'ambulanza atta a svolgere una funzione di trasporto e di primo soccorso, è consuetudine la presenza di personale (volontario e non), la cui mansione è limitata ad una prima stabilizzazione del paziente, oltre al trasporto dello stesso presso un centro ospedaliero. Tale personale non è considerato in questa categoria.
+	\item \textbf{Soccorritore}: medico o infermiere che presta soccorso ai pazienti sia in ospedale, che anche all'esterno in caso di emergenze. Nella definizione di soccorritore data dal committente, non è incluso il personale che non è adibito ad un intervento invasivo diretto sul paziente (personale volontario e senza abilitazioni mediche/infermieristiche). Ad esempio, a bordo di un'ambulanza atta a svolgere una funzione di trasporto e di primo soccorso, è consuetudine la presenza di personale (volontario e non), la cui mansione è limitata ad una prima stabilizzazione del paziente, oltre al trasporto dello stesso presso un centro ospedaliero. Tale personale non è considerato in questa categoria.
 	\item \textbf{Paziente}: Persona che necessita di cure mediche in una situazione di emergenza. Sono inclusi in questa categoria sia i soggetti che si recano in ospedale in autonomia, sia i soggetti che giungono in ospedale scortati da appositi mezzi di trasporto (come ambulanze).
 	\item \textbf{Situazione di emergenza}: Circostanza o condizione di immediato pericolo per la salute del paziente, che necessita di un perentorio intervento di uno o più soccorritori (ad esempio traumi dovuti ad incidenti automobilistici, condizioni acute quali infarto, ictus, \dots).
 	\item \textbf{Identificativo}: codice che permette di risalire all'identità di un certo utente all'interno del sistema. Esso deve contenere la minima quantità di informazione che consente di identificare un paziente che è in possesso di un identificatore
@@ -301,7 +301,7 @@ Si individuano due funzionalità principali del sistema che dovranno essere sogg
 	\item \textbf{Gestione dell'accesso ai dati}: un soccorritore non autorizzato non deve poter ricevere alcun dato medico. Le informazioni che definiscono l'autorizzazione o meno di un certo soccorritore sono quelle contenute all'interno della banca dati (come stabilito in \autoref{glossary}). 
 \end{description}
 
-\chapter{Analisi del problema}
+\chapter{Analisi del problema} \label{problem-analysis}
 
 In questo capitolo saranno analizzate nel dettaglio le problematiche derivanti, direttamente o indirettamente, dai requisiti. Verrà quindi effettuato uno studio di fattibilità per determinare se sussistono i presupposti necessari alla realizzazione del sistema, proponendo soluzioni plausibili.
 
@@ -643,7 +643,7 @@ I componenti individuati nella definizione dell'architettura sono sei. Siccome i
 
 Ad ogni membro del team sarà inizialmente assegnato un componente preso tra \emph{UsersAuthorizationsService}, servizio DNS e \emph{FirstAidService}. Questa scelta è stata dettata dal fatto che i componenti appena menzionati risultano indipendenti e il loro funzionamento potrà essere verificato e testato senza la necessità del supporto di altri componenti. Ciò non sarebbe valido per l'applicazione Android, che necessiterebbe della disponibilità dell'intera infrastruttura per svolgere il suo corretto funzionamento, e nemmeno per il front server, che non sarebbe in grado di processare con successo alcuna richiesta senza l'apporto dei microservizi del sistema. Dopo aver implementato i primi tre servizi del sistema, dovrebbe risultare banale la realizzazione del front server, il quale si limiterà ad aggregare i microservizi già disponibili, così come non si considera eccessivo il costo delle fasi di progettazione ed implementazione del \emph{Logger}. Si valuta, invece, più complesso il lavoro necessario per lo sviluppo dell'applicazione Android.
 
-\chapter{Progettazione}
+\chapter{Progettazione} \label{design}
 
 \section{Servizio DNS} \label{design-dns}
 All'interno del progetto, il \emph{Domain Name System} è un servizio, accessibile via web tramite il protocollo HTTP, che rende disponibile un modo per individuare tutti i servizi offerti dal sistema \emph{Proxima}. In particolare, effettua un \emph{mapping} fra un servizio, individuato da una stringa strutturata, e una serie di riferimenti tramite i quali è possibile contattare dei componenti il cui scopo è mettere a disposizione tale servizio. 
@@ -794,11 +794,12 @@ Oltre agli attori del sistema, anche il server DNS è stato opportunamente testa
 In generale, ogni test è stato architettato grazie all'utilizzo della libreria \emph{scalatest}, che, tramite la composizione di trait diversi (ad esempio \emph{WordSpecLike} e \emph{Matchers}) ha dato la possibilità di utilizzare frasi di senso compiuto, unite a parole chiave (es: \emph{must} oppure \emph{in}), per costruire dei test facilmente
 leggibili e comprensibili, sia in fase di realizzazione che di esecuzione.
 
-\chapter{Deployment (?)}
+\chapter{Deployment (?)} \label{deployment}
 
-\chapter{Manutenzione}
+\chapter{Manutenzione} \label{maintenance}
 
 \chapter{Retrospettiva}
+In questo capitolo verrà ripercorso il lavoro svolto nelle varie fasi del progetto, in modo da valutare l'adeguatezza del processo di sviluppo adottato. Inoltre, sarà possibile esprimere un giudizio sul prodotto finale, valutandone l'aderenza ai requisiti raccolti, oltre a ragionare su possibili ed eventuali sviluppi futuri.
 
 \section{Processo di sviluppo}
 Il processo di sviluppo adottato ha permesso un progresso continuo e lineare del sistema, fin dalle prime battute. A partire dai requisiti è stato formulato un primo modello del sistema, che è stato poi raffinato nel tempo in modo da sfociare nell'architettura definitiva, fino ad un livello di dettaglio tale da consentire l'implementazione dei vari componenti. 
@@ -807,10 +808,19 @@ La fase più corposa del processo di sviluppo si è rivelata essere quella di an
 
 La sfida principale affrontata nella fase di progettazione è stata il design di un sistema il più generale possibile, in modo da minimizzare gli sforzi conseguenti a successivi innesti di servizi all'interno del mondo \emph{Proxima}. L'architettura logica prodotta nella fase di analisi si è, però, dimostrata un ottimo punto di partenza, facilitando notevolmente la progettazione. Lo stile architetturale a microservizi si è rivelato determinante per accorciare notevolmente i tempi di sviluppo, permettendo la completa suddivisione della fase di progettazione di dettaglio (oltre all'implementazione) fra i membri del team, parallelizzando il lavoro.
 
-L'accuratezza e la completezza delle fasi di analisi e progettazione ha permesso di minimizzare i costi del processo di implementazione. In questa fase è stato infatti possibile affidarsi completamente alle direttive prodotte durante la progettazione di dettaglio, senza incappare in alcun intoppo derivante da eventuali situazioni non previste. In definitiva, si conviene che il tempo investito nella fase di analisi del problema ha permesso di sviscerare tutte le principali problematiche in una fase ancora embrionale della progettazione, semplificando e snellendo notevolmente le fasi successive.
+L'accuratezza e la completezza delle fasi di analisi e progettazione ha permesso di minimizzare i costi del processo di implementazione. In questa fase è stato infatti possibile affidarsi completamente alle direttive prodotte durante la progettazione di dettaglio, senza incappare in alcun intoppo derivante da eventuali situazioni non previste. In definitiva, si conviene che il tempo investito nella fase di analisi del problema ha permes-so di sviscerare tutte le principali problematiche in una fase ancora embrionale della progettazione, semplificando e snellendo notevolmente le fasi successive.
 
 \section{Giudizio finale}
-\section{Sviluppi futuri}
+Siamo complessivamente soddisfatti del progetto sviluppato. Il sistema \emph{Proxima} è stato realizzato in modo da aderire alla totalità dei requisti raccolti nella fase di analisi dei requisiti, in \autoref{requirements}, e rielaborati in quella di analisi del problema, in \autoref{problem-analysis}. Come ampiamente espresso nella fase di progettazione, in \autoref{design}, l'architettura del sistema è stata, però, costruita in modo da favorire caratteristiche come manutenibilità ed estendibilità.
 
+Il sistema ristretto all'ambito del primo soccorso può essere immediatamente distribuito e dislocato, facendo riferimento alle indicazioni di deployment, descritte in \autoref{deployment}. Inoltre risulta facilmente manutenibile ed estendibile, come rispettivamente illustrato in \autoref{maintenance} e \autoref{future-work}.
+
+\section{Sviluppi futuri} \label{future-work}
+L'alto grado di estendibilità del sistema permette la sua espansione a tempo di esecuzione. L'introduzione di nuovi domini applicativi nel sistema \emph{Proxima} (che si andranno ad aggiungere a quello del primo soccorso) può infatti essere gestita in maniera completamente dinamica, evitando una sospensione dell'attività del sistema che provocherebbe un disservizio momentaneo. L'architettura preesistente del sistema non viene intaccata in alcun modo dall'aggiunta di nuovi ambiti di interesse. 
+
+In questa sezione sono descritte le operazioni necessarie per permettere l'aggiunta di un nuovo dominio applicativo al sistema.
+
+\subsection{Aggiunta di un componente al sistema}
+\subsection{Aggiornamento della pagina web}
  
 \end{document}
