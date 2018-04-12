@@ -305,7 +305,7 @@ Si individuano due funzionalità principali del sistema che dovranno essere sogg
 
 In questo capitolo saranno analizzate nel dettaglio le problematiche derivanti, direttamente o indirettamente, dai requisiti. Verrà quindi effettuato uno studio di fattibilità per determinare se sussistono i presupposti necessari alla realizzazione del sistema, proponendo soluzioni plausibili.
 
-\section{Analisi del sistema generale}
+\section{Analisi del sistema generale} \label{general-analysis}
 Come anticipato nella \autoref{goal}, lo scopo del progetto non è soltanto quello di soddisfare i requisiti esposti nel \autoref{requirements}, ma di costruire la base di tutto il sistema, sopra la quale saranno implementati i servizi, tra i quali quello di gestione delle emergenze mediche esposto in precedenza. Il sistema \emph{Proxima} dovrà quindi fornire una base, sopra la quale potranno essere costruiti servizi e componenti. Esso agirà quindi da \emph{middleware}, e dovrà fornire ai servizi ed agli utenti le seguenti funzionalità:
 \begin{itemize}
 	\item Servizio di identificazione. Esso sarà la base del sistema, attraverso cui tutte le funzionalità potranno essere implementate. L'identificazione dovrà essere univoca, e offerta come servizio a chiunque voglia interagire con il sistema. Sarà ovviamente compito del sistema stesso gestire l'accesso ai dati, che dovrà essere garantito solo a chi autorizzato. I vari servizi non dovranno essere accessibili in modo diretto, ma solamente attraverso il sistema \emph{Proxima}.
@@ -799,7 +799,7 @@ leggibili e comprensibili, sia in fase di realizzazione che di esecuzione.
 \chapter{Manutenzione} \label{maintenance}
 
 \chapter{Retrospettiva}
-In questo capitolo verrà ripercorso il lavoro svolto nelle varie fasi del progetto, in modo da valutare l'adeguatezza del processo di sviluppo adottato. Inoltre, sarà possibile esprimere un giudizio sul prodotto finale, valutandone l'aderenza ai requisiti raccolti, oltre a ragionare su possibili ed eventuali sviluppi futuri.
+In questo capitolo verrà ripercorso il lavoro svolto nelle varie fasi del progetto, in modo da valutare l'adeguatezza del processo di sviluppo adottato. Inoltre, sarà possibile esaminare gli eventuali sviluppi futuri ed esprimere un giudizio sul prodotto finale.
 
 \section{Processo di sviluppo}
 Il processo di sviluppo adottato ha permesso un progresso continuo e lineare del sistema, fin dalle prime battute. A partire dai requisiti è stato formulato un primo modello del sistema, che è stato poi raffinato nel tempo in modo da sfociare nell'architettura definitiva, fino ad un livello di dettaglio tale da consentire l'implementazione dei vari componenti. 
@@ -810,17 +810,34 @@ La sfida principale affrontata nella fase di progettazione è stata il design di
 
 L'accuratezza e la completezza delle fasi di analisi e progettazione ha permesso di minimizzare i costi del processo di implementazione. In questa fase è stato infatti possibile affidarsi completamente alle direttive prodotte durante la progettazione di dettaglio, senza incappare in alcun intoppo derivante da eventuali situazioni non previste. In definitiva, si conviene che il tempo investito nella fase di analisi del problema ha permes-so di sviscerare tutte le principali problematiche in una fase ancora embrionale della progettazione, semplificando e snellendo notevolmente le fasi successive.
 
-\section{Giudizio finale}
-Siamo complessivamente soddisfatti del progetto sviluppato. Il sistema \emph{Proxima} è stato realizzato in modo da aderire alla totalità dei requisti raccolti nella fase di analisi dei requisiti, in \autoref{requirements}, e rielaborati in quella di analisi del problema, in \autoref{problem-analysis}. Come ampiamente espresso nella fase di progettazione, in \autoref{design}, l'architettura del sistema è stata, però, costruita in modo da favorire caratteristiche come manutenibilità ed estendibilità.
-
-Il sistema ristretto all'ambito del primo soccorso può essere immediatamente distribuito e dislocato, facendo riferimento alle indicazioni di deployment, descritte in \autoref{deployment}. Inoltre risulta facilmente manutenibile ed estendibile, come rispettivamente illustrato in \autoref{maintenance} e \autoref{future-work}.
-
 \section{Sviluppi futuri} \label{future-work}
-L'alto grado di estendibilità del sistema permette la sua espansione a tempo di esecuzione. L'introduzione di nuovi domini applicativi nel sistema \emph{Proxima} (che si andranno ad aggiungere a quello del primo soccorso) può infatti essere gestita in maniera completamente dinamica, evitando una sospensione dell'attività del sistema che provocherebbe un disservizio momentaneo. L'architettura preesistente del sistema non viene intaccata in alcun modo dall'aggiunta di nuovi ambiti di interesse. 
+L'alto grado di estensibilità del sistema permette la sua espansione a tempo di esecuzione. L'introduzione di nuovi domini applicativi nel sistema \emph{Proxima} (che si andranno ad aggiungere a quello del primo soccorso) può infatti essere gestita in maniera completamente dinamica, evitando una sospensione dell'attività del sistema che provocherebbe un disservizio momentaneo. L'architettura preesistente del sistema non verrebbe intaccata in alcun modo dall'aggiunta di nuovi ambiti di interesse. 
 
 In questa sezione sono descritte le operazioni necessarie per permettere l'aggiunta di un nuovo dominio applicativo al sistema.
 
-\subsection{Aggiunta di un componente al sistema}
-\subsection{Aggiornamento della pagina web}
+\subsection{Aggiunta di un servizio al sistema}
+L'aggiunta di un nuovo servizio al sistema prevede, innanzitutto, l'assegnamento di un identificativo al servizio, sotto forma di sequenza di domini separati da un punto (ad esempio \emph{proxima.example.ex}). Il passo successivo consiste nella progettazione e implementazione di un componente in grado di regolare l'accesso ai dati degli utenti relativi al servizio (così come il componente \emph{FirstAidService} per il primo soccorso). Esso dovrà essere in grado di gestire il meccanismo di autenticazione degli operatori autorizzati ai dati. Nell'ambito del primo soccorso si è ritenuto adeguato l'utilizzo di una combinazione tra identificativo del soccorritore e crittografia a chiave pubblica, ma tale meccanismo potrebbe non essere ideale per altri servizi. Si è, quindi, deciso di demandare l'autenticazione degli operatori ai servizi specifici, piuttosto che condensare il tutto in un servizio unico all'interno del sistema. 
+
+Il componente dovrà rispettare le seguenti condizioni per integrarsi con successo all'interno del sistema:
+\begin{itemize}
+	\item Eseguire la registrazione al servizio DNS. Il componente potrà essere reperibile all'interno del sistema dopo aver effettuato un'adeguata richiesta POST al DNS nel formato specificato.
+	\item Esporre una corretta interfaccia \emph{RESTful}. Il componente dovrà essere contattabile tramite una richiesta di tipo GET sul path \emph{/data}, in maniera analoga al \emph{FirstAidService}.
+\end{itemize}
+
+\subsection{Aggiornamento delle autorizzazioni degli utenti}
+Allo stato del deployment attualmente previsto, l'unico servizio erogato dal sistema \emph{Proxima} risulta essere quello del primo soccorso. Si è ampiamente discusso della possibilità di aggiungere altri servizi al sistema, lasciando agli utenti la decisione su quali dati condividere con il personale autorizzato e quali invece mantenere privati. Il microservizio \emph{UsersAuthorizationsService} si occupa proprio di controllare che l'utente abbia dato il consenso alla lettura dei dati relativi ad un certo servizio richiesto dagli operatori. In \autoref{general-analysis} si individua la necessità di mettere in condizione gli utenti di selezionare quali dati condividere all'interno del sistema, e quali negare. Ciò non è stato trattato in questo progetto, in quanto ci si è limitati al dominio del primo soccorso, nel quale i dati medici degli utenti devono sempre essere a disposizione dei soccorritori autorizzati.
+
+Nel caso dovesse essere aggiunto al sistema un dominio che richiede l'autorizzazione degli utenti per il trattamento dei dati, sarà necessario escogitare un modo per permettere agli utenti stessi di esprimere le proprie preferenze. Una possibile soluzione consiste nella realizzazione di una pagina Web, attraverso la quale gli utenti, opportunamente autenticati, possano consultare lo spettro completo dei servizi offerti da \emph{Proxima}, oltre ad accettare o meno il consenso alla trattazione dei dati. Per questioni legate a sicurezza e privacy, la politica dovrà essere \emph{default-deny}. Questo significa che il trattamento dei dati deve essere negato per ogni servizio, con l'eccezione dei soli servizi espressamente accettati dall'utente. Ovviamente questo discorso non vale per tutti quei servizi in cui la concessione dei dati è obbligatoria (ad esempio in ambito medico e giudiziario).
+
+L'ultimo tassello del processo consiste nell'integrazione della pagina Web con il componente \emph{UsersAuthorizationsService}, che può essere realizzata in diversi modi. Di seguito sono brevemente illustrate le due modalità ritenute più rilevanti.
+\begin{itemize}
+	\item Il servizio \emph{UsersAuthorizationsService} fa affidamento sulle informazioni contenute in un database per decretare l'autorizzazione o meno alla lettura dei dati. La soluzione più semplice consiste in un'aggiornamento diretto del database in questione ogni qual volta un utente modifichi le sue preferenze riguardo ai vari servizi del sistema. Si presuppone la presenza di un componente intermedio che, informato di una variazione, possa intervenire direttamente sul database. Questa opzione risulta molto comoda, in quanto il componente \emph{UsersAuthorizationsService} non subirebbe alcun cambiamento e si limiterebbe a continuare la sua normale interazione in lettura con il database. D'altra parte, però, in questo modo si andrebbe a realizzare un'interazione basata su un database condiviso, altamente sconsigliata nell'ottica dei microservizi\footnote{Sam Newman, {\em Building Microservices}, O'Reilly Media, 2014}.
+	\item La seconda soluzione consiste nel demandare al servizio \emph{UsersAuthorizationsService} il compito di aggiornare il database ad ogni variazione delle preferenze degli utenti. In questo modo si potrebbe perseguire l'integrazione \emph{RESTful}, utilizzata in ogni parte del sistema. In questo caso il componente \emph{UsersAuthorizationsService} dovrebbe essere modificato in modo da gestire delle richieste di tipo POST, PUT e DELETE, che presuppongono rispettivamente una creazione, modifica e cancellazione di un record del database. Inoltre il carico di lavoro del componente sarebbe notevolmente incrementato, portando ad un inevitabile deployment dello stesso sul \emph{cloud} o una sua distribuzione su componenti fisici separati. Questo approccio garantisce, però, un grado decisamente maggiore di disaccoppiamento dei servizi.
+\end{itemize}
+ 
+\section{Giudizio finale}
+Il sistema \emph{Proxima} è stato realizzato in modo da aderire alla totalità dei requisti raccolti nella fase di analisi dei requisiti, in \autoref{requirements}, e rielaborati in quella di analisi del problema, in \autoref{problem-analysis}. Come ampiamente espresso nella fase di progettazione, in \autoref{design}, l'architettura del sistema è stata, però, costruita in modo da favorire caratteristiche come manutenibilità ed estensibilità. Il sistema ristretto all'ambito del primo soccorso può essere immediatamente distribuito e dislocato, facendo riferimento alle indicazioni di deployment, descritte in \autoref{deployment}. Inoltre risulta facilmente manutenibile ed estendibile, come rispettivamente illustrato in \autoref{maintenance} e \autoref{future-work}.
+
+In definitiva, possiamo ritenerci complessivamente soddisfatti del lavoro svolto. 
  
 \end{document}
