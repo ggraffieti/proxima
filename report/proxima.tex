@@ -803,7 +803,7 @@ In \autoref{fig:dns-delete} è mostrato un esempio della struttura DNS prima e d
 
 \chapter{Implementazione}
 
-\section{Servizio di autorizzazioni degli utente}
+\section{Servizio di autorizzazioni degli utenti}
 
 Il server HTTP, ovvero il servizio in questione, descritto in \autoref{users_authorizations_design} è stato sviluppato in \emph{Node}\footnote{\url{https://nodejs.org/it/}}, facendo affidamento al framework \emph{Espress}\footnote{\url{http://expressjs.com/it/}} ed al linguaggio \emph{Typescript}\footnote{\url{https://www.typescriptlang.org/}}. Oltre al fatto che le tecnologie citate risultano essere fortemente consolidate e supportate, questa scelta è stata fatta principalmente per due motivazioni, quali facilità di sviluppo e largo supporto per l'interazione con database non relazionali.
 
@@ -884,6 +884,32 @@ Ovviamente, un aggiornamento manuale dell'applicazione su tutti i dispositivi è
 L'unico problema di rilievo riguarda la chiave privata del soccorritore, che, al primo avvio dell'applicazione, dovrà essere inserita manualmente da un ente autorizzato. 
 
 \chapter{Manutenzione}
+
+In questo capitolo verrà eseguito uno studio sulla manutenibilità del sistema. Più nello specifico, saranno analizzati alcuni dei possibili cambiamenti che sarebbe ragionevole apportare al sistema in futuro, assieme a nuove eventuali direttive del committente che porterebbero alla modifica di determinati componenti del sistema stesso. Per ognuna di queste ne verrà indicato l'impatto e la relativa facilità di effettuazione.
+
+\section{Richieste del committente}
+
+Riuscire a prevedere tutte le possibili richieste che il committente potrebbe avanzare in futuro risulta essere un compito molto difficile. In questa sezione ci si limita quindi ad eseguire un'analisi di quelle principali, riportate di seguito:
+\begin{itemize}
+	\item \textbf{Cambiamento delle tecnologie}: è presumibile pensare che in futuro il committente possa richiedere di sostituire l'identificatore degli utenti con uno più evoluto. Questo potrebbe accadere se, ad esempio, venisse creata una tecnologia in grado di far comunicare lettore e identificatore in un raggio limitato di 3 metri (come da requisito iniziale). Il cambio di identificatore comporterebbe un cambio del protocollo di comunicazione tra i componenti citati. Per affrontare questo cambiamento, si potrebbe modificare l'applicazione Android, in termini di dipendenze e librerie utilizzate, in modo da affiancare al supporto per NFC quello per la nuova tecnologia, a patto che ciò sia possibile. In caso contrario, risulterebbe necessario sostituire l'applicazione Android con un lettore \emph{ad-hoc}, rendendo il cambiamento più costoso e complesso. Come alternativa, nel caso fosse possibile si potrebbero invece utilizzare degli identificatori \emph{ad-hoc} in grado di essere letti sia tramite NFC, sia tramite la nuova tecnologia; in questo modo si potrebbe perlomeno continuare ad utilizzare l'applicazione Android. Qualunque sia l'approccio scelto, ci si limiterebbe ad agire su lettori ed identificatori, senza apportare alcuna modifica alle componenti restanti del sistema, come \emph{front server} e microservizi.  
+	
+	\item \textbf{Metodo di autenticazione}: per garantire un maggior livello di sicurezza in relazione alla consultazione dei dati da parte di personale autorizzato, il committente potrebbe richiedere di apportare modifiche al metodo di autenticazione del personale stesso. Per esempio, al posto di utilizzare identificativo del soccorritore si potrebbe voler utilizzare una sua caratteristica biometrica (volto, voce, \dots). Innanzitutto, tale richiesta prevederebbe una modifica all'applicazione Android, in modo che sia possibile, con essa, effettuare il riconoscimento della caratteristica biometrica di interesse. In seguito, per minimizzare l'impatto del cambiamento sul sistema, basterebbe creare un servizio dedito al mapping da caratteristica biometrica ad identificativo. A questo punto, l'applicazione Android si limiterebbe ad interagire con il sistema al solito modo, inviando, in ogni richiesta, un pattern che descriva la caratteristica biometrica utilizzata al posto dell'identificativo utilizzato in precedenza. Il \emph{front server}, a seguito della ricezione di una richiesta così formattata, provvederà a contattare il nuovo servizio in modo da ottenere l'identificativo di interesse, per poi procedere al recupero dei dati medici. 
+
+	Sulla base di quanto appena detto, non sarebbe quindi necessaria alcuna modifica alla struttura o ai servizi del sistema. Tuttavia, il cambiamento avrebbe impatto decisamente maggiore qualora il riconoscimento della caratteristica biometrica scelta dal committente non fosse supportato da Android. In tal caso, occorrerebbe sostituire l'applicazione con un lettore \emph{ad-hoc}, assicurandosi che questo sia in grado di leggere il contenuto degli identificatori degli utenti.
+	
+	\item \textbf{Interfaccia al sistema}: in futuro il committente potrebbe richiedere di sviluppare un'app iOS analoga a quella Android, o, più in generale, fornire vie alternative di interfacciamento al sistema, come \emph{web app} o sito web. L'unico costo derivante da questa richiesta starebbe nella realizzazione del nuovo componente; per fare in modo di integrare il componente stesso nel sistema, baserà infatti far sì che questo comunichi con il \emph{front server} inviando richieste GET opportunamente formattate. L'aggiunta di una nuova interfaccia al sistema non andrebbe quindi ad intaccare struttura del sistema stesso e/o microservizi.
+\end{itemize}
+
+\section{Evoluzione del sistema}
+
+Il punto di forza del sistema sta nella sua architettura a microservizi. Sebbene per poterla attuare sia stato fatto del lavoro aggiuntivo in fase di progettazione, questa architettura comporta una serie di vantaggi in termini di scalabilità, estensibilità e manutenibilità del sistema. Di seguito sono riportati ed analizzati alcuni cambiamenti facilmente applicabili in un'ottica di evoluzione del sistema:
+\begin{itemize}
+	\item \textbf{Replicazione/eliminazione microservizi}: qualora in futuro un determinato servizio del sistema \emph{Proxima} presentasse un aumento notevole del proprio utilizzo, si potrebbe semplicemente decidere di replicare i microservizi finalizzati all'erogazione del servizio di interesse. L'integrazione delle repliche all'interno del sistema sarebbe, come già accennato precedentemente in questo documento, a costo zero; basterebbe infatti che le repliche, a tempo di creazione, si registrassero al servizio DNS (con un'apposita richiesta POST) per poter poi essere contattate da chi ne necessita.
+	
+	Contrariamente, nel caso un determinato servizio del sistema presentasse un forte calo nel suo utilizzo, si potrebbe considerare di eliminare eventuali repliche dei microservizi finalizzati all'erogazione del servizio di interesse. Anche quest'operazione risulterebbe immediata, siccome sarebbe sufficiente che le repliche da eliminare venissero de-registrate dal servizio di DNS (con un'apposita richiesta DELETE).
+	
+	\item \textbf{Tecnologia dei microservizi}: qualora in futuro risultasse vantaggioso apportare modifiche ad un certo microservizio o, più in generale, utilizzare un'altra tecnologia per la sua implementazione, allora queste operazioni evolutive sarebbero limitate al solo microservizio di interesse, senza andare ad impattare sul sistema e sull'interazione tra i suoi componenti. Sarà sufficiente infatti che l'interfaccia del microservizio in esame rimanga la stessa, in modo che gli altri componenti del sistema possano continuare ad interagire con esso come in precedenza. Questo discorso relativo ai microservizi risulta valido anche per il \emph{front-server}.
+\end{itemize}  
 
 \chapter{Restrospettiva}
 \section{Giudizio finale}
