@@ -43,7 +43,7 @@ public class HTTPClientServiceTest {
 
                 @Override
                 public void onError(Integer errorCode) {
-                    assertEquals(HttpsURLConnection.HTTP_FORBIDDEN, errorCode.intValue());
+                    assertEquals(HttpsURLConnection.HTTP_UNAUTHORIZED, errorCode.intValue());
                 }
 
                 @Override

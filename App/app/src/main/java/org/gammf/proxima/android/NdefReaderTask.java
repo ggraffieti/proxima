@@ -64,8 +64,9 @@ public class NdefReaderTask extends AsyncTask<Tag, Void, String> {
      */
     private String readText(final NdefRecord record) throws UnsupportedEncodingException {
         /*
-            The most significant bit of the first byte of the record payload stores the text encoding.
-            The six least significant bits of the first bytes store the language-code length.
+            The most significant bit of the first byte of the record payload stores the text encoding of the payload itself.
+            The second most significant bit is a RFU flag and MUST be set to 0.
+            The six least significant bits of the first byte store the language-code length.
             The actual content of the payload starts at language-code length + 1 (first byte).
         */
         byte[] payload = record.getPayload();
@@ -74,6 +75,10 @@ public class NdefReaderTask extends AsyncTask<Tag, Void, String> {
 
         int languageCodeLength = payload[0] & 0x3F;
 
-        return new String(payload, languageCodeLength + 1, payload.length - languageCodeLength - 1, textEncoding);
+        if((payload[0] & 64) == 0) {
+            return new String(payload, languageCodeLength + 1, payload.length - languageCodeLength - 1, textEncoding);
+        } else {
+            return "";
+        }
     }
 }

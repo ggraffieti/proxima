@@ -19,6 +19,7 @@ import org.gammf.proxima.R;
 import org.gammf.proxima.interfaces.HTTPClientServiceListener;
 import org.gammf.proxima.util.AppUtilities;
 import org.gammf.proxima.util.CommunicationUtilities;
+import org.gammf.proxima.util.HurlStackManager;
 import org.gammf.proxima.util.IdentifiersManager;
 import org.gammf.proxima.util.KeyManager;
 
@@ -36,7 +37,7 @@ public class HTTPClientService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         if(mRequestQueue == null) {
-            mRequestQueue = Volley.newRequestQueue(this);
+            mRequestQueue = Volley.newRequestQueue(this, HurlStackManager.getInstance().getCustomHurlStack(this));
             KeyManager.init(getApplicationContext());
         }
         return new LocalBinder();
