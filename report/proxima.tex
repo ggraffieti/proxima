@@ -850,6 +850,24 @@ Il servizio di primo soccorso è un servizio di altissima importanza, e un suo c
 Nella progettazione del servizio di primo soccorso abbiamo scelto di utilizzare un approccio ad eventi, per la garanzia di totale assenza di corse critiche e di problemi legati al multithreading (è attivo sempre e solo il flusso di controllo dell'\emph{event loop}). Inoltre un sistema del genere è maggiormente scalabile di un approccio a pool di thread, la cui dimensione può essere facilmente sotto o sovra stimata. Anche se può sembrare contro-intuitivo avere un solo thread in esecuzione, in realtà è una soluzione ampiamente utilizzata per l'implementazione di sevizi in cui l'\emph{availability} è una proprietà fondamentale. Nel nostro caso, inoltre, il servizio non dovrà mai compiere task che richiedono largo uso della CPU, ma la maggior parte del tempo sarà speso aspettando eventi di rete o richieste al database/file-system. 
 
 \subsection{Autorizzazione del soccorritore}
+L'autorizzazione del soccorritore è una proprietà fondamentale del sistema, poiché impedisce che malintenzionati o persone non autorizzate possano avere accesso a dati sensibili come i dati medici di altre persone. Verificare l'identità di una persona a distanza non è un compito semplice, e molti tentativi sono stati fatti nel corso degli anni. I principali metodi di autenticazione sono basati su: 
+\begin{itemize}
+	\item \textbf{Qualcosa che l'utente sa} come password o codici. Essi sono facilmente rubabili o intuibili, tramite tecniche di ingegneria sociale o semplicemente tramite forza bruta. Inoltre in una situazione concitata come quella di emergenza è assolutamente da evitare ogni azione che sia di distrazione al soccorso del paziente, per cui l'immissione di password non può essere presa in considerazione.
+	\item \textbf{Qualcosa che l'utente è} come impronte digitali, riconoscimento dell'iride, ed in generale tecniche biometriche. Tali metodi risultano i più sicuri, poiché non facilmente rubabili o replicabili. Tuttavia, nel caso di primo soccorso, sovvengono problemi che rendono tali tecniche non utilizzabili, come l'utilizzo di guanti, mascherine ed in generale oggetti di ``intralcio'' a tali sistemi. 
+	\item \textbf{Qualcosa che l'utente possiede} come una chiave privata, una tessera o altri dispositivi. In questo caso il possesso di tale oggetto identifica la persona, ciò comporta che la sicurezza dell'oggetto è fondamentale per tale schema di autenticazione. 
+\end{itemize}
+Dati i requisiti dati dalla particolare situazione di emergenza abbiamo deciso di basare l'autorizzazione su uno schema a chiave pubblica e chiave privata, usate sotto forma di firma digitale. Il dispositivo lettore in dotazione al soccorritore conterrà al suo interno la chiave privata del soccorritore, con cui sarà firmata la richiesta di dati, in modo da poter riconoscere le richieste legittime da quelle di malintenzionati. 
+
+Lo schema di firma e autenticazione è riportato di seguito:
+\begin{enumerate}
+	\item Viene creata una chiave pubblica ed una chiave privata per ogni soccorritore autorizzato. Le chiavi pubbliche sono mantenute in un registro all'interno del servizio, mentre quelle private sono inserite all'interno dei lettori in dotazione ai soccorritori.
+	\item Alla richiesta di accesso ai dati è allegata una firma digitale, formata dalla concatenazione del codice del paziente e quello del soccorritore, criptati con la chiave privata del soccorritore.
+	\item Il servizio di autorizzazione verifica, tramite la chiave pubblica, che il messaggio sia stato realmente inviato dal soccorritore autorizzato.
+\end{enumerate}
+L'algoritmo scelto per la produzione e la verifica della chiave pubblica è \emph{RSA}\footnote{\url{https://en.wikipedia.org/wiki/RSA_(cryptosystem)}}, utilizzando chiavi da 2048 bit, e criptando l'hash, ottenuto tramite \emph{sha256} della concatenazione tra codice del paziente e codice del soccorritore. 
+
+La totale indipendenza dei diversi servizi implementabili su \emph{proxima}, fa si che ognuno possa avere il suo schema di autorizzazione per l'accesso ai dati (o, addirittura, non averne alcuno). Questo è un vantaggio enorme, poiché ogni servizio (si pensi a quello di primo soccorso e a quello di un supermercato) può richiedere autorizzazioni più o meno avanzate per l'accesso ai dati. Mantenendo ogni servizio totalmente separato dagli altri non si impone alcun vincolo su chi e come può accedere ai dati di tale servizio, rendendo ancora più eterogeneo ed estensibile il sistema nella sua interezza.
+
 \subsection{Controllo dei turni di servizio}
 \subsection{Invio dei dati medici}
 \subsection{Logging}
