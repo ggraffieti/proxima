@@ -626,7 +626,7 @@ I microservizi sono dei servizi piccoli ed autonomi che cooperano per il raggiun
 \end{itemize}
 
 
-\subsection{\emph{Splitting the monolith}}
+\subsection{\emph{Splitting the monolith}} \label{splitting}
 
 Il componente \emph{DataControl} individuato in fase di analisi risulta essere un monolite, che può essere suddiviso nei seguenti microservizi:
 
@@ -826,6 +826,34 @@ In \autoref{fig:dns-post} è raffigurato un esempio della struttura DNS prima e 
 Se all'interno dell struttura DNS, ogni componente è rappresentato come una foglia dell'albero, la cancellazione di un'indirizzo si riduce all'eliminazione della foglia ad esso corrispondente. 
 
 In \autoref{fig:dns-delete} è mostrato un esempio della struttura DNS prima e dopo l'eliminazione di un componente appartenente al dominio del primo soccorso dal sistema. Si può notare che, nel caso specifico, il servizio di primo soccorso rimarrà comunque garantito all'interno del sistema \emph{Proxima}, in quanto persiste il riferimento ad un altro componente che offre il medesimo servizio. Nel caso così non fosse il servizio non sarebbe più erogabile.
+
+\section{Servizio di primo soccorso}
+Il servizio di primo soccorso è il servizio dell'applicazione che si occupa della fornitura, a soccorritori autorizzati, dei dati dei pazienti nel caso di emergenza. Esso, come descritto nella \autoref{splitting}, deriva dal componente \emph{data control} trattato in fase di analisi. I compiti principali del servizio in esame sono riassunti di seguito: 
+\begin{itemize}
+	\item Autorizzazione del soccorritore
+	\item Controllo del turno di servizio del soccorritore, richieste valide di accesso ai dati dovranno provenire solamente in orari di servizio dei soccorritori, forniti dal committente. 
+	\item Invio dei dati medici al soccorritore, solo se autorizzato.
+	\item Logging di ogni attività, in modo sicuro e non ripudiabile.
+\end{itemize}
+Dato che queste quattro attività, anche se separabili, hanno un forte legame tra loro, ed inoltre non possono essere eseguite in parallelo (prima è necessario verificare l'identità del soccorritore, e solo in seguito, eventualmente, inviare i dati) è stato deciso di condensarle in un unico componente, mantenendo però la loro indipendenza tramite l'architettura a microservizi. 
+
+\subsection{Generalità}
+Il servizio di primo soccorso dovrà essere solamente uno dei tanti servizi che potranno essere separatamente implementabili nella infrastruttura del sistema, ed esso può essere visto come un primo esempio di funzionamento completo e verticale del sistema \emph{proxima}.Quanto descritto da qui in avanti deve ritenersi quindi inerente al solo servizio di primo soccorso, e non una linea guida per l'implementazione di servizi sulla piattaforma.
+
+Il servizio di primo soccorso è un servizio di altissima importanza, e un suo corretto funzionamento può aiutare i medici ed i soccorritori a curare nel migliore modo possibile un paziente in situazioni di emergenza. Per tale motivo eso dovrà essere sempre attivo, raggiungibile e dovrà rispondere in modo rapido. La \emph{availability} di tale servizio è un requisito fondamentale, e dovrà permeare ogni scelta di design descritta da qui in avanti. Ci sono diversi modi per massimizzare l'\emph{availability} di un sistema, i più utilizzati sono descritti di seguito: 
+\begin{itemize}
+	\item \textbf{Multithreading}: il servizio è composto da più thread, tipicamente ne viene creato uno ad ogni richiesta, con il solo compito di gestirla. Ciò non è particolarmente indicato in sistemi in cui la maggior parte del tempo di una richiesta viene speso in attesa di operazioni di \emph{I/O} (query su un database, attesa su una connessione di rete\dots), poiché si spende tempo per la creazione di thread (e per lo scheduling) che per la maggior parte del tempo saranno inattivi, in attesa di risorse.
+	\item \textbf{Pool di thread}: il servizio ha un numero fisso di thread, a cui viene passato un compito, ed una volta svolto ritornano disponibili. Questo approccio è migliore del precedente, poiché elimina il tempo di creazione ed eliminazione di thread, ma rimane il problema dell'attesa di risorse. Inoltre la valutazione della dimensione del pool non è semplice da valutare a priori, rischiando di sotto o sovra dimensionarlo.
+	\item \textbf{Modello ad attori}: il sistema è composto da attori, entità software ognuna con il proprio flusso di controllo logico e che comunicano tramite scambio di messaggi. Un normale server può ospitare migliaia di attori, senza che le prestazioni degradino. 
+	\item \textbf{Modello ad \emph{event-loop}}: il sistema consiste in un unico thread, chiamato \emph{event-loop}, il quale esegue il codice associato ad eventi presenti nella \emph{event queue}. Se durante l'esecuzione si incorre in un'attesa di una risorsa, l'event-loop preleva un altro evento dalla event queue e ne esegue il codice associato. In questo modo l'event-loop non è mai bloccato. Quando la risorsa sarà disponibile verrà inserito un evento nella event queue, in modo che l'event loop potrà processarlo. 
+\end{itemize}
+Nella progettazione del servizio di primo soccorso abbiamo scelto di utilizzare un approccio ad eventi, per la garanzia di totale assenza di corse critiche e di problemi legati al multithreading (è attivo sempre e solo il flusso di controllo dell'\emph{event loop}). Inoltre un sistema del genere è maggiormente scalabile di un approccio a pool di thread, la cui dimensione può essere facilmente sotto o sovra stimata. Anche se può sembrare contro-intuitivo avere un solo thread in esecuzione, in realtà è una soluzione ampiamente utilizzata per l'implementazione di sevizi in cui l'\emph{availability} è una proprietà fondamentale. Nel nostro caso, inoltre, il servizio non dovrà mai compiere task che richiedono largo uso della CPU, ma la maggior parte del tempo sarà speso aspettando eventi di rete o richieste al database/file-system. 
+
+\subsection{Autorizzazione del soccorritore}
+\subsection{Controllo dei turni di servizio}
+\subsection{Invio dei dati medici}
+\subsection{Logging}
+\subsection{Interfaccia di comunicazione}
 
 \section{Front server}
 Il front server è un punto di aggregazione dei microservizi del mondo Proxima e fornisce un'interfaccia di accesso al sistema. Rappresenta uno strato intermedio situato fra i microservizi e l'esterno, svolgendo il ruolo di \emph{user inteface}, senza includere la \emph{business logic} del sistema. Ogni richiesta proveniente dall'applicazione Android dovrà essere diretta verso questo componente il quale, dopo averla elaborata tramite il supporto dei microservizi necessari, produrrà un'adeguata risposta.
