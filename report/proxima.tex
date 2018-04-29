@@ -881,8 +881,16 @@ Un servizio di logging sicuro di ogni accesso ai dati è un requisito fondamenta
 
 Per garantire tali prerogative è stato scelto di utilizzare un logger a ``due livelli'', ovvero locale e remoto. I messaggi di logging, quindi, oltre al essere mantenuti localmente all'interno del servizio sono anche inviati ad un servizio remoto, che a sua volta manterrà la traccia di ogni accesso ai dati. In questo modo tale sistema viene protetto da guasti o disastri naturali che possono occorrere alle macchine su cui tale servizio risiede. Inoltre, data la natura distribuita dei servizi, potrebbero esistere più copie del servizio di primo soccorso attive. Il logging remoto, in questo caso, agirebbe da aggregatore dei dati. Inoltre, non solo gli accessi ai dati dovranno essere memorizzati, ma ogni tentativo di accesso, anche se esso non è andato a buon fine. In questo modo possono essere scoperti attacchi al sistema, o possibili tentativi di accesso da parte di malintenzionati. 
 \subsection{Interfaccia di comunicazione} \label{firstAidCom}
-
-\subsection{Comportamento}
+Come per tutti i servizi descritti fino a questo momento anche per il servizio di primo soccorso è stato scelto un approccio \emph{ReSTful}, basato su risorse, per la comunicazione. In particolare, ogni dato medico di ogni singolo paziente è una risorsa, che può essere richiesta tramite il metodo HTTP \texttt{GET}. Dato che l'accesso ai dati può essere dato solamente a soccorritori autorizzati, e il controllo dovrà essere svolto dal servizio stesso, si è fatto uso d \emph{query parameters}\footnote{\url{https://en.wikipedia.org/wiki/Query_string}} per indicare il codice di paziente e soccorritore, e la firma digitale per il riconoscimento di quest'ultimo. Il servizio di primo soccorso risponde su porta 9876.
+\subsubsection*{Gestione delle chiavi pubbliche dei soccorritori}
+Oltre alla richiesta dei dati medici è necessario che il servizio gestisca l'immissione, la modifica e la cancellazione delle chiavi pubbliche dei soccorritori. Per fare ciò si è scelto sempre un approccio \emph{ReSTful}, dove le risorse sono le chiavi pubbliche stesse. I metodi HTTP per la gestione delle chiavi sono riportati di seguito: 
+\begin{itemize}
+	\item \textbf{POST}: utilizzato per l'inserimento di una nuova chiave privata ad un nuovo soccorritore. La chiave fornita deve essere nel formato \emph{PEM}.
+	\item \textbf{PUT}: utilizzato per la modifica di una chiave già associata ad un soccorritore. La chiave fornita deve essere in formato \emph{PEM}.
+	\item \textbf{DELETE}: utilizzato per l'eliminazione di una chiave. Va fornito il solo identificativo del soccorritore, che dopo tale operazione non avrà più alcuna chiave pubblica associata. 
+\end{itemize}
+Una approfondita descrizione delle \emph{ReST API} del servizio di primo soccorso è disponibile all'indirizzo: \\ 
+\url{https://app.swaggerhub.com/apis/gmp/ProximaFirstAidService/1.0.0}.
 
 \section{Front server}
 Il front server è un punto di aggregazione dei microservizi del mondo Proxima e fornisce un'interfaccia di accesso al sistema. Rappresenta uno strato intermedio situato fra i microservizi e l'esterno, svolgendo il ruolo di \emph{user inteface}, senza includere la \emph{business logic} del sistema. Ogni richiesta proveniente dall'applicazione Android dovrà essere diretta verso questo componente il quale, dopo averla elaborata tramite il supporto dei microservizi necessari, produrrà un'adeguata risposta.
@@ -954,7 +962,7 @@ Sfruttando la definizione dei trait appena illustrati, le classi di attori corri
 \end{itemize}
 
 L'implementazione del resto del sistema si è rivelata fluida e in linea rispetto a quanto proposto nella fase di progettazione. L'unica eccezione riguarda la creazione automatica dei nodi interni della gerarchia. Per garantire ciò si è rivelata necessaria la definizione di un attore \emph{DNSControllerActor}, che, periodicamente, possa controllare lo stato della gerarchia e, se necessario, ordinare la creazione di uno o più nodi interni al \emph{DNSNodesCreatorActor}.
-
+\section{Servizio di primo soccorso}
 \section{Front server}
 L'implementazione del front server è stata effettuata mediante l'ausilio di \emph{Nodejs}\footnote{\url{https://nodejs.org}}, che in collaborazione con il framework \emph{express}\footnote{\url{http://expressjs.com}}, permette la creazione di un server in pochissimi passi. Inoltre si è considerato il modello ad eventi non bloccante di \emph{Nodejs} come un'ottima architettura per l'implementazione del front server, che dovrà dimostrarsi sempre reattivo, anche a fronte di un carico di richieste elevato. Il linguaggio scelto per la scrittura è \emph{Typescript}\footnote{\url{https://www.typescriptlang.org}}, che, rispetto a \emph{Javascript}, permette di utilizzare le astrazioni tipiche dei linguaggi ad oggetti.
 
@@ -983,7 +991,7 @@ Oltre agli attori del sistema, anche il server DNS è stato opportunamente testa
 
 In generale, ogni test è stato architettato grazie all'utilizzo della libreria \emph{scalatest}, che, tramite la composizione di trait diversi (ad esempio \emph{WordSpecLike} e \emph{Matchers}) ha dato la possibilità di utilizzare frasi di senso compiuto, unite a parole chiave (es: \emph{must} oppure \emph{in}), per costruire dei test facilmente
 leggibili e comprensibili, sia in fase di realizzazione che di esecuzione.
-
+\section{Servizio di primo soccorso}
 \section{Applicazione Android}
 
 Per la quasi totalità delle componenti software dell'applicazione Android sono state sviluppate delle apposite classi di testing in modo da convalidarne il funzionamento. Più nello specifico, per le classi \emph{android-independent} è stato fatto affidamento al framework \emph{JUnit}\footnote{\url{https://junit.org/junit4/}} per la scrittura dei relativi test, situati all'interno della cartella \texttt{test}. Per quanto riguarda invece le classi \emph{android-related} (come \emph{Activitis, Services, \dots}) è stato fatto ricorso alla scrittura di \emph{instrumented tests} attraverso la libreria \emph{Espresso}\footnote{\url{https://developer.android.com/training/testing/espresso/index.html}}, che ha comodamente permesso di verificare il corretto funzionamento delle interfacce utente così come il funzionamento delle componenti in background. Questa seconda categoria di test è situata all'interno della cartella \texttt{androidTest}. Purtroppo non è stato creato un test automatizzato per la classe \emph{org.gammf.proxima.NdefReaderTask} per via dell'impossibilità di simulare la lettura di un tag NFC.
