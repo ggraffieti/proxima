@@ -866,12 +866,23 @@ Lo schema di firma e autenticazione è riportato di seguito:
 \end{enumerate}
 L'algoritmo scelto per la produzione e la verifica della chiave pubblica è \emph{RSA}\footnote{\url{https://en.wikipedia.org/wiki/RSA_(cryptosystem)}}, utilizzando chiavi da 2048 bit, e criptando l'hash, ottenuto tramite \emph{sha256} della concatenazione tra codice del paziente e codice del soccorritore. 
 
+Ovviamente dovrà essere gestita anche la gestione delle chiavi, ovvero l'immissione, aggiornamento o revoca delle chiavi pubbliche (e di conseguenza di quelle private) nel registro dei soccorritori. Maggiori dettagli sono presenti in \autoref{firstAidCom}
+
 La totale indipendenza dei diversi servizi implementabili su \emph{proxima}, fa si che ognuno possa avere il suo schema di autorizzazione per l'accesso ai dati (o, addirittura, non averne alcuno). Questo è un vantaggio enorme, poiché ogni servizio (si pensi a quello di primo soccorso e a quello di un supermercato) può richiedere autorizzazioni più o meno avanzate per l'accesso ai dati. Mantenendo ogni servizio totalmente separato dagli altri non si impone alcun vincolo su chi e come può accedere ai dati di tale servizio, rendendo ancora più eterogeneo ed estensibile il sistema nella sua interezza.
 
 \subsection{Controllo dei turni di servizio}
+I turni di servizi dei medici sono forniti dal committente, e consistono in un database descritto precedentemente in \autoref{domain-model}. Il controllo dei turni dovrà avvenire solamente se il soccorritore risulta riconosciuto ed autorizzato dalla convalida della sua firma digitale. Non è possibile l'accesso a dati medici da parte di soccorritori, anche autorizzati, al di fuori dei turni di lavoro. 
+
+Questa fase, quindi, si compone principalmente di interrogazioni al database dei turni di lavoro fornito dal committente. Questo caso d'uso combacia perfettamente con l'architettura ad eventi scelta per il servizio. 
 \subsection{Invio dei dati medici}
+Come per i turni di lavoro dei soccorritori, anche i dati medici sono forniti dal committente del sistema, attraverso l'accesso ad un database descritto in \autoref{domain-model}. Come nel caso del controllo dei turni dei soccorritori, il lavoro è principalmente dato da interrogazioni al database e invio di messaggi sulla rete, confermando la bontà della scelta di una architettura ad eventi per il servizio. 
 \subsection{Logging}
-\subsection{Interfaccia di comunicazione}
+Un servizio di logging sicuro di ogni accesso ai dati è un requisito fondamentale del sistema, dato che tramite esso possono essere individuati tentativi di un utilizzo scorretto del servizio o abusi. Il logging deve essere sicuro, ovvero non dovrà essere possibile una sua corruzione o cancellazione. Ciò è indispensabile per garantire il non ripudio delle azioni commesse. 
+
+Per garantire tali prerogative è stato scelto di utilizzare un logger a ``due livelli'', ovvero locale e remoto. I messaggi di logging, quindi, oltre al essere mantenuti localmente all'interno del servizio sono anche inviati ad un servizio remoto, che a sua volta manterrà la traccia di ogni accesso ai dati. In questo modo tale sistema viene protetto da guasti o disastri naturali che possono occorrere alle macchine su cui tale servizio risiede. Inoltre, data la natura distribuita dei servizi, potrebbero esistere più copie del servizio di primo soccorso attive. Il logging remoto, in questo caso, agirebbe da aggregatore dei dati. Inoltre, non solo gli accessi ai dati dovranno essere memorizzati, ma ogni tentativo di accesso, anche se esso non è andato a buon fine. In questo modo possono essere scoperti attacchi al sistema, o possibili tentativi di accesso da parte di malintenzionati. 
+\subsection{Interfaccia di comunicazione} \label{firstAidCom}
+
+\subsection{Comportamento}
 
 \section{Front server}
 Il front server è un punto di aggregazione dei microservizi del mondo Proxima e fornisce un'interfaccia di accesso al sistema. Rappresenta uno strato intermedio situato fra i microservizi e l'esterno, svolgendo il ruolo di \emph{user inteface}, senza includere la \emph{business logic} del sistema. Ogni richiesta proveniente dall'applicazione Android dovrà essere diretta verso questo componente il quale, dopo averla elaborata tramite il supporto dei microservizi necessari, produrrà un'adeguata risposta.
