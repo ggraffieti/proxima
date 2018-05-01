@@ -5,6 +5,9 @@ import { WorkShiftQueries } from "../workShiftsVerifier/workShiftsQueries";
 import { MedicalDataQueries } from "../medicalData/medicalDataQueries";
 import { ILogger } from "../logger/ILogger";
 import { LoggerFactory } from "../logger/loggerFactory";
+import { RescuerShiftError } from "../errors/rescuerShiftError";
+import { DatabaseError } from "../errors/databaseError";
+import { WrongDigitalSignatureError } from "../errors/wrongDigitalSignatureError";
 
 export class DataRequestHandler extends RequestHandler {
 
@@ -46,15 +49,23 @@ export class DataRequestHandler extends RequestHandler {
           return MedicalDataQueries.getPatientData(targetID)
         }
         else {
-          return Promise.reject("false work schedule");
+          return Promise.reject(new RescuerShiftError());
         }
       })
       .then((data) => {
         res.send(data);
         DataRequestHandler.logger.logDataAccess(operatorID, targetID);
       })
-      .catch((_) => { // use err wisely
-        DataRequestHandler.sendUnauthorizedError(res);
+      .catch(error => {
+        if (error instanceof DatabaseError) {
+          DataRequestHandler.sendServerError(res);
+        } 
+        else if ((error instanceof WrongDigitalSignatureError) || (error instanceof RescuerShiftError)) {
+          DataRequestHandler.sendUnauthorizedError(res);
+        }
+        else {
+          DataRequestHandler.sendServerError(res);
+        }
         DataRequestHandler.logger.logDataAccessDenied(operatorID, targetID);
       });
     }

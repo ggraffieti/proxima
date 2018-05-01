@@ -1,5 +1,7 @@
 import * as crypto from "crypto";
 import { PublicKeyQueries } from "./publicKeyQueries";
+import { DatabaseError } from "../errors/databaseError";
+import { WrongDigitalSignatureError } from "../errors/wrongDigitalSignatureError";
 
 /**
  * Static class that performs the verification of the digital signature. 
@@ -29,9 +31,9 @@ export class AuthorizationChecker {
           resolve(true);
         }
         else {
-          reject("Wrong digital signature");
+          reject(new WrongDigitalSignatureError());
         }
-      }).catch((_) => reject("Cannot get key of operator " + operatorID));
+      }).catch((_) => reject(new DatabaseError("Cannot get key of rescuer " + operatorID)));
     })
   }
 
