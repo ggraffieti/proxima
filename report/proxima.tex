@@ -654,13 +654,21 @@ Un problema simile si riscontra anche nel sistema distribuito più grande e diff
 
 Per rimediare alle problematiche sopra descritte sarà necessario includere all'interno del sistema un servizio dedito a mappare i nomi dei servizi in riferimenti, utilizzabili per contattare i servizi stessi.
 
+In \autoref{general_architecture} è possibile osservare l'architettura generale del sistema assieme alle interazioni presenti tra le sue parti. Le varie interazioni sono state ordinate numericamente per illustrare un caso di utilizzo del sistema.
+
+\begin{figure}[H]
+	\hspace*{-0.7in}
+	\centering
+	\includegraphics[width=180mm]{./img/general_architecture.png}
+	\caption{Rappresentazione dell'architettura complessiva del sistema. L'interazione tra i componenti avviene, cronologicamente, come segue: 1) Lettura, da parte dell'operatore autorizzato, del proprio identificativo e dell'identificativo dell'utente tramite l'applicazione Android; 2) Invio di una richiesta al \emph{front server} tramite Internet, finalizzata al recupero dei dati del paziente relativi ad un certo servizio; 3) Controllo, da parte del front server, che l'utente abbia autorizzato il servizio in questione all'utilizzo dei propri dati; se sì, si passa al punto 4, altrimenti il dispositivo Android viene notificato a riguardo; 4) richiesta al servizio DNS per il mapping tra nome del servizio di interesse e relativo indirizzo del microservizio dedito alla gestione dei dati degli utenti per quel servizio; 5) Invio di una richiesta al servizio dedito alla gestione dei dati degli utenti; nel caso l'operatore sia autorizzato alla consultazione dei dati, allora questi sono inviati al \emph{front server}, che provvede poi ad inoltrarli al dispositivo Android. In caso contrario, il dispositivo Android viene notificato a riguardo; 6) A seguito dell'invio dei dati, a patto che questo sia avvenuto, il servizio invia una richiesta al \emph{Logger}, richiedendo di memorizzate l'accesso ai dati stessi che è appena avvenuto.\label{general_architecture}}
+\end{figure}
+
 \section{Interazione tra i componenti} \label{components_interaction}
 
 I componenti del sistema dovranno interagire in modo da mantenere il più alto livello di disaccoppiamento, vista l'architettura a microservizi. Inoltre la modalità di interazione tra i componenti del sistema dovrà essere di tipo \emph{request-response}: se un componente necessita di una certa funzionalità della quale non è in possesso, invierà una richiesta ad un componente in grado di fornire tale servizio, il quale risponderà di conseguenza nel modo appropriato. Sulla base di queste considerazioni si è deciso di fare affidamento sul protocollo HTTP (\emph{HyperText Transfer Protocol}).
 
 I dati degli utenti gestiti dagli appositi microservizi (ad esempio, \emph{FirstAidService}) possono essere considerati come le risorsi principali del sistema. Su tali risorse possono essere effettuate diverse operazioni, come la lettura, la creazione, la modifica e la cancellazione. Uno stile architetturale che si rivela adeguato per la trattazione della questione relativa all'interazione fra i servizi è REST (\emph{REpresentational State Transfer})\footnote{Jim Webber, Ian Robinson, Savas Parastatidis, {\em REST in Practice: Hypermedia and Systems Architecture}, O'Reilly Media, 2010}. L'utilizzo di questo approccio è atto a favorire interoperabilità tra i componenti e \emph{openness} del sistema, in quanto l'interfaccia alla quale eventuali nuovi componenti devono conformarsi è nota, essendo alla base dello scambio di dati per il Web.
 In merito a quanto detto, i componenti del sistema interagiranno utilizzando i classici verbi HTTP. Ad esempio, ad una richiesta GET corrisponderà una risposta contente lo stato di risorsa identificata da un determinato URL. Una richiesta POST determinerà invece la creazione di una risorsa.
-
 
 \chapter{Piano di lavoro}
 
