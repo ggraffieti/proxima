@@ -1,5 +1,6 @@
 import * as mongoose from "mongoose";
 import { IWeeklyWorkShiftModel, workShifts } from "./workShiftsModel";
+import { DatabaseError } from "../errors/databaseError";
 
 /**
  * Query class that handles queries about rescuers work shifts.
@@ -20,8 +21,7 @@ export class WorkShiftQueries {
     return new Promise((resolve, reject) => {
       workShifts.findOne({rescuerID: rescuerId}).exec((err, doc: IWeeklyWorkShiftModel) => {
         if (err || !doc) {
-          console.log("Error on work shift retrival from DB");
-          reject(err);
+          reject(new DatabaseError());
         }
         else {
           let date: Date = new Date();

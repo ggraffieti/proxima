@@ -1,6 +1,7 @@
 import * as mongoose from "mongoose";
 import { IMedicalData } from "./utils/IMedicalData";
 import { medicalData, IMedicalDataModel } from "./firstAidDataModel"
+import { DatabaseError } from "../errors/databaseError";
 
 /**
  * Query class that hadles queries about first aid medical data.
@@ -19,7 +20,7 @@ export class MedicalDataQueries {
     return new Promise((resolve, reject) => {
       medicalData.findOne({patientID: patientId}).exec((err, doc: IMedicalDataModel) => {
         if (err || !doc) {
-          reject(err);
+          reject(new DatabaseError());
         }
         else {
           resolve(doc.toMedicalData());
