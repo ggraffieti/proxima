@@ -8,10 +8,12 @@ import { LoggerFactory } from "../logger/loggerFactory";
 import { RescuerShiftError } from "../errors/rescuerShiftError";
 import { DatabaseError } from "../errors/databaseError";
 import { WrongDigitalSignatureError } from "../errors/wrongDigitalSignatureError";
+import { AbstractConsoleLogger } from "../logger/abstractConsoleLogger";
 
 export class DataRequestHandler extends RequestHandler {
 
   private static logger: ILogger = LoggerFactory.remoteLogger();
+  private static consoleLogger: AbstractConsoleLogger = LoggerFactory.newConsoleLogger();
 
   private constructor() {
     super();
@@ -33,9 +35,9 @@ export class DataRequestHandler extends RequestHandler {
     let targetID: string = req.query.targetID;
     let signature: string = req.query.signature;
 
+    this.consoleLogger.logInConsole("New medical data request");
+
     if (operatorID && targetID && signature) {
-      console.log("handleDataRequest");
-      console.log("operator: " + operatorID);
 
       // In URL the character '+' is an alias for whitespace, so node, automatically replaces + with whitespaces. We need to undo this replacement manually.
       signature = signature.split(" ").join("+"); 
@@ -55,22 +57,32 @@ export class DataRequestHandler extends RequestHandler {
       .then((data) => {
         res.send(data);
         DataRequestHandler.logger.logDataAccess(operatorID, targetID);
+        this.consoleLogger.logInConsole("Rescuer " + operatorID + " autorized to read medical data of patient " + targetID);
       })
       .catch(error => {
         if (error instanceof DatabaseError) {
           DataRequestHandler.sendServerError(res);
+          this.consoleLogger.logInConsole("An internal error occurred");
         } 
         else if ((error instanceof WrongDigitalSignatureError) || (error instanceof RescuerShiftError)) {
           DataRequestHandler.sendUnauthorizedError(res);
+          if (error instanceof WrongDigitalSignatureError) {
+            this.consoleLogger.logInConsole("Wrong digital signature, rescuer " + operatorID);
+          } 
+          else {
+            this.consoleLogger.logInConsole("Rescuer " + operatorID + " tried to access data outside work hours");
+          }
         }
         else {
           DataRequestHandler.sendServerError(res);
+          this.consoleLogger.logInConsole("An internal error occurred");
         }
         DataRequestHandler.logger.logDataAccessDenied(operatorID, targetID);
       });
     }
     else {
       DataRequestHandler.sendBadRequestError(res);
+      this.consoleLogger.logInConsole("Bad Request...dropped");
     }
   }
 
