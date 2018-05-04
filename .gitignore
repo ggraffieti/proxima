@@ -30,3 +30,6 @@ report/img/
 
 # qactor libs
 it.unibo.iss.libs/*
+
+node_modules
+build

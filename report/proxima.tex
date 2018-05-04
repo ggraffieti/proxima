@@ -96,10 +96,13 @@
 \maketitle
 \pagenumbering{arabic}
 
+\begin{abstract}
+	\emph{Proxima} è un servizio pervasivo che mira a fornire dei servizi personalizzati agli utenti sulla base della loro identità. Esso è stato progettato ed implementato per i corsi di \emph{Pervasive Computing} e \emph{Laboratorio di sistemi software}, erogati dalla facoltà di Ingegneria e Scienze Informatiche dell'Università di Bologna (A.A. 2017/2018).
+	
+	Il progetto si pone come obiettivo quello di fornire un esempio concreto di un sistema realizzabile avvalendosi delle moderne tecnologie pervasive del vasto dominio dell'\emph{Internet of Things}. Questo documento non è finalizzato a fornire una mera documentazione del codice prodotto, ma mira a descrivere l'intero processo di sviluppo, ponendo particolare enfasi sulle fasi di analisi e progettazione. 
+\end{abstract}
 
 \tableofcontents
-
-\chapter{Introduzione}
 
 \chapter{Idea}
 \section{Visione} \label{vision}
@@ -111,7 +114,7 @@ Ogni componente del sistema, sia esso un dispositivo computazionale o una person
 
 Attraverso il deployment del sistema proposto saranno aperti vari nuovi scenari, tra cui
 \begin{itemize}
-	\item  Stravolgimento dell'interazione uomo-macchina, che non sarà più guidata da espliciti comandi, ma totalmente trasparente all'utente. Ad esempio, una casa intelligente può rilevare la presenza del proprietario nelle vicinanze, ed interagendo con il suo avatar virtuale può ricevere i dati di come il proprietario vuole interagire con essa (accensione luci in alcune stanze, accensione riscaldamento, apertura porte o finestre\dots) senza che il proprietario debba fisicamente fare alcuna azione
+	\item Stravolgimento dell'interazione uomo-macchina, che non sarà più guidata da espliciti comandi, ma totalmente trasparente all'utente. Ad esempio, una casa intelligente può rilevare la presenza del proprietario nelle vicinanze, ed interagendo con il suo avatar virtuale può ricevere i dati di come il proprietario vuole interagire con essa (accensione luci in alcune stanze, accensione riscaldamento, apertura porte o finestre\dots) senza che il proprietario debba fisicamente fare alcuna azione.
 	\item Totale personalizzazione dell'interazione tra persona e dispositivo computazionale, che potrà essere imparata dal sistema in automatico tramite metodi di \emph{learning}.
 	\item Metodi di pagamento automatico, senza l'obbligo del possesso di carte o moneta. Il dispositivo di pagamento rileverà in automatico le merci ed il compratore, e comunicando con i rispettivi avatar virtuali procederà al pagamento della merce. L'avatar del compratore potrà richiedere la conferma della persona reale prima di procedere. Sui mezzi pubblici non sarà più necessario l'acquisto del biglietto, ma semplicemente il mezzo, interagendo con gli avatar dei passeggeri, addebiterà il prezzo del bigliett all'ingresso nel mezzo.
 	\item Scambio di dati tra persone fisiche, ad esempio dati medici o giudiziari. L'avatar di un medico contatterà l'avatar del paziente, che fornirà ad esso i dati medici, mostrati poi al medico nel mondo reale. In maniera simile un agente di polizia potrà ricevere i dati giudiziari di persone sospette, ad esempio per controlli negli aeroporti. 
@@ -155,10 +158,10 @@ Il sistema dovrà definire una politica di accesso ai dati contenuti nella banca
 \section{Glossario} \label{glossary}
 In questa sezione verranno esplorati ed esplicati i concetti chiave usati dal committente durante la fase di raccolta dei requisiti. 
 \begin{itemize}
-	\item \textbf{Soccorritore}: medico o infermiere che presta soccorso ai pazienti sia in ospedale, che anche all'esterno in caso di emergenze. Nella definizione di soccorritore data dal committente, non è incluso il personale che non è adibito ad un intervento invasivo diretto sul paziente (personale volontario e non senza abilitazioni mediche/infermieristiche). Ad esempio, a bordo di un'ambulanza atta a svolgere una funzione di trasporto e di primo soccorso, è consuetudine la presenza di personale (volontario e non), la cui mansione è limitata ad una prima stabilizzazione del paziente, oltre al trasporto dello stesso presso un centro ospedaliero. Tale personale non è considerato in questa categoria.
+	\item \textbf{Soccorritore}: medico o infermiere che presta soccorso ai pazienti sia in ospedale, che all'esterno in caso di emergenze. Nella definizione di soccorritore data dal committente, non è incluso il personale che non è adibito ad un intervento invasivo diretto sul paziente (personale volontario e senza abilitazioni mediche/infermieristiche). Ad esempio, a bordo di un'ambulanza atta a svolgere una funzione di trasporto e di primo soccorso, è consuetudine la presenza di personale (volontario e non), la cui mansione è limitata ad una prima stabilizzazione del paziente, oltre al trasporto dello stesso presso un centro ospedaliero. Tale personale non è considerato in questa categoria.
 	\item \textbf{Paziente}: Persona che necessita di cure mediche in una situazione di emergenza. Sono inclusi in questa categoria sia i soggetti che si recano in ospedale in autonomia, sia i soggetti che giungono in ospedale scortati da appositi mezzi di trasporto (come ambulanze).
 	\item \textbf{Situazione di emergenza}: Circostanza o condizione di immediato pericolo per la salute del paziente, che necessita di un perentorio intervento di uno o più soccorritori (ad esempio traumi dovuti ad incidenti automobilistici, condizioni acute quali infarto, ictus, \dots).
-	\item \textbf{Identificativo}: codice che permette di risalire all'identità di un certo utente all'interno del sistema. Esso deve contenere la minima quantità di informazione che consente di identificare un paziente che è in possesso di un identificatore
+	\item \textbf{Identificativo}: codice che permette di risalire all'identità di un certo utente all'interno del sistema. Esso deve contenere la minima quantità di informazione che consente di identificare un paziente che è in possesso di un identificatore.
 	\item \textbf{Lettore}: dispositivo Android (smartphone, tablet), in grado di recuperare l'identificativo del paziente dall'identificatore e dotato di una costante connessione di rete, in modo da poter comunicare con la base di dati remota fornita dal committente. Su richiesta, le funzionalità del lettore devono essere condensate all'interno di un'applicazione nativa Android.
 	\item \textbf{Dati medici}: dati relativi al paziente che risultano particolarmente utili al soccorritore nella fase di primo soccorso. Tali informazioni sono contenute all'interno della banca dati fornita dal committente. Nello specifico, esse sono relative a:
 	\begin{itemize}
@@ -202,14 +205,14 @@ Di seguito sono elencati i requisiti non funzionali del sistema:
 	\item \textbf{Costi}: il costo dell'identificatore non dovrà superare i 5 euro per unità. I dispositivi \emph{Android} utilizzati come lettori dovranno essere acquistati, ed il loro prezzo non dovrà superare i 200 euro per unità.
 	\item \textbf{Sicurezza e privacy}: tutte le comunicazioni tra i componenti del sistema dovranno essere sicure, e non sarà possibile l'intercettazione dei dati da parte di soggetti non autorizzati. I dati medici dei pazienti sono dati sensibili, ed il loro accesso dovrà essere garantito solamente ai soccorritori, e solamente in reali situazioni di emergenza. I dati dovranno essere conservati e trasmessi in modo sicuro, in modo da garantire la loro integrità. Per questioni legali ogni accesso ai dati dovrà essere opportunamente memorizzato, in modo che sia sempre possibile risalire a quale soccorritore ha letto i dati del dato paziente. Non dovrà essere possibile che un paziente sia scambiato con un altro, o che volontariamente assuma l'identità di un'altra persona.
 	\item \textbf{Availability}: il servizio offerto dovrà essere sempre consultabile, e dovrà fornire i dati medici corretti ad ogni interazione con i soccorritori autorizzati. Il sistema dovrà essere raggiungibile da qualunque luogo, a patto che sia possibile stabilire una connessione internet. Il ritardo di risposta del sistema (assumendo tempo zero per la trasmissione dei dati) non dovrà mai superare i 2 secondi.
-	\item \textbf{Scalability}: il sistema avrà per lo più un carico di lavoro costante, ma dovrà gestire anche picchi di richieste, dovuti ad esempio a catastrofi naturali, attacchi terroristici ecc\dots Il tempo di risposta massimo dovrà essere sempre mantenuto al di sotto del valore espresso precedentemente, indipendentemente dal numero di richieste che il sistema dovrà gestire. 
+	\item \textbf{Scalability}: il sistema avrà per lo più un carico di lavoro costante, ma dovrà gestire anche picchi di richieste, dovuti ad esempio a catastrofi naturali, attacchi terroristici ecc\dots  Il tempo di risposta massimo dovrà essere sempre mantenuto al di sotto del valore espresso precedentemente, indipendentemente dal numero di richieste che il sistema dovrà gestire. 
 	\item \textbf{Fault tolerance}: nel caso non sia possibile stabilire una connessione con il sistema dovrà essere mostrato un avviso al soccorritore di modo che intervenga sul paziente senza fare affidamento sul sistema. In questo modo non viene perso tempo prezioso nella ricerca e nell'identificazione del paziente. I dati medici dovranno essere in ogni caso recuperabili, anche a seguito di fallimenti del sistema. Essi, infatti, non dovranno mai venire persi. 
 	\item \textbf{User experience}: i dati medici dovranno essere mostrati al soccorritore in modo da facilitare la loro lettura e consultazione. Essi, infatti, dovranno essere letti in fasi particolarmente concitate, per cui la loro presentazione non dovrà far perdere tempo al soccorritore, oltre a quello necessario alla loro lettura. 
 \end{itemize}
 
 \section{Domain model} \label{domain-model}
 \subsection{Banca dati}
-Il committente ha reso disponibile una base dati, la quale contiene le informazioni mediche dei pazienti. I dati sono memorizzati all'interno della banca dati attraverso un database \emph{MongoDB}\footnote{\url{https://www.mongodb.com}}, e strutturati in documenti \emph{JSON}\footnote{\url{https://www.json.org}}. I dati sono contenuti in un'unica collezione chiamata \emph{medicalData}. La struttura dei dati è riportata di seguito:
+Il committente ha reso disponibile una base dati, la quale contiene le informazioni mediche dei pazienti. I dati sono memorizzati all'interno della banca dati attraverso un database \emph{MongoDB}\footnote{\url{https://www.mongodb.com}}, e strutturati in documenti \emph{JSON}\footnote{\url{https://www.json.org}}. I dati sono contenuti in un'unica collezione chiamata \emph{medicalrecords}. La struttura dei dati è riportata di seguito:
 \begin{lstlisting}[style=json, caption={Esempio di una entry all'interno del database dato.}, captionpos=b]
 {
 	"_id": ObjectId("507f1f77bcf86cd799439011"),
@@ -244,25 +247,25 @@ Il committente ha reso disponibile una base dati, la quale contiene le informazi
 }
 \end{lstlisting}
 
-Similmente la base dati contenente i turni dei soccorritori è fornita, e anch'essa consta di una collezione \emph{MongoDB}, chiamata \emph{RescuersWorkSchedule}. Il formato dei dati è riportato di seguito:
+Similmente la base dati contenente i turni dei soccorritori è fornita, e anch'essa consta di una collezione \emph{MongoDB}, chiamata \emph{rescuersworkschedules}. Il formato dei dati è riportato di seguito:
 
-\begin{lstlisting}[style=json, caption={Esempio di un turno lavorativo all'interno della banca dati. Gli orari di inizio e fine turno sono espressi in numero di secondi dopo la mezzanotte del giorno stesso. In uno stesso giorno un soccorritore può avere assegnati più turni.}, captionpos=b]
+\begin{lstlisting}[style=json, caption={Esempio di un turno lavorativo all'interno della banca dati. Gli orari di inizio e fine turno sono espressi in numero di minuti dopo la mezzanotte del giorno stesso. In uno stesso giorno un soccorritore può avere assegnati più turni.}, captionpos=b]
 {
 	"rescuerID": "df54f5gdfh4",
-	"monday": [
+	"monday": [ 
 		{
 			"begin": 0,
-			"end": 21600
-		},
+			"end": 360
+		}, 
 		{
-			"begin": 79200,
-			"end": 86499
+			"begin": 1320,
+			"end": 1439
 		}
 	],
-	"tuesday": [
+	"tuesday": [ 
 		{
 			"begin": 0,
-			"end": 25200
+			"end": 180
 		}
 	],
 	
@@ -301,11 +304,11 @@ Si individuano due funzionalità principali del sistema che dovranno essere sogg
 	\item \textbf{Gestione dell'accesso ai dati}: un soccorritore non autorizzato non deve poter ricevere alcun dato medico. Le informazioni che definiscono l'autorizzazione o meno di un certo soccorritore sono quelle contenute all'interno della banca dati (come stabilito in \autoref{glossary}). 
 \end{description}
 
-\chapter{Analisi del problema}
+\chapter{Analisi del problema} \label{problem-analysis}
 
 In questo capitolo saranno analizzate nel dettaglio le problematiche derivanti, direttamente o indirettamente, dai requisiti. Verrà quindi effettuato uno studio di fattibilità per determinare se sussistono i presupposti necessari alla realizzazione del sistema, proponendo soluzioni plausibili.
 
-\section{Analisi del sistema generale}
+\section{Analisi del sistema generale} \label{general-analysis}
 Come anticipato nella \autoref{goal}, lo scopo del progetto non è soltanto quello di soddisfare i requisiti esposti nel \autoref{requirements}, ma di costruire la base di tutto il sistema, sopra la quale saranno implementati i servizi, tra i quali quello di gestione delle emergenze mediche esposto in precedenza. Il sistema \emph{Proxima} dovrà quindi fornire una base, sopra la quale potranno essere costruiti servizi e componenti. Esso agirà quindi da \emph{middleware}, e dovrà fornire ai servizi ed agli utenti le seguenti funzionalità:
 \begin{itemize}
 	\item Servizio di identificazione. Esso sarà la base del sistema, attraverso cui tutte le funzionalità potranno essere implementate. L'identificazione dovrà essere univoca, e offerta come servizio a chiunque voglia interagire con il sistema. Sarà ovviamente compito del sistema stesso gestire l'accesso ai dati, che dovrà essere garantito solo a chi autorizzato. I vari servizi non dovranno essere accessibili in modo diretto, ma solamente attraverso il sistema \emph{Proxima}.
@@ -366,7 +369,7 @@ Ogni problematica relativa alla sicurezza accennata in \autoref{issues} necessit
 	
 	\item \emph{Identificativo compromesso}: non esistono soluzioni complete per fare fronte, in maniera automatizzata, a smarrimenti o furti di identificativi. Quel che si può fare è dare agli utenti del servizio la possibilità di denunciare tali avvenimenti, in modo che l'identificativo di interesse possa venire disabilitato. In tal caso, all'utente verrà consegnato un nuovo identificativo e la banca dati verrà aggiornata di conseguenza.
 	
-	\item \emph{Insider threats}: il problema degli accessi illeciti ai dati parte di soccorritori autorizzati risulta essere tra i più delicati. Anche in questo caso, purtroppo non esiste una soluzione totalmente automatizzata che permetta di eliminare
+	\item \emph{Insider threats}: il problema degli accessi illeciti ai dati da parte di soccorritori autorizzati risulta essere tra i più delicati. Anche in questo caso, purtroppo non esiste una soluzione totalmente automatizzata che permetta di eliminare
 	completamente il problema. Tuttavia, per far fronte ad esso potrebbe venire memorizzato, nella banca dati, un file di \emph{log} contenente tutti gli accessi ai dati da parte di tutti i soccorritori, ognuno corredato da un \emph{timestamp}. Questo file potrebbe poi essere consultato per effettuare controlli sugli accessi stessi, verificando  che ognuno di questi abbia effettivamente avuto luogo in una situazione di emergenza.
 	
 	\item \emph{Privacy}: un determinato soccorritore, una volta entrato in possesso dei dati sensibili di un paziente in seguito ad una situazione di emergenza, potrebbe riutilizzarli e, ad esempio, divulgarli. Questo risulterebbe in una violazione della privacy del paziente. Purtroppo non vi è modo di impedire che ciò accada; il soccorritore potrebbe infatti, ad esempio, segnarsi i dati dopo averli visualizzati. Quel che si può fare è limitarsi a non memorizzare alcun dato sensibile all'interno del lettore e stabilire i provvedimenti da prendere nel caso si scopra vi sia stata una violazione della privacy da parte di un certo soccorritore.
@@ -382,7 +385,7 @@ Come discusso in \autoref{issues}, i dati presenti all'interno della banca dati 
 
 Oltre a questa problematica, la banca dati non fornisce alcun meccanismo di autenticazione per poter regolare l'accesso ai dati in essa contenuti. Questo significa che, per soddisfare i requisiti di sicurezza, sarà necessario implementare tale meccanismo, impedendo così la lettura dei dati da parte di soggetti non autorizzati. Nella pratica, l'unico modo di fornire una politica di accesso basata sull'identità dei soccorritori e sui loro turni è attraverso la presenza di un componente dedicato, contattabile via Internet dai lettori dei soccorritori stessi. La banca dati dovrà, di conseguenza, poter essere interrogata solo da tale componente, in modo che vi sia un controllo totale sulle richieste verso la stessa. 
 
-Il nuovo componente in questione potrebbe essere un \emph{web server}, contattabile dai lettori tramite HTTPS per ovviare alle problematiche di \emph{Sniffing} e \emph{Replay Attack}, descritte precedente in \autoref{security_issues}. Per garantire lo stesso livello di sicurezza nelle comunicazioni con la banca dati, il \emph{web server} dovrà interagire con la stessa utilizzando il protocollo \emph{MongoDB Wire Protocol}, come da requisito, con un supporto a SSL/TLS. 
+Il nuovo componente in questione potrebbe essere un \emph{web server}, contattabile dai lettori tramite HTTPS per ovviare alle problematiche di \emph{Sniffing} e \emph{Replay Attack}, descritte precedente in \autoref{security_issues}. Per garantire lo stesso livello di sicurezza nelle comunicazioni con la banca dati, il \emph{web server} potrebbe interagire con la stessa utilizzando il protocollo \emph{MongoDB Wire Protocol}, come da requisito, con un supporto a SSL/TLS. 
 
 \subsection{Tecnologia di identificazione} \label{tec-id}
 Con tecnologia di identificazione si intende il protocollo di connettività che verrà utilizzato per permettere al lettore di recuperare l'identificativo, attraverso un'interazione con l'identificatore. È possibile effettuare un primo abbozzo dell'interazione fra lettore e identificatore, individuando le fasi seguenti:
@@ -461,13 +464,13 @@ Android supporta diversi protocolli (variabili da versione a versione) che perme
 	
 	La filosofia di Wi-Fi Aware risulta simile alla visione espressa in \autoref{vision}, con la principale differenza che consiste nel metodo di identificazione dell'utente. Infatti, Wi-Fi Aware si basa sul presupposto che un utente sia in possesso di uno smartphone, attraverso il quale può essere notificato di tutti i dispositivi e servizi nelle vicinanze. L'idea alla base di \emph{Proxima} è invece quella di slegare l'utente dallo smartphone e spostare la computazione verso i dispositivi esterni, ovvero gli erogatori di servizi. 
 	
-	Wi-Fi Aware è in stretta correlazione con Wi-Fi Direct, le due tecnologie sono complementari. Ad esempio, Wi-Fi Direct potrebbe permettere l'individuazione di un certo servizio, sfruttando poi le alte velocità di Wi-Fi Direct per effettuare la connessione ed il relativo scambio di informazioni. Le due tecnologie condividono i medesimi punti deboli, in particolare la difficoltà nella stima delle distanze fra i dispositivi ed il consumo troppo elevato.
+	Wi-Fi Aware è in stretta correlazione con Wi-Fi Direct, le due tecnologie sono complementari. Ad esempio, Wi-Fi Aware potrebbe permettere l'individuazione di un certo servizio, sfruttando poi le alte velocità di Wi-Fi Direct per effettuare la connessione ed il relativo scambio di informazioni. Le due tecnologie condividono i medesimi punti deboli, in particolare la difficoltà nella stima delle distanze fra i dispositivi ed il consumo troppo elevato.
 	
 	\item[NFC (Near Field Communication)] : è uno standard di connettività wireless che consente una comunicazione fra due dispositivi posti a breve distanza l'uno dall'altro. Idealmente la distanza massima di funzionamento è leggermente inferiore ai 20 cm, ma nella maggior parte dei dispositivi si aggira intorno ai 5 cm. Un dispositivo NFC può essere utilizzato, ad esempio, per emulare una \emph{smart card}, in modo da effettuare transazioni direttamente dal proprio smartphone, oppure in modalità \emph{peer-to-peer} per lo scambio di informazioni fra due dispositivi diversi. Una terza modalità, \emph{reader/writer}, risulta essere quella più interessante per il sistema in esame, in quanto permette ad un dispositivo NFC di leggere (e scrivere) un \emph{tag NFC}. Un tag, nella maggior parte dei casi, è un dispositivo passivo (a consumo nullo), in grado di memorizzare una quantità ridotta di informazioni. L'interazione con il reader è resa possibile da quest'ultimo device che fornisce al tag, tramite onde elettromagnetiche, la potenza necessaria per l'attivazione. 
 	
 	L'identificatore del sistema potrebbe essere implementato come un tag NFC, contenente l'identificativo dell'utente, leggibile attraverso il lettore (device Android) dopo una fase di ricerca. Il raggio di funzionamento ristretto impone un contatto (o quasi) fra lettore e identificatore, che in alcune situazioni di emergenza potrebbe rivelarsi scomodo per il soccorritore, ma d'altro canto garantisce che l'identificatore letto sia quello desiderato. NFC non supporta operazioni di crittografia dei messaggi, non permettendo la risoluzione delle problematiche di tracciabilità e masquerade.
 	
-	\item[Contactless smart cart]: è un dispositivo passivo, la quale comunica con i lettori tramite il protocollo NFC, ma al contrario dei banali tag descritti in precedenza, possiede, al suo interno, un microprocessore capace di operazioni crittografiche. La crittografia è nella maggior parte dei casi a chiave pubblica, difatti gli ambiti di maggiore utilizzo sono quelli di firma digitale o pagamento elettronico. Essa non dovrà solamente essere alimentata dal lettore, ma dovrà comunicare con esso. Lo scambio dati dal lettore alla carta avviene grazie alla modulazione dell'onda elettromagnetica che il lettore invia alla smart card per alimentarla, mentre le comunicazione in senso contrario avviene attraverso la regolazione, da parte della carta, della potenza assorbita. L'utilizzo di una contactless smart card richiede una infrastruttura ben più complessa del solo NFC, dato che dovranno essere gestite chiavi pubbliche e private a livello di singoli identificatori. Inoltre la comunicazione con esse deve seguire un rigido protocollo (ISO/IEC 14443). Esse sarebbero la soluzione a tutti i problemi di sicurezza espressi precedentemente per l'uso di semplici tag NFC, ma a costo di una più complessa infrastruttura del sistema, e di un costo maggiore per l'identificatore, rispetto a quanto espresso nei requisiti. 
+	\item[Contactless smart cart]: è un dispositivo passivo, il quale comunica con i lettori tramite il protocollo NFC, ma al contrario dei banali tag descritti in precedenza, possiede, al suo interno, un microprocessore capace di operazioni crittografiche. La crittografia è nella maggior parte dei casi a chiave pubblica, difatti gli ambiti di maggiore utilizzo sono quelli di firma digitale o pagamento elettronico. Essa non dovrà solamente essere alimentata dal lettore, ma dovrà comunicare con esso. Lo scambio dati dal lettore alla carta avviene grazie alla modulazione dell'onda elettromagnetica che il lettore invia alla smart card per alimentarla, mentre le comunicazione in senso contrario avviene attraverso la regolazione, da parte della carta, della potenza assorbita. L'utilizzo di una contactless smart card richiede una infrastruttura ben più complessa del solo NFC, dato che dovranno essere gestite chiavi pubbliche e private a livello di singoli identificatori. Inoltre la comunicazione con esse deve seguire un rigido protocollo (ISO/IEC 14443). Esse sarebbero la soluzione a tutti i problemi di sicurezza espressi precedentemente per l'uso di semplici tag NFC, ma a costo di una più complessa infrastruttura del sistema, e di un costo maggiore per l'identificatore, rispetto a quanto espresso nei requisiti. 
 \end{description}
 
 Dalla fase di ricognizione sulle tecnologie attualmente disponibili su Android è conseguita una drastica limitazione dello spettro di quelle utilizzabili all'interno del sistema. In \autoref{tectable-android} sono mostrati i risultati più significativi raccolti in questa fase.
@@ -536,11 +539,11 @@ Per quanto riguarda le tecnologie non supportate da Android, analizzate in \auto
 
 In conclusione, fra le tecnologie esaminate per l'implementazione della comunicazione fra lettore ed identificatore, nessuna permette di soddisfare la totalità dei requisiti. Si decide, in accordo con il committente, di optare per l'utilizzo di NFC, preferito a contactless smart card per i costi notevolmente inferiori, non considerando i problemi di tracciabilità e masquerade che, nell'ambito del primo soccorso, possono essere trascurati.
 
-\subsection{Autenticazione del soccorritore}
+\subsection{Autenticazione del soccorritore} \label{rescuer_auth}
 L'autenticazione del soccorritore è necessaria per l'utilizzo del servizio. In una situazione di emergenza, i tempi dedicati a questa fase devono essere minimi ed il meccanismo di autenticazione deve essere solido e non invasivo, evitando errori derivanti da un mancato riconoscimento del soccorritore. Vengono individuate varie possibilità:
 \begin{itemize}
 	\item \textbf{Username e password}: il meccanismo di autenticazione più diffuso nell'uso quotidiano. In questo caso, ad ogni soccorritore verrebbero assegnate delle credenziali di accesso al sistema. Ad ogni utilizzo dell'applicazione, il soccorritore dovrebbe inserire tali credenziali in modo da confermare la propria identità. In una situazione di emergenza, questo approccio potrebbe risultare problematico, sia per il tempo necessario per l'inserimento, sia per questioni relative alle credenziali, che il soccorritore potrebbe temporaneamente non ricordare.
-	\item \textbf{Riconoscimento biometrico}: meccanismo di autenticazione che si basa sulle caratteristiche biometriche dell'utente. Tramite il lettore sarebbe, ad esempio, possibile implementare meccanismi di riconoscimento del volto, riconoscimento dell'impronta digitale e riconoscimento della voce. Tali meccanismi di autenticazione non garantiscono, però, un grado di affidabilità adeguato per il sistema.
+	\item \textbf{Riconoscimento biometrico}: meccanismo di autenticazione che si basa sulle caratteristiche biometriche dell'utente. Tramite il lettore sarebbe, ad esempio, possibile implementare meccanismi di riconoscimento del volto, riconoscimento dell'impronta digitale e riconoscimento della voce. Tali sistemi, in particolare nei casi di impronte o iride hanno una sicurezza molto elevata, ma nel contesto di primo soccorso potrebbero esserci ``intralci'' a tale meccanismo, dati ad esempio dall'utilizzo di guanti, mascherine, ecc\dots
 	\item \textbf{Lettore}: per slegare il soccorritore dall'obbligo di autenticazione, è possibile delegare tale processo al lettore. In questo modo, sarebbe il lettore che, in automatico, si occuperebbe della fase di autenticazione, permettendo al soccorritore di concentrarsi esclusivamente sul paziente. Questo meccanismo potrebbe essere messo in atto dotando il lettore di una chiave segreta, in grado di identificare un determinato soccorritore. In questo modo, però, si presenterebbe la problematica relativa alla sicurezza della chiave.
 	\item \textbf{Identificatore}: è lecito assumere che il soccorritore sia in possesso di un proprio identificatore. Esso presenta un modo per identificare univocamente il soggetto, e potrebbe, quindi, essere utilizzato per attestare l'identità del soccorritore. Come già discusso in \autoref{tec-id}, sarebbe possibile per un malintenzionato recuperare l'identificativo di un soccorritore ed utilizzarlo per superare la fase di autenticazione, risultando così un soggetto autorizzato alla lettura dei dati medici.
 \end{itemize}
@@ -548,12 +551,12 @@ I meccanismi di autenticazione appena citati potrebbero anche essere combinati t
 
 In accordo con il committente, si è deciso di optare per una soluzione che combina i vantaggi di lettore e identificatore. L'autenticazione avverrà a due livelli, il soccorritore si autenticherà nel sistema tramite il suo identificatore, mentre il lettore confermerà l'identità del soccorritore tramite la chiave segreta.  
 
-\section{Architettura logica}
+\section{Architettura logica} \label{logic_architecture}
 L'analisi delle problematiche, svolta in \autoref{issues}, congiuntamente allo studio di fattibilità in \autoref{feasibility}, ha portato alla definizione di un'architettura logica, in grado di descrivere struttura, interazione e comportamento del sistema.
 
 Dallo studio di fattibilità è emersa una variazione particolarmente rilevante rispetto ai requisiti espressi in \autoref{requirements}. In accordo con il committente, si è infatti deciso di adottare il protocollo NFC per la trasmissione dell'identificativo da identificatore a lettore. Di conseguenza l'identificatore diviene un tag NFC, all'interno del quale è memorizzato l'identificativo del paziente. Il tag è passivo (non alimentato) e può essere attivato dal lettore nel momento in cui il soccorritore necessita l'identificativo del paziente.
 
-L'utilizzo di NFC provoca un impatto evidente anche sugli scenari di esecuzione del sistema, illustrati in \autoref{scenarios}. Il breve raggio di funzionamento di NFC impone una vicinanza strettissima, prossima al contatto, fra lettore e identificatore, rendendo, di fatto, altamente improbabile l'individuazione di più identificatori nella fase di ricerca di un lettore. Il soccorritore, dopo aver aperto l'applicazione, deve superare una prima fase di autenticazione, che prevede che egli avvicini il lettore al proprio identificatore. Fatto ciò, il soccorritore dovrà avvicinare il lettore all'identificatore del paziente, in modo da ricevere l'identificativo, utilizzato poi per accedere ai dati medici del paziente, contenuti all'interno della banca dati. 
+L'utilizzo di NFC provoca un impatto evidente anche sugli scenari di esecuzione del sistema, illustrati in \autoref{scenarios}. Il breve raggio di funzionamento di NFC impone una vicinanza strettissima, prossima al contatto, fra lettore e identificatore, rendendo, di fatto, altamente improbabile l'individuazione di più identificatori nella fase di ricerca. Il soccorritore, dopo aver aperto l'applicazione, deve superare una prima fase di autenticazione, che prevede che egli avvicini il lettore al proprio identificatore. Fatto ciò, il soccorritore dovrà avvicinare il lettore all'identificatore del paziente, in modo da ricevere l'identificativo, utilizzato poi per accedere ai dati medici del paziente, contenuti all'interno della banca dati. 
 
 All'interno del sistema sono individuati quattro componenti principali:
 \begin{itemize}
@@ -574,38 +577,538 @@ QActor, sviluppato dal professore Antonio Natali. Sulla base dei requisiti e del
 \begin{itemize}
 	\item \textbf{Base model}: ogni componente del sistema viene modellato come un \emph{QActor}. I dati medici dei pazienti, contenuti nella base di conoscenza dell'attore \emph{Data}, sono simulati (si trattano solamente nome, cognome e gruppo sanguigno di ogni paziente). Il modello è eseguibile e permette di simulare uno scenario completo di utilizzo del sistema, dall'apertura dell'applicazione del soccorritore fino alla visualizzazione dei dati medici del paziente.
 	\item \textbf{Connection model}: estensione del modello di base considerando il problema della connettività. Infatti, il soccorritore necessita di connettività per poter reperire i dati medici del paziente, e nel caso essa non sia presente, il servizio \emph{Proxima} non può essere erogato. All'apertura dell'applicazione deve essere immediatamente notificata al soccorritore l'eventuale mancanza di connettività, in modo da non fargli sprecare tempo prezioso.
-	\item \textbf{Man-in-the-middle model}: estensione del \emph{Connection model} con l'introduzione delle problematiche di \emph{sniffing} e \emph{replay attack}. Se i dati medici transitassero in chiaro fra \emph{Data contro} e \emph{Rescuer}, un \emph{man-in-the-middle} potrebbe intercettarli e visualizzarli e/o modificarli a piacere. Per evitare questa problematica, nel modello si è simulato l'utilizzo di crittografia attraverso uno dei più semplici algoritmi crittografici, ovvero il \emph{cifrario di Cesare}. Per semplicità, la crittografia è stata considerata solamente nella comunicazione fra \emph{Data control} e \emph{Rescuer}, ma allo stesso modo potrebbe essere applicata anche alle altre comunicazioni.
+	\item \textbf{Man-in-the-middle model}: estensione del \emph{Connection model} con l'introduzione delle problematiche di \emph{sniffing} e \emph{replay attack}. Se i dati medici transitassero in chiaro fra \emph{Data control} e \emph{Rescuer}, un \emph{man-in-the-middle} potrebbe intercettarli e visualizzarli e/o modificarli a piacere. Per evitare questa problematica, nel modello si è simulato l'utilizzo di crittografia attraverso uno dei più semplici algoritmi crittografici, ovvero il \emph{cifrario di Cesare}. Per semplicità, la crittografia è stata considerata solamente nella comunicazione fra \emph{Data control} e \emph{Rescuer}, ma allo stesso modo potrebbe essere applicata anche alle altre comunicazioni.
 \end{itemize}
 
-I modelli realizzati costituiscono una linea guida per la fase di progettazione, racchiudendo l'architettura logica emersa dall'analisi del problema. I modelli sono stati opportunamente testati, in modo da garantire una corretta rappresentazione dei requisiti analizzati. I test implementati in questo stadio dovranno essere verificati anche nelle successive fasi di progettazione e implementazione.
+I modelli realizzati costituiscono una linea guida per la fase di progettazione, racchiudendo l'architettura logica emersa dall'analisi del problema. Questi pongono l'enfasi sull'interazione dei componenti, tralasciando alcuni aspetti marginali. Uno di questi è il \emph{logging} degli accessi ai dati medici, che potrebbe essere affrontato con le soluzioni proposte in \autoref{security_issues}. Questa mansione potrebbe essere assegnata al componente \emph{Data Control} od eventualmente ad un componente dedicato. 
+
+I modelli sono stati opportunamente testati, in modo da garantire una corretta rappresentazione dei requisiti analizzati.
 
 \section{Analisi dei rischi}
-In questa sezione verranno analizzati i rischi principali del progetto, ovvero le parti più complesse dello stesse, per le quali non ci sono soluzioni banali o standardizzate. In modo particolare si farà riferimento al rischio di una consegna del sistema ritardata, che non rispetta quindi i tempi prefissati. 
+In questa sezione verranno analizzati i rischi principali del progetto, ovvero le parti più complesse dello stesso, per le quali non ci sono soluzioni banali o standardizzate. In modo particolare si farà riferimento al rischio di una consegna del sistema ritardata, che non rispetta quindi i tempi prefissati. 
 
 I principali componenti del sistema che presentano rischi per una sua consegna nei tempi prestabiliti sono elencati di seguito: 
 \begin{itemize}
 	\item \textbf{Interazione con NFC}: l'interazione con l'identificatore dovrà avvenire tramite NFC. Ciò presenta un rischio per il sistema, poiché ciò significa dover intervenire a basso livello, manipolando in modo diretto la memoria ed i sensori all'interno del dispositivo Android. Se non si volesse perseguire questa strada, un possibilità è quella di utilizzare librerie \emph{ad hoc} per l'interazione tramite NFC. Il rischio di tale software è dato dalla sua non controllabilità, ovvero il modello dell'interazione potrebbe essere diverso da quello analizzato e progettato. Ciò porterebbe ad un ripensamento della parte progettuale del sistema, dovendo operare in modo \emph{bottom-up}.
 	\item \textbf{Sicurezza delle comunicazioni}: la sicurezza è una feature fondamentale del sistema, ed una sua corretta implementazione è un forte requisito per la sua riuscita. La sicurezza, data la vastità dell'argomento anche se limitato alle sole comunicazioni, non è un concetto semplice da trattare. Essa, infatti, non può essere aggiunta come una \emph{patch} una volta implementato il sistema, ma la sicurezza dovrà essere una parte fondamentale del progetto del sistema (\emph{secure by design}\footnote{\url{https://en.wikipedia.org/wiki/Secure_by_design}}). In particolar modo l'implementazione di comunicazioni sicure, allo stato dell'arte, si basa sulla generazione di chiavi crittografiche e certificati. In fase prototipale ciò aumenta la complessità sia dell'implementazione che del deployment del sistema. Inoltre gli attacchi possibili alla sicurezza della comunicazione sono molteplici, e testare la sicurezza del sistema a fronte anche solo di una parte consistente di essi richiederà ulteriore tempo e lavoro.
-	\item \textbf{Scalabilità e availability}: esse sono due proprietà sia del sistema \emph{Proxima} generale, sia del servizio di aiuto in caso di emergenza descritto in \autoref{requirements}. Non esiste alcuna metodologia automatica per progettare e implementare sistemi scalabili e sempre disponibili. Esistono, in letteratura, metodologie generiche, ed alcune soluzioni pratiche al problema (come la replicazione), ma esse non sono valide per ogni sistema. Il rischio principale è quello di sottostimare o sovrastimare la problematica, rendendo il sistema troppo scalabile o troppo poco scalabile. Mentre quest'ultima problematica è comprensibile da tutti, la prima è molto più sottile. Rendere un sistema più scalabile di quanto in realtà sia necessario è un problema, poiché per raggiungere tali risultati non richiesti si è speso tempo (di progettazione, di implementazione\dots) e denaro (deployment di infrastrutture più complesse, replicazione\dots). \`{E} dunque un rischio da non sottovalutare quello di sotto o sovra stimare il livello di scalabilità del sistema, in modo da non allungare i tempi di consegna per funzionalità non richieste. 
+	\item \textbf{Scalabilità e availability}: esse sono due proprietà sia del sistema \emph{Proxima} generale, sia del servizio di aiuto in caso di emergenza descritto in \autoref{requirements}. Non esiste alcuna metodologia automatica per progettare e implementare sistemi scalabili e sempre disponibili. Esistono, in letteratura, metodologie generiche, ed alcune soluzioni pratiche al problema (come la replicazione), ma esse non sono valide per ogni sistema. Il rischio principale è quello di sottostimare o sovrastimare la problematica, rendendo il sistema troppo scalabile o troppo poco scalabile. Mentre quest'ultima problematica è comprensibile da tutti, la prima è molto più sottile. Rendere un sistema più scalabile di quanto in realtà sia necessario è un problema, poiché per raggiungere tali risultati non richiesti si è speso tempo (di progettazione, di implementazione\dots) e denaro (deployment di infrastrutture più complesse, replicazione\dots). \`{E} dunque un rischio da non sottovalutare quello di sotto o sovra stimare il livello di scalabilità del sistema, in modo da non allungare i tempi di consegna per funzionalità non necessarie. 
 	\item \textbf{Nuovi requisiti, o modifica di quelli esistenti}: esso è uno dei maggiori rischi che ogni progetto pone. I requisiti variano, e anche a distanza di tempo possono esserne aggiunti di nuovi o modificati quelli preesistenti. Un sistema \emph{rigido} è senz'altro un grosso rischio per una consegna nei tempi prestabiliti. La costruzione di un \emph{modello} del sistema mitiga il problema, a patto che il modello sia corretto, e accettato dal cliente stesso. Esso dovrà essere facilmente estensibile e modificabile, anche in corso d'opera, e ciò non dovrà pesantemente influire sul tempo richiesto per l'implementazione del sistema finito. Esso dovrà inoltre servire come base per ulteriori estensioni future, in modo che anche a distanza di tempo sia possibile analizzare i nuovi problemi, progettare la modifica al sistema ed implementarla in un lasso di tempo ragionevole. 
-	\item \textbf{Cambiamenti nelle API utilizzate}: essa è una problematica nascosta, ma che può portare a gravi ritardi nella consegna. Non esistono progetti software in cui non si fa uso di librerie esterne o parti di codice sviluppate e mantenute da terzi. Un esempio può essere dato dalla \emph{Java Virtual Machine (JVM)}. I cambiamenti di tali dipendenze, sopratutto se non viene mantenuta la piena retro-compatibilità, può portare a gravi ritardi, dovuti allo studio e alla implementazione \emph{ex-novo} di intere parti del progetto. Tale problematica non può essere gestita dal team di sviluppo, ma è dipendente solamente da fattori esterni, per cui non può essere del tutto prevista e prevenuta.
+	\item \textbf{Cambiamenti nelle API utilizzate}: essa è una problematica nascosta, ma che può portare a gravi ritardi nella consegna. Non esistono progetti software in cui non si faccia uso di librerie esterne o parti di codice sviluppate e mantenute da terzi. Un esempio può essere dato dalla \emph{Java Virtual Machine (JVM)}. I cambiamenti di tali dipendenze, sopratutto se non viene mantenuta la piena retro-compatibilità, può portare a gravi ritardi, dovuti allo studio e alla implementazione \emph{ex-novo} di intere parti del progetto. Tale problematica non può essere gestita dal team di sviluppo, ma è dipendente solamente da fattori esterni, per cui non può essere del tutto prevista e prevenuta.
 \end{itemize}
 
-\chapter{Piano di lavoro}
+\chapter{Design architetturale} \label{design}
 
-\chapter{Progettazione}
+In questa sezione verranno descritte le scelte progettuali adottate per la realizzazione del progetto in esame. Ogni scelta sarà fatta considerando come punto di partenza l'architettura logica individuata in \autoref{logic_architecture}, tenendo conto però dell'analisi del sistema generale svolta in \autoref{general-analysis}.
+
+\section{Raffinamento del modello d'analisi}
+
+In fase di analisi del problema, svolta nel \autoref{problem-analysis}, sono stati individuati i principali componenti facenti parte del sistema. Per quanto riguarda \emph{Patient}, \emph{Rescuer} e \emph{Data} non è necessario alcun lavoro di raffinamento in quanto risultano esser stati adeguatamente modellati nella fase precedente. Ciò non vale per il componente \emph{Data Control}, le cui funzionalità necessitano un'estensione per soddisfare i vincoli imposti dalla realizzazione di un sistema generale, e non limitato al solo caso di primo soccorso.
+
+Oltre al controllo degli accessi alla banca dati, il componente \emph{Data Control} dovrà presentare le seguenti funzionalità:
+\begin{itemize}
+	\item \textbf{Tracciamento degli accessi}: come da requisito, ogni accesso autorizzato ai dati medici dovrà essere registrato, in modo da poter esser consultabile in un secondo momento.
+	\item \textbf{Gestione dei permessi}: come accennato in \autoref{general-analysis}, sarà necessario regolare l'accesso ai dati dell'utente anche in relazione ai permessi che lo stesso può concedere o negare per un determinato servizio.
+\end{itemize}
+
+\section{Architettura a microservizi}
+
+\subsection{Stile architetturale a microservizi}
+
+I microservizi sono dei servizi piccoli ed autonomi che cooperano per il raggiungimento di un obiettivo comune. In merito a quanto appena detto nella sezione precedente, l'utilizzo di uno stile architetturale a microservizi si rivela essere vantaggioso sotto diversi punti di vista\footnote{Sam Newman, {\em Building Microservices}, O'Reilly Media, 2014}:
+\begin{itemize}
+	\item \textbf{Eterogeneità tecnologica}: essendo lo sviluppo di ogni microservizio indipendente dagli altri, è possibile adottare per ognuno di questi una tecnologia differente. Questo fattore permette di sviluppare il singolo microservizio avvalendosi degli strumenti tecnologici più opportuni, piuttosto che basarsi su una tecnologia \emph{one-size-fits-all}, che risulterebbe un compromesso per la realizzazione dell'intero sistema.
+	\item \textbf{Resilienza}: essendo le funzionalità del sistema generale ripartite tra i microservizi che lo compongono, un eventuale fallimento di un certo microservizio non comprometterebbe il funzionamento complessivo del sistema.
+	\item \textbf{Scalabilità}: nel caso di un sistema strutturato in modo monolitico, la scalabilità viene ottenuta scalando il sistema nel suo complesso; in una struttura a microservizi, invece, è possibile concentrasi sulla scalabilità dei singoli servizi che ne necessitano, rendendo la scalabilità stessa più granulare.
+	\item \textbf{Facilità di deployment}: nel caso di un sistema monolitico ogni piccolo cambiamento porterebbe alla necessità di un nuovo deployment dell'intero sistema, con tutti i relativi costi dovuti all'inattività dello stesso. In un sistema a microservizi, ogni cambiamento è circoscritto ad un singolo microservizio, senza intaccare il sistema nel suo complesso. Conseguentemente, sarà necessario rieseguire il deployment solo dei microservizi interessati.
+	\item \textbf{Facilità nell'organizzazione del lavoro}: nel caso di un sistema monolitico, l'organizzazione del lavoro risulta più complessa, data la dimensione notevole del team di sviluppo e le conseguenti questioni date dalle difficoltà coordinative e comunicative. Al contrario, la suddivisione del progetto in microservizi rende l'organizzazione del lavoro più semplice dato che il team sarà suddiviso in sotto-team e, ad ognuno di essi, assegnato un microservizio.
+	\item \textbf{Composability}: nel caso di un sistema monolitico, il riuso di alcune delle sue funzionalità può risultare complicato o addirittura, in alcuni casi, impraticabile, data la forte dipendenza che vi è tra di esse. In un sistema a microservizi, la riusabilità è elevata, dato che ogni microservizio è un componente totalmente indipendente dagli altri.
+	\item \textbf{Modularità}: nel caso di un sistema monolitico, la rimozione o la re-implementazione di un certa funzionalità può risultare essere un'attività estremamente costosa. In un sistema a microservizi, questo operazione interesserebbe il singolo microservizio responsabile della funzionalità di interesse. Una sua rimozione o re-implementazione sarebbe sicuramente meno costosa e più immediata.
+\end{itemize}
+
+
+\subsection{\emph{Splitting the monolith}} \label{splitting}
+
+Il componente \emph{DataControl} individuato in fase di analisi risulta essere un monolite, che può essere suddiviso nei seguenti microservizi:
+
+\begin{itemize}
+	\item \textbf{FirstAidService}: servizio finalizzato alla gestione dei dati medici e al controllo degli accessi ad essi. 
+	\item \textbf{Logger}: servizio finalizzato alla registrazione di ogni singolo accesso autorizzato ai dati medici.
+	\item \textbf{UsersAuthorizationsService}: servizio finalizzato alla gestione dei permessi conferiti dall'utente per la visualizzazione dei propri dati ai vari servizi del sistema. 
+\end{itemize}
+
+Il sistema sarà quindi composto, escludendo l'applicazione Android, dai microservizi appena descritti. Si rivela necessaria l'aggiunta di un \emph{front server} per l'aggregazione dei microservizi e per fornire un'interfaccia di accesso al sistema.
+
+\subsection{Servizio DNS}
+
+Nel contesto del progetto in esame, il numero di microservizi risulta essere limitato a quelli descritti nella sezione precedente. L'interazione tra questi risulta banale, presupponendo che il \emph{Front Server} si assuma il compito di interrogare i vari microservizi per soddisfare le richieste giunte dall'applicazione Android.
+
+Nonostante ciò, in un'ottica futura nella quale il sistema risulta essere diffuso su una zona geografica più ampia si presenterebbero le seguenti problematiche:
+\begin{itemize}
+	\item \textbf{Scalabilità orizzontale}: nel caso un determinato microservizio presentasse un carico di richieste notevole, sarebbe ragionevole decidere di replicare il servizio stesso in modo che il carico di lavoro fosse suddiviso fra componenti fisici separati. In tal caso, chi avesse necessità di interagire con il microservizio in esame dovrebbe non solo possedere un riferimento a tutte le sue repliche ma anche un criterio per scegliere con quale replica interagire. Su larga scala, questa problematica potrebbe risultare estremamente difficile da affrontare.
+	\item \textbf{Molteplicità dei servizi}: allo stato attuale, l'unico servizio rilevante per il sistema risulta essere quello del primo soccorso. Si prevede che in futuro una moltitudine di servizi eterogenei entrerà a far parte del sistema, rendendo la struttura a microservizi più articolata e complessa. In quest'ottica è inammissibile pensare che, ad esempio, il \emph{front server} disponga di un riferimenti ad ognuno di essi. 
+\end{itemize}
+
+Sulla base di queste considerazioni, è necessario un componente avente il compito di gestire in maniera dinamica i riferimenti dei vari microservizi in base al tipo di servizio offerto all'interno del sistema. 
+
+Un problema simile si riscontra anche nel sistema distribuito più grande e diffuso al mondo: \emph{Internet}. Difatti, Internet può essere considerato come un sistema distribuito dove ogni host di rete reifica un microservizio (sito web, posta elettronica, trasferimento file, \dots). La domanda sorge spontanea: che meccanismo utilizza Internet per garantire un mapping dinamico tra \emph{hostname} e relativo indirizzo? Un ulteriore sistema distribuito, il DNS (\emph{Domain Name System}), il cui compito è appunto quello di associare ad un \emph{hostname} strutturato un certo indirizzo fisico.
+
+Per rimediare alle problematiche sopra descritte sarà necessario includere all'interno del sistema un servizio dedito a mappare i nomi dei servizi in riferimenti, utilizzabili per contattare i servizi stessi.
+
+\begin{figure}[H]
+	\hspace*{-0.7in}
+	\centering
+	\includegraphics[width=180mm]{./img/general_architecture.png}
+	\caption{Rappresentazione dell'architettura complessiva del sistema. L'interazione tra i componenti avviene, cronologicamente, come segue: 1) Lettura, da parte dell'operatore autorizzato, del proprio identificativo e dell'identificativo dell'utente tramite l'applicazione Android; 2) Invio di una richiesta al \emph{front server} tramite Internet, finalizzata al recupero dei dati del paziente relativi ad un certo servizio; 3) Controllo, da parte del front server, che l'utente abbia autorizzato il servizio in questione all'utilizzo dei propri dati; se sì, si passa al punto 4, altrimenti il dispositivo Android viene notificato a riguardo; 4) richiesta al servizio DNS per il mapping tra nome del servizio di interesse e relativo indirizzo del microservizio dedito alla gestione dei dati degli utenti per quel servizio; 5) Invio di una richiesta al servizio dedito alla gestione dei dati degli utenti; nel caso l'operatore sia autorizzato alla consultazione dei dati, allora questi sono inviati al \emph{front server}, che provvede poi ad inoltrarli al dispositivo Android. In caso contrario, il dispositivo Android viene notificato a riguardo; 6) A seguito dell'invio dei dati, a patto che questo sia avvenuto, il servizio invia una richiesta al \emph{Logger}, richiedendo di memorizzate l'accesso ai dati stessi che è appena avvenuto.\label{general_architecture}}
+\end{figure}
+
+\section{Interazione tra i componenti} \label{components_interaction}
+
+In \autoref{general_architecture} è possibile osservare l'architettura generale del sistema assieme alle interazioni presenti tra le sue parti. Le varie interazioni sono state ordinate numericamente per illustrare un caso di utilizzo del sistema. I componenti del sistema dovranno interagire in modo da mantenere il più alto livello di disaccoppiamento, vista l'architettura a microservizi. Inoltre la modalità di interazione tra i componenti del sistema dovrà essere di tipo \emph{request-response}: se un componente necessita di una certa funzionalità della quale non è in possesso, invierà una richiesta ad un componente in grado di fornire tale servizio, il quale risponderà di conseguenza nel modo appropriato. Sulla base di queste considerazioni si è deciso di fare affidamento sul protocollo HTTP (\emph{HyperText Transfer Protocol}).
+
+I dati degli utenti gestiti dagli appositi microservizi (ad esempio, \emph{FirstAidService}) possono essere considerati come le risorsi principali del sistema. Su tali risorse possono essere effettuate diverse operazioni, come la lettura, la creazione, la modifica e la cancellazione. Uno stile architetturale che si rivela adeguato per la trattazione della questione relativa all'interazione fra i servizi è REST (\emph{REpresentational State Transfer})\footnote{Jim Webber, Ian Robinson, Savas Parastatidis, {\em REST in Practice: Hypermedia and Systems Architecture}, O'Reilly Media, 2010}. L'utilizzo di questo approccio è atto a favorire interoperabilità tra i componenti e \emph{openness} del sistema, in quanto l'interfaccia alla quale eventuali nuovi componenti devono conformarsi è nota, essendo alla base dello scambio di dati per il Web.
+In merito a quanto detto, i componenti del sistema interagiranno utilizzando i classici verbi HTTP. Ad esempio, ad una richiesta \texttt{GET} corrisponderà una risposta contente lo stato della risorsa identificata da un determinato URL. Una richiesta \texttt{POST} determinerà invece la creazione di una risorsa.
+
+\chapter{Piano di lavoro}
+In questo capitolo sarà esplicato il processo di sviluppo adottato per il progetto in esame. In particolare saranno brevemente riassunti i risultati tangibili prodotti delle fasi precedenti, per poi definire una modalità di pianificazione del lavoro che permetta di affrontare al meglio le fasi conclusive dello sviluppo del sistema.
+
+\section{Processo di sviluppo}
+Il processo complessivo di sviluppo del sistema può essere suddiviso in cinque fasi, strettamente collegate tra loro, in quanto ognuna di esse costituisce l'input di quella successiva. Lo svolgimento di ogni fase richiede competenze e specializzazioni differenti e potrebbe potenzialmente essere affidato a figure diverse del team di sviluppo. Le fasi in questione possono essere riassunte schematicamente come di seguente.
+\begin{itemize}
+	\item \textbf{Analisi dei requisiti}: studio del dominio del progetto e comprensione delle richieste del committente.
+	\item \textbf{Analisi del problema}: definizione delle problematiche e studio di fattibilità del progetto, per poi giungere alla definizione formale di una prima architettura logica del sistema. 
+	\item \textbf{Progettazione}: definizione dell'architettura del sistema.
+	\item \textbf{Progettazione di dettaglio}: definizione dettagliata di tutti i componenti del sistema.
+	\item \textbf{Implementazione}: realizzazione effettiva del sistema.
+\end{itemize}
+
+Nel nostro caso, sia per quanto riguarda la mancanza di figure specializzate in una determinata fase e sia per coinvolgere ogni membro del team nell'intero processo di sviluppo, si è deciso di effettuare insieme le prime tre fasi, che hanno portato alla definizione di un'architettura del sistema. Essa è descritta mediante l'indicazione dei componenti che la compongono e delle modalità di interazione fra gli stessi. Nella fase di progettazione si è scelto di adottare un approccio a microservizi, che consente di suddividere il sistema in sottoparti indipendenti e di procedere in parallelo alla progettazione ed implementazione di ciascuna di esse.
+
+\section{Suddivisione del lavoro}
+I componenti individuati nella definizione dell'architettura sono sei. Siccome il team è formato da tre membri, non è stato possibile effettuare un assegnamento uno-ad-uno dei componenti, ma ogni membro del team è stato incaricato di occuparsi della progettazione di dettaglio e dell'implementazione di due componenti del sistema. Si è considerato opportuno considerare con una priorità maggiore i microservizi più rilevanti del sistema, rimandando ad un secondo momento la realizzazione dei componenti di interfaccia del sistema (applicazione Android e front server) e dei componenti ritenuti meno complessi (\emph{Logger}). In \autoref{table-workplan} sono riassunte le scelte che porteranno alla suddivisione del lavoro, accompagnate dal costo previsto per ogni attività.
+
+\begin{table}[H]
+	\centering
+	\begin{threeparttable}
+		\begin{tabular}{|
+				>{\centering}m{.35\textwidth} |
+				>{\centering}m{.25\textwidth} |
+				>{\centering}m{.15\textwidth} |
+				>{\centering}m{.10\textwidth} |}
+			\hline
+			\textbf{Componente} & \textbf{Incaricato} & \textbf{Priorità} & \textbf{\emph{Effort}}\tnote{*} \tabularnewline
+			\hline
+			UsersAuthorizationsService & Alfredo Maffi & Alta & 4 \tabularnewline
+			\hline
+			FirstAidService & Gabriele Graffieti & Alta & 9 \tabularnewline
+			\hline
+			Servizio DNS & Manuel Peruzzi & Alta & 10 \tabularnewline
+			\hline
+			Applicazione Android & Alfredo Maffi & Media & 8 \tabularnewline
+			\hline
+			Logger & Gabriele Graffieti & Bassa & 3 \tabularnewline
+			\hline
+			Front server & Manuel Peruzzi & Bassa & 2 \tabularnewline
+			\hline
+		\end{tabular}
+		\begin{tablenotes} \footnotesize
+			\item[*] Lo sforzo previsto per la progettazione di dettaglio e l'implementazione di ogni componente. Questa misura è espressa in \emph{giorni/uomo}, considerando ogni unità come un arco di tempo lavorativo di 8 ore. 
+		\end{tablenotes}
+		\caption{Riepilogo della suddivisione del lavoro tra i membri del team, per quanto riguarda le fasi di progettazione di dettaglio e implementazione.}
+		\label{table-workplan}
+	\end{threeparttable}
+\end{table}
+
+Ad ogni membro del team sarà inizialmente assegnato un componente preso tra \emph{UsersAuthorizationsService}, servizio DNS e \emph{FirstAidService}. Questa scelta è stata dettata dal fatto che i componenti appena menzionati risultano indipendenti e il loro funzionamento potrà essere verificato e testato senza la necessità del supporto di altri componenti. Ciò non sarebbe valido per l'applicazione Android, che necessiterebbe della disponibilità dell'intera infrastruttura per svolgere il suo corretto funzionamento, e nemmeno per il front server, che non sarebbe in grado di processare con successo alcuna richiesta senza l'apporto dei microservizi del sistema. Dopo aver implementato i primi tre servizi del sistema, dovrebbe risultare banale la realizzazione del front server, il quale si limiterà ad aggregare i microservizi già disponibili, così come non si considera eccessivo il costo delle fasi di progettazione ed implementazione del \emph{Logger}. Si valuta, invece, più complesso il lavoro necessario per lo sviluppo dell'applicazione Android.
+
+\chapter{Design di dettaglio}
+
+\section{Servizio di autorizzazioni degli utenti} \label{users_authorizations_design}
+
+All'interno del sistema \emph{Proxima}, il servizio di autorizzazioni degli utenti offre un modo per stabilire qualora un determinato utente abbia precedentemente autorizzato un certo servizio all'utilizzo dei propri dati. Per lo sviluppo del prototipo, si presuppone l'esistenza di un database, contenente l'elenco dei servizi autorizzati per singolo utente. Il servizio farà quindi affidamento alle informazioni contenute nel database per svolgere la propria mansione. Si noti che lo scopo del servizio in questione si limita alla funzionalità sopra descritta, e non quindi alla modifica, rimozione o aggiunta di nuovi permessi. 
+
+\subsection{Interfaccia di comunicazione}
+
+Sulla base di quanto detto in \autoref{components_interaction}, l'interazione con il servizio dovrà essere \emph{RESTful}. Sarà presente quindi un server HTTP che avrà il compito di gestire le richieste inviate al servizio. Più nel dettaglio, il server starà in ascolto su porta 8436 con path \texttt{/authorize}. Ogni richiesta al servizio dovrà essere effettuata tenendo conto delle specifiche appena descritte. Non essendoci, oltre alla gestione delle richieste, altre mansioni da ricoprire, la struttura del servizio combacerà con quella del server HTTP, il cui comportamento sarà soddisfare le richieste ricevute consultando il database contenente le autorizzazioni degli utenti.
+
+Il servizio gestirà un solo metodo del protocollo HTTP, ovvero il metodo \texttt{GET}, con il quale sarà possibile stabilire se un determinato utente abbia autorizzato un certo servizio all'utilizzo dei propri dati. Identificativo del paziente e nome strutturato del servizio d'interesse dovranno essere inseriti all'intero dell'URL della richiesta, in corrispondenza, rispettivamente, dei parametri \emph{targetID} e \emph{service}. Una descrizione dettagliata dell'API può essere reperita al seguente indirizzo \url{https://app.swaggerhub.com/apis/gmp/ProximaUsersAuthorizationsService/1.0.0}.
+
+\subsection{Database}
+
+Le autorizzazioni concesse dai singoli utenti ai vari servizi del sistema \emph{Proxima} saranno contenute all'interno di un database \emph{NoSQL}. L'utilizzo di un database non relazionale garantirà una buona facilità di utilizzo e un'ottima flessibilità per eventuali sviluppi futuri.
+
+\section{Servizio DNS} \label{design-dns}
+All'interno del progetto, il \emph{Domain Name System} è un servizio, accessibile via web tramite il protocollo HTTP, che rende disponibile un modo per individuare tutti i servizi offerti dal sistema \emph{Proxima}. In particolare, effettua un \emph{mapping} fra un servizio, individuato da una stringa strutturata, e una serie di riferimenti tramite i quali è possibile contattare dei componenti il cui scopo è mettere a disposizione tale servizio. 
+
+Il DNS potrà essere interrogato, fornendo l'indicazione del servizio desiderato, in modo da ricevere in risposta il riferimento di un componente che è in grado di erogare tale servizio. Inoltre, dovrà rendere possibile l'aggiunta e l'eliminazione dinamica di riferimenti, in modo da favorire la crescita e l'adattamento dei servizi trattati del sistema \emph{Proxima}.
+
+\subsection{Domain Name System} \label{original-dns}
+Il servizio di DNS del sistema \emph{Proxima} trae ispirazione dall'omonimo Domain Name System utilizzato globalmente per la risoluzione di nomi dei nodi della rete Internet in indirizzi IP. Di seguito sono riassunte le caratteristiche del DNS\footnote{Paul Albitz, Cricket Liu, {\em DNS and BIND, 5th Edition}, O'Reilly Media, 2009.} ritenute rilevanti per il progetto in esame.
+\begin{description}
+	\item[Domain Name Space]: è il grande albero rovesciato che rappresenta il database distribuito del DNS, contenente tutte le informazioni degli host di rete. L'albero è caratterizzato dall'assegnazione di etichette ad ogni nodo, con l'unica eccezione della radice alla quale viene conferita un'etichetta nulla. In questo modo è possibile attribuire un nome di dominio ad ogni nodo, come la sequenza delle etichette nel percorso dal nodo stesso fino alla radice, separate da punto. Un dominio può essere definito come un sottoalbero del \emph{Domain Name Space}, a cui viene assegnato il nome di dominio del nodo situato più in alto.
+	\item \textbf{Delegation}: meccanismo che permette di raggiungere uno dei principali obiettivi posti nella fase di design del DNS, ovvero la decentralizzazione dell'amministrazione. I domini sono tra loro indipendenti e la loro gestione può essere delegata ad organizzazioni differenti. Inoltre, un'organizzazione che amministra un dominio può suddividerlo in sotto-domini, ognuno dei quali può essere ulteriormente delegato.
+	\item \textbf{Name resolution}: processo di recupero dei dati dal \emph{Domain Name Space}. La successione dei passi che portano allo svolgimento di tale processo è riassunta in \autoref{fig:dns-resolution}.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=0.60]{./img/dns-resolution.png}
+		\caption{Processo di risoluzione DNS per l'indirizzo di un host di rete. Il client (\emph{resolver}) effettua una query al server DNS locale (o \emph{name server} locale), che si preoccupa poi, in assenza di \emph{cache}, di contattare prima la radice e poi la sequenza di \emph{name server} referenziati necessari per recuperare l'indirizzo richiesto dal client.}
+		\label{fig:dns-resolution}
+	\end{figure}
+\end{description}
+
+\subsection{Struttura gerarchica e modello ad attori} 
+\subsubsection{Struttura gerarchica}\label{dns-hierarchy}
+Proprio come il \emph{Domain Name System} per gli indirizzi IP, descritto in \autoref{original-dns}, il DNS del sistema \emph{Proxima} sarà organizzato in maniera gerarchica, con una struttura ad albero rovesciato. In questo caso, però, la risoluzione degli indirizzi non avverrà a partire dai nomi, ma dall'identificativo dei servizi. Ogni servizio è descritto a partire da una sequenza di domini sempre più specifici separati da un punto. Il nome di dominio di un certo nodo viene composto come la sequenza di etichette nel percorso dalla radice dell'albero fino al nodo stesso e non viceversa, come invece illustrato in \autoref{original-dns} (ad esempio \emph{proxima.medical.firstAid}). 
+
+Ogni componente del sistema \emph{Proxima} è caratterizzato dal servizio che mette a disposizione e dal riferimento (indirizzo) tramite il quale può essere contattato. La separazione in domini del servizio permette la costruzione di un modello strutturato, nel quale solamente gli elementi situati nel settore inferiore dell'albero siano a conoscenza dell'informazione vera e propria, ovvero il riferimento del servizio. I nodi superiori della gerarchia possono, invece, rappresentare i domini che descrivono il servizio, consentendo di ottenere un quadro complessivo simile a quello raffigurato in \autoref{fig:dns-hierarchy}.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.7]{./img/dns-hierarchy.png}
+	\caption{Un esempio di struttura gerarchica, ad albero rovesciato, del sistema. Il sotto-albero derivante dal nodo interno \emph{firstAid} è quello di interesse diretto per il progetto in esame. Il sotto-albero derivante dal nodo interno \emph{commercial} non rappresenta un dominio attualmente gestito dal sistema \emph{Proxima}, ma è stato inserito per rappresentare una gamma di servizi che potrebbero potenzialmente essere aggiunti, in maniera dinamica, al DNS, entrando a far parte del sistema. }
+	\label{fig:dns-hierarchy}
+\end{figure}
+
+Come si può evincere dallo schema in \autoref{fig:dns-hierarchy}, la gerarchia ad albero rovesciato è composta da tre differenti tipologie di nodi:
+\begin{itemize}
+	\item \textbf{Root node}: è la radice dell'albero, nonché il nodo da cui dovranno transitare tutte le richieste inerenti al DNS. Ad essa è associato il dominio più generale del sistema in esame, ovvero \emph{proxima}, dato che tale dominio dovrà essere condiviso da tutti i servizi del mondo \emph{Proxima}. Può avere un numero arbitrario di figli che, in linea teorica, potrebbero essere sia nodi interni che foglie dell'albero. Per mantenere una visione il più possibile strutturata dei servizi, sarebbe opportuno evitare un legame diretto fra questo nodo e le foglie, delegando la gestione dei riferimenti dei servizi a nodi più specifici.
+	\item \textbf{Internal node}: è un nodo interno dell'albero, discendente da un nodo padre (che potrebbe essere il nodo radice o un nodo interno). È caratterizzato dal legame con almeno un nodo figlio (che potrebbe essere sia un nodo foglia, sia un ulteriore nodo interno). Questo nodo può essere considerato come un punto di \emph{routing}, in quanto è in grado di dirottare una certa richiesta verso il nodo più appropriato, che potrebbe essere una foglia che è in grado di soddisfare direttamente la richiesta, oppure un nodo interno tramite il quale sarà poi possibile giungere alla foglia desiderata. Ogni nodo interno è relativo ad un particolare dominio più o meno specifico e si occupa della gestione di tutti i componenti che offrono i servizi appartenenti al dominio di competenza.
+	\item \textbf{Leaf node}: è un nodo foglia dell'albero, discendente da un nodo padre (presumibilmente un nodo interno, ma anche il nodo radice in alcuni casi). È uno dei nodi terminali dell'albero, in quanto non può avere figli ed è il custode del contenuto informativo del servizio di competenza. Infatti, ogni nodo foglia è caratterizzato da una corrispondenza diretta verso uno ed un solo componente del sistema \emph{Proxima}, rappresentato per mezzo del servizio che offre, oltre al riferimento utilizzabile per stabilire una comunicazione con esso.
+\end{itemize}
+
+Questo architettura gerarchica prevede una suddivisione delle informazioni relative ai servizi fra nodi diversi, che potrebbero anche risiedere su componenti fisici separati. Non è prevista la presenza di un nodo universale che condensi al suo interno tutte le informazioni dell'intero sistema \emph{Proxima}, ma si mira alla definizione di un insieme di nodi complementari, che singolarmente hanno una conoscenza limitata della totalità dei servizi, ma presi nel loro insieme garantiscono tutte le funzionalità del servizio DNS desiderato, fornendo anche ampie garanzie di scalabilità.
+
+Nel contesto dei microservizi, adottato come riferimento per il progetto in esame, ogni nodo della struttura gerarchica potrebbe, in una visione estrema, essere considerato come un microservizio, contattabile dai nodi situati in un livello superiore della gerarchia in caso di necessità.
+
+\subsubsection{Modello ad attori} \label{dns-actormodel}
+Durante la fase di definizione della struttura gerarchica del servizio DNS, si è posta l'enfasi sulla suddivisione del carico di lavoro tra una moltitudine di nodi attivi e indipendenti. Ognuno di essi è caratterizzato dall'\emph{encapsulation} di uno stato interno e dalla capacità di contattare gli altri nodi della gerarchia, in modo da costruire un sistema collettivo che sia grado di far fronte alle richieste esterne, garantendo scalabilità al crescere del numero dei componenti del sistema \emph{Proxima}. L'analisi di queste prerogative porta ad individuare nel modello ad attori la scelta più appropriata per l'implementazione del servizio.
+
+Si prevede la costruzione di un sistema ad attori nel quale ogni nodo della gerarchia sarà mappato in un corrispondente attore. Se ne deriva la definizione degli attori \emph{DNSRootActor}, \emph{DNSInternalNodeActor} e \emph{DNSLeafNodeActor} che corrispondono rispettivamente a nodo radice, nodo interno e nodo foglia della gerarchia DNS, ognuno relativo ad un dominio del sistema \emph{Proxima}. I primi due attori condividono la funzionalità di \emph{routing}, necessaria per conservare un riferimento agli attori figli, in modo da poterli contattare in caso di necessità. Ad ogni \emph{DNSLeafNodeActor} sarà invece assegnato il riferimento di un determinato componente, oltre al servizio da esso offerto. La comunicazione fra gli attori della gerarchia segue la modalità \emph{message passing}, tratto distintivo del modello ad attori.
+
+L'attore \emph{DNSRootActor} dovrà essere attivo e raggiungibile in ogni momento successivo al deployment del servizio, mentre i nodi interni e le foglie della gerarchia potranno essere creati dinamicamente solo in caso di necessità, seguendo un approccio \emph{by-need}. Questo vincolo pone il problema di costruzione della gerarchia DNS in maniera incrementale durante tutta la fase di esecuzione del sistema. Si prevede, dunque, la presenza di un attore \emph{DNSNodesCreatorActor}, il cui unico scopo consisterà nella creazione di attori \emph{DNSInternalNodeActor} e \emph{DNSLeafNodeActor}, quando adeguatamente sollecitato. Ognuno di questi attori potrà essere creato in un qualsiasi momento durante l'esecuzione del sistema e dovrà inserirsi immediatamente all'interno della gerarchia DNS preesistente. 
+
+\subsection{Interfaccia di comunicazione} \label{dns-communication}
+L'interazione con il servizio DNS, come precedentemente stabilito, dovrà essere \emph{RESTful}. Ciò impone la presenza di un server HTTP, il cui scopo sarà quello di soddisfare le richieste esterne giunte in corrispondenza di una determinata porta. Più nel dettaglio, ogni richiesta al DNS dovrà essere diretta alla porta 1406, con l'indicazione del path \texttt{dns/address}, che mostra come ogni possibile operazione agisca su un determinato indirizzo (riferimento) di un servizio del sistema \emph{Proxima}. Infatti il punto chiave di un'architettura REST consiste nel modello delle risorse che, nel caso specifico, sono proprio gli indirizzi dei vari servizi del sistema. Ogni richiesta verso il DNS sarà relativa ad una determinata risorsa, che potrà essere richiesta, creata o eliminata. I metodi del protocollo HTTP gestiti dal server DNS sono i seguenti:
+\begin{itemize}
+	\item \textbf{GET}: messaggio che richiede lo stato di una certa risorsa, individuata tramite l'indicazione di un servizio nell'\emph{URL} della richiesta. Il server DNS risponderà con un messaggio contenente l'indirizzo di un componente che offre il servizio specificato. \newline Si prevede che questa operazione sarà la più utilizzata, in quanto permetterà ad un componente esterno di contattare un servizio del sistema \emph{Proxima} in modo disaccoppiato. Gli unici prerequisiti risultano essere la conoscenza del tipo di servizio offerto dal servizio \emph{Proxima} e la raggiungibilità del DNS.
+	\item \textbf{POST}: messaggio che presuppone la richiesta di creazione di una risorsa, descritta nel body della richiesta. Nel caso specifico, la risorsa in questione è l'indirizzo di un componente del sistema \emph{Proxima}. Il server DNS procederà alla creazione dell'indirizzo, rispondendo al client con un apposito \emph{URL}, utilizzabile per richiedere la nuova risorsa. \newline Questa operazione permette l'aggiunta dinamica di servizi al sistema \emph{Proxima}, anche in una fase successiva al deployment. Infatti, sarà possibile inserire un nuovo servizio nel DNS in qualsiasi momento ed esso entrerà immediatamente a far parte del sistema, diventando raggiungibile da un qualsiasi componente richiedente tale servizio al DNS. Inoltre, per garantire un maggiore livello di autonomia, questa operazione potrebbe essere effettuata direttamente da ogni servizio \emph{Proxima}, in una fase immediatamente successiva alla creazione. In questo modo ogni servizio che volesse entrare a far parte del sistema, dovrebbe semplicemente preoccuparsi di registrarsi al DNS indicando il servizio offerto e l'indirizzo utilizzabile per stabilire una comunicazione.
+	\item \textbf{DELETE}: messaggio che sollecita l'eliminazione di una risorsa, specificata nella richiesta. Il server DNS provvederà alla rimozione della risorsa, che non sarà più considerata per le future richieste di tipo \texttt{GET}. \newline Questa operazione può risultare utile per informare il DNS che un certo componente non è più disponibile ad offrire il servizio dichiarato, oppure che l'indirizzo precedentemente assegnatogli non è più valido.
+\end{itemize}
+Una maggiormente approfondita descrizione delle \emph{REST APIs} del server DNS è stata effettuata mediante l'ausilio del framework \emph{Swagger}\footnote{\url{https://swagger.io}}. Essa è resa disponibile online al link \url{https://app.swaggerhub.com/apis/gmp/ProximaDNSService/1.0.0}.
+
+Lo scopo del server sarà quello di restare in ascolto sulla porta predefinita, demandando alla gerarchia DNS il compito di soddisfare tutte le richieste ricevute. Si rivela opportuna la definizione di un attore \emph{BridgeActor}, in grado di frapporsi fra server e gerarchia interna. In particolare, il compito di questo attore è quello di mappare una richiesta giunta dal server in un corrispondente messaggio comprensibile alla gerarchia interna ed effettuare successivamente il processo inverso, convertendo la risposta elaborata dalla gerarchia interna in un messaggio accessibile al server.
+
+\subsection{Comportamento}
+In \autoref{dns-communication} sono state individuate tutte le modalità di interazione con il servizio DNS, sotto forma di metodi HTTP. Dall'analisi di tali operazioni si possono discernere le tre funzionalità principali che il servizio DNS dovrà essere in grado di fornire, ovvero le operazioni di creazione e cancellazione di uno specifico indirizzo, oltre alla restituzione di un indirizzo corrispondente ad un determinato servizio.
+
+\subsubsection{Richiesta dell'indirizzo di un servizio}
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.7]{./img/dns-get.png}
+	\caption{Un esempio di sviluppo della struttura gerarchica del DNS. Per semplicità si è scelto di considerare solamente l'ambito di interesse specifico del progetto, ovvero il primo soccorso, tralasciando altri possibili domini applicativi del sistema \emph{Proxima}.}
+	\label{fig:dns-get}
+\end{figure}
+In un determinato momento del ciclo di esecuzione del sistema \emph{Proxima}, il DNS sarà provvisto degli indirizzi di un insieme di servizi. Ad esempio, per quanto riguarda l'ambito del primo soccorso, la situazione potrebbe essere simile a quella raffigurata in \autoref{fig:dns-get}. Per garantire scalabilità e disponibilità del sistema generale è ragionevole pensare che un medesimo servizio possa essere offerto da più componenti separati, caratterizzati da un proprio indirizzo individuale. Ognuno di questi componenti dovrà necessariamente essere registrato al DNS, in modo da essere rintracciabile all'interno del sistema \emph{Proxima}. 
+
+Una richiesta dell'indirizzo di un componente in grado di offrire un determinato servizio si riduce ad una ricerca sull'albero DNS di una foglia che sia associata al servizio desiderato. Nel caso si verifichi la presenza di più foglie compatibili con la richiesta (come nel caso in \autoref{fig:dns-get} per il primo soccorso), dovrà essere il DNS stesso a garantire un meccanismo di \emph{load balancing}, in modo da distribuire il carico delle richieste in maniera equa fra i componenti disponibili. Una soluzione semplice ma efficacie consiste nell'implementazione di una politica di \emph{scheduling round-robin}, in cui i componenti possono essere alternati in maniera regolare, evitando il sovraccarico dei singoli nodi.
+
+\subsubsection{Aggiunta dell'indirizzo di un servizio}
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.7]{./img/dns-post.png}
+	\caption{Nella parte sinistra è raffigurato un esempio di sviluppo della struttura gerarchica del DNS relativa al primo soccorso. Nella parte destra è mostrata l'evoluzione della struttura nel caso in cui un nuovo indirizzo relativo al campo di primo soccorso venisse aggiunto al sistema. }
+	\label{fig:dns-post}
+\end{figure}
+La struttura gerarchica descritta in \autoref{dns-hierarchy} rende molto semplice l'aggiunta dell'indirizzo di un componente che offre un certo servizio. Infatti sarà sufficiente l'aggiunta di una foglia rappresentante il nuovo indirizzo all'albero DNS esistente. 
+
+In \autoref{fig:dns-post} è raffigurato un esempio della struttura DNS prima e dopo l'aggiunta di un nuovo componente appartenente al dominio del primo soccorso al sistema. Si può notare l'introduzione di un nodo interno (\emph{firstAid}), oltre che della nuova foglia. Questo comportamento deriva dal fatto che al raggiungimento di un certo valore di soglia prefissato è opportuno che la gestione di nodi simili (stesso servizio) sia delegata ad un nuovo nodo interno. Nel caso raffigurato, il valore della soglia è posto a 3.
+
+\subsubsection{Eliminazione dell'indirizzo di un servizio}
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.7]{./img/dns-delete.png}
+	\caption{Nella parte sinistra è raffigurato un esempio di sviluppo della struttura gerarchica del DNS relativa al primo soccorso. Nella parte destra è mostrata l'evoluzione della struttura nel caso in cui un indirizzo esistente venga eliminato dal sistema (il nodo foglia \emph{firstAid} con indirizzo \emph{192.168.0.2:1111}). }
+	\label{fig:dns-delete}
+\end{figure}
+Se all'interno dell struttura DNS, ogni componente è rappresentato come una foglia dell'albero, la cancellazione di un'indirizzo si riduce all'eliminazione della foglia ad esso corrispondente. 
+
+In \autoref{fig:dns-delete} è mostrato un esempio della struttura DNS prima e dopo l'eliminazione di un componente appartenente al dominio del primo soccorso dal sistema. Si può notare che, nel caso specifico, il servizio di primo soccorso rimarrà comunque garantito all'interno del sistema \emph{Proxima}, in quanto persiste il riferimento ad un altro componente che offre il medesimo servizio. Nel caso così non fosse il servizio non sarebbe più erogabile.
+
+\section{Servizio di primo soccorso}
+Il servizio di primo soccorso è il servizio dell'applicazione che si occupa della fornitura, a soccorritori autorizzati, dei dati dei pazienti nel caso di emergenza. Esso, come descritto nella \autoref{splitting}, deriva dal componente \emph{data control} trattato in fase di analisi. I compiti principali del servizio in esame sono riassunti di seguito: 
+\begin{itemize}
+	\item Autorizzazione del soccorritore.
+	\item Controllo del turno di servizio del soccorritore. Richieste valide di accesso ai dati dovranno provenire solamente negli orari di servizio dei soccorritori, forniti dal committente. 
+	\item Invio dei dati medici al soccorritore, solo se autorizzato.
+	\item Logging di ogni attività, in modo sicuro e non ripudiabile.
+\end{itemize}
+Dato che queste quattro attività, anche se separabili, hanno un forte legame tra loro, ed inoltre non possono essere eseguite in parallelo (prima è necessario verificare l'identità del soccorritore, e solo in seguito, eventualmente, inviare i dati) è stato deciso di condensarle in un unico componente, mantenendo però la loro indipendenza tramite l'architettura a microservizi. 
+
+\subsection{Generalità}
+Il servizio di primo soccorso dovrà essere solamente uno dei tanti servizi che potranno essere separatamente implementabili nell'infrastruttura del sistema, ed esso può essere visto come un primo esempio di funzionamento completo e verticale del sistema \emph{Proxima}. Quanto descritto da qui in avanti deve ritenersi quindi inerente al solo servizio di primo soccorso, e non una linea guida per l'implementazione di servizi sulla piattaforma.
+
+Il servizio di primo soccorso è un servizio di grande importanza, e un suo corretto funzionamento può aiutare i medici ed i soccorritori a curare nel migliore modo possibile un paziente in situazioni di emergenza. Per tale motivo esso dovrà essere sempre attivo, raggiungibile e dovrà rispondere in modo rapido. La \emph{availability} di tale servizio è un requisito fondamentale, e dovrà permeare ogni scelta di design descritta da qui in avanti. Ci sono diversi modi per massimizzare l'\emph{availability} di un sistema, i più utilizzati sono descritti di seguito: 
+\begin{itemize}
+	\item \textbf{Multithreading}: il servizio è composto da più thread, tipicamente ne viene creato uno ad ogni richiesta, con il solo compito di gestirla. Ciò non è particolarmente indicato in sistemi in cui la maggior parte del tempo di una richiesta viene speso in attesa di operazioni di \emph{I/O} (query su un database, attesa su una connessione di rete\dots), poiché si spende tempo per la creazione di thread (e per lo scheduling) che per la maggior parte del tempo saranno inattivi, in attesa di risorse.
+	\item \textbf{Pool di thread}: il servizio ha un numero fisso di thread, a cui viene passato un compito, ed una volta svolto ritornano disponibili. Questo approccio è migliore del precedente, poiché elimina il tempo di creazione ed eliminazione di thread, ma rimane il problema dell'attesa di risorse. Inoltre la valutazione della dimensione del pool non è semplice da valutare a priori, rischiando di sotto o sovra dimensionarlo.
+	\item \textbf{Modello ad attori}: il sistema è composto da attori, entità software ognuna con il proprio flusso di controllo logico, le quali comunicano tramite scambio di messaggi. Un normale server può ospitare migliaia di attori, senza che le prestazioni degradino. 
+	\item \textbf{Modello ad \emph{event-loop}}: il sistema consiste in un unico thread, chiamato \emph{event-loop}, il quale esegue il codice associato ad eventi presenti nella \emph{event queue}. Se durante l'esecuzione si incorre in un'attesa di una risorsa, l'event-loop preleva un altro evento dalla event queue e ne esegue il codice associato. In questo modo l'event-loop non è mai bloccato. Quando la risorsa sarà disponibile verrà inserito un nuovo evento nella event queue, in modo che l'event loop potrà processarlo. 
+\end{itemize}
+Nella progettazione del servizio di primo soccorso è stato scelto di utilizzare un approccio ad eventi, per la garanzia di totale assenza di corse critiche e di problemi legati al multithreading (è attivo sempre e solo il flusso di controllo dell'\emph{event loop}). Inoltre un sistema del genere è maggiormente scalabile di un approccio a pool di thread, la cui dimensione può essere facilmente sotto o sovra stimata. Anche se può sembrare contro-intuitivo avere un solo thread in esecuzione, in realtà è una soluzione ampiamente utilizzata per l'implementazione di sevizi in cui l'\emph{availability} è una proprietà fondamentale. Nel nostro caso, inoltre, il servizio non dovrà mai compiere task che richiedono largo uso della CPU, ma la maggior parte del tempo sarà speso aspettando eventi di rete o richieste al database/file-system. 
+
+\subsection{Autorizzazione del soccorritore}
+L'autorizzazione del soccorritore è una proprietà fondamentale del sistema, poiché impedisce che malintenzionati o persone non autorizzate possano avere accesso a dati sensibili come i dati medici di altre persone. Come descritto in \autoref{rescuer_auth} si è scelto di utilizzare un metodo di autenticazione basato su chiave segreta, in particolare si utilizza uno schema a chiave pubblica e chiave privata, usate sotto forma di firma digitale. Il dispositivo lettore in dotazione al soccorritore conterrà al suo interno la chiave privata del soccorritore, con cui sarà firmata la richiesta di dati, in modo da poter riconoscere le richieste legittime da quelle di malintenzionati. 
+
+Lo schema di firma e autenticazione è riportato di seguito:
+\begin{enumerate}
+	\item Viene creata una chiave pubblica ed una chiave privata per ogni soccorritore autorizzato. Le chiavi pubbliche sono mantenute in un registro all'interno del servizio, mentre quelle private sono inserite all'interno dei lettori in dotazione ai soccorritori.
+	\item Alla richiesta di accesso ai dati è allegata una firma digitale, formata dalla concatenazione del codice del paziente e quello del soccorritore, criptati con la chiave privata del soccorritore.
+	\item Il servizio di autorizzazione verifica, tramite la chiave pubblica, che il messaggio sia stato realmente inviato dal soccorritore autorizzato.
+\end{enumerate}
+L'algoritmo scelto per la produzione e la verifica della chiave pubblica è \emph{RSA}\footnote{\url{https://en.wikipedia.org/wiki/RSA_(cryptosystem)}}, utilizzando chiavi da 2048 bit, e criptando l'hash, ottenuto tramite \emph{SHA256}\footnote{\url{https://it.wikipedia.org/wiki/Secure_Hash_Algorithm}} della concatenazione tra codice del paziente e codice del soccorritore. 
+
+Ovviamente dovrà essere considerata anche la gestione delle chiavi, ovvero l'immissione, aggiornamento o revoca delle chiavi pubbliche (e di conseguenza di quelle private) nel registro dei soccorritori. Maggiori dettagli sono presenti in \autoref{firstAidCom}
+
+La totale indipendenza dei diversi servizi implementabili sul sistema \emph{Proxima}, fa si che ognuno possa avere il suo schema di autorizzazione per l'accesso ai dati (o, addirittura, non averne alcuno). Questo è un vantaggio enorme, poiché ogni servizio (si pensi a quello di primo soccorso e a quello di un supermercato) può richiedere autorizzazioni più o meno avanzate per l'accesso ai dati. Mantenendo ogni servizio totalmente separato dagli altri non si impone alcun vincolo su chi e come può accedere ai dati di tale servizio, rendendo ancora più eterogeneo ed estensibile il sistema nella sua interezza.
+
+\subsection{Controllo dei turni di servizio}
+I turni di servizi dei medici sono forniti dal committente, e consistono in un database descritto precedentemente in \autoref{domain-model}. Il controllo dei turni dovrà avvenire solamente se il soccorritore risulta riconosciuto ed autorizzato dalla convalida della sua firma digitale. Non è possibile l'accesso a dati medici da parte di soccorritori, anche autorizzati, al di fuori dei turni di lavoro. 
+
+Questa fase, quindi, si compone principalmente di interrogazioni al database dei turni di lavoro fornito dal committente. Questo caso d'uso combacia perfettamente con l'architettura ad eventi scelta per il servizio. 
+\subsection{Invio dei dati medici}
+Come per i turni di lavoro dei soccorritori, anche i dati medici sono forniti dal committente del sistema, attraverso l'accesso ad un database descritto in \autoref{domain-model}. Come nel caso del controllo dei turni dei soccorritori, il lavoro è principalmente dato da interrogazioni al database e invio di messaggi sulla rete, confermando la bontà della scelta di una architettura ad eventi per il servizio. 
+\subsection{Logging}
+Un servizio di logging sicuro di ogni accesso ai dati è stato posto in fase di analisi come requisito del sistema, dato che tramite esso possono essere individuati tentativi di un utilizzo scorretto del servizio o abusi. Il logging deve essere sicuro, ovvero non dovrà essere possibile una sua corruzione o cancellazione. Ciò è indispensabile per garantire il non ripudio delle azioni commesse. 
+
+Per garantire tali prerogative è stato scelto di utilizzare un logger a ``due livelli'', ovvero locale e remoto. I messaggi di logging, quindi, oltre al essere mantenuti localmente all'interno del servizio sono anche inviati ad un servizio remoto, che a sua volta manterrà la traccia di ogni accesso ai dati. In questo modo tale sistema viene protetto da guasti o disastri naturali che possono occorrere alle macchine su cui tale servizio risiede. Inoltre, data la natura distribuita dei servizi, potrebbero esistere più copie del servizio di primo soccorso attive. Il logging remoto, in questo caso, agirebbe da aggregatore dei dati. Inoltre, non solo gli accessi ai dati dovranno essere memorizzati, ma ogni tentativo di accesso, anche se esso non è andato a buon fine. In questo modo possono essere scoperti attacchi al sistema, o possibili tentativi di accesso da parte di malintenzionati. 
+\subsection{Interfaccia di comunicazione} \label{firstAidCom}
+Come per tutti i servizi descritti fino a questo momento anche per il servizio di primo soccorso è stato scelto un approccio \emph{ReSTful}, basato su risorse, per la comunicazione. In particolare, ogni dato medico di ogni singolo paziente è una risorsa, che può essere richiesta tramite il metodo HTTP \texttt{GET}. Dato che l'accesso ai dati può essere concesso solamente a soccorritori autorizzati, e il controllo dovrà essere svolto dal servizio stesso, si è fatto uso di \emph{query parameters}\footnote{\url{https://en.wikipedia.org/wiki/Query_string}} per indicare il codice di paziente e soccorritore, e la firma digitale per il riconoscimento di quest'ultimo. Il servizio di primo soccorso risponde su porta 9876.
+\subsubsection*{Gestione delle chiavi pubbliche dei soccorritori}
+Oltre alla richiesta dei dati medici è necessario che il servizio gestisca l'immissione, la modifica e la cancellazione delle chiavi pubbliche dei soccorritori. Per fare ciò si è scelto sempre un approccio \emph{ReSTful}, dove le risorse sono le chiavi pubbliche stesse. I metodi HTTP per la gestione delle chiavi sono riportati di seguito: 
+\begin{itemize}
+	\item \textbf{POST}: utilizzato per l'inserimento di una nuova chiave pubblica ad un nuovo soccorritore. La chiave fornita deve essere nel formato \emph{PEM}.
+	\item \textbf{PUT}: utilizzato per la modifica di una chiave già associata ad un soccorritore. La chiave fornita deve essere in formato \emph{PEM}.
+	\item \textbf{DELETE}: utilizzato per l'eliminazione di una chiave. Va fornito il solo identificativo del soccorritore, che dopo tale operazione non avrà più alcuna chiave pubblica associata. 
+\end{itemize}
+Una approfondita descrizione delle \emph{ReST APIs} del servizio di primo soccorso è disponibile all'indirizzo: \\ 
+\url{https://app.swaggerhub.com/apis/gmp/ProximaFirstAidService/1.0.0}.
+
+\section{Front server}
+Il front server è un punto di aggregazione dei microservizi del mondo \emph{Proxima} e fornisce un'interfaccia di accesso al sistema. Rappresenta uno strato intermedio situato fra i microservizi e l'esterno, svolgendo il ruolo di \emph{user inteface}, senza includere la \emph{business logic} del sistema. Ogni richiesta proveniente dall'applicazione Android dovrà essere diretta verso questo componente il quale, dopo averla elaborata tramite il supporto dei microservizi necessari, produrrà un'adeguata risposta.
+
+\subsection{Interfaccia di comunicazione} \label{frontserver-api}
+L'interazione con il front server dovrà essere \emph{RESTful}. Inoltre, essendo il front server l'interfaccia del sistema \emph{Proxima} contattabile dall'esterno, esso dovrà offrire delle garanzie di sicurezza riguardo alla crittografia delle comunicazioni. Ciò impone la presenza di un server HTTPS, il cui scopo sarà quello di soddisfare le richieste esterne giunte in corrispondenza di una determinata porta. Più nel dettaglio, ogni richiesta al front server dovrà essere diretta alla porta 6041, con l'indicazione del path \emph{data}, che mostra come ogni possibile operazione agisca sui dati degli utenti del sistema \emph{Proxima}. 
+
+Il solo metodo HTTP che il front server è in grado di gestire è \texttt{GET}. Un messaggio di questo tipo rappresenta la richiesta dei dati di un determinato utente relativi ad un certo servizio. Tale messaggio dovrà contenere, oltre all'identificativo dell'utente target e al servizio, anche l'identificativo dell'operatore richiedente, identificato univocamente dalla sua firma digitale. Nel caso l'operatore risulti autorizzato alla lettura dei dati richiesti, una risposta contenente gli stessi sarà restituita. Una descrizione più approfondita delle \emph{REST APIs} del front server è stata effettuata mediante l'ausilio del framework \emph{Swagger}\footnote{\url{https://swagger.io/}}. Essa è resa disponibile online al link \url{https://app.swaggerhub.com/apis/gmp/ProximaFrontServer/1.0.0}.
+
+\subsection{Comportamento} \label{frontserver-behaviour}
+Il comportamento del front server sarà caratterizzato da una costante fase di attesa di richieste esterne. Le fasi che permettono di processare con successo una richiesta \texttt{GET}, descritta in \autoref{frontserver-api}, sono le seguenti.
+\begin{enumerate}
+	\item \textbf{Verifica della validità della richiesta}: è necessario controllare che la richiesta contenga i parametri necessari al sistema per portare a termine il processo di recupero dei dati.
+	\item \textbf{Controllo del permesso dell'utente}: prima di procedere al recupero dei dati è necessario verificare che l'utente abbia dato il consenso al trattamento dei dati per lo specifico servizio. L'osservanza di tale vincolo può essere verificata tramite l'interrogazione del servizio \emph{UsersAuthorizationsService}.
+	\item \textbf{Recupero del riferimento del servizio richiesto}: è necessario venire a conoscenza del riferimento del servizio richiesto, in modo da poterlo contattare. Tramite una richiesta al servizio DNS è possibile recuperare tale riferimento.
+	\item \textbf{Richiesta dei dati}: è necessario richiedere i dati al servizio preposto, il cui riferimento è stato recuperato al passo precedente.
+	\item \textbf{Invio della risposta}: infine i dati recuperati sono inoltrati al richiedente.
+\end{enumerate}
+I passi appena descritti rappresentano l'intera gestione di una richiesta terminata con successo. Nel caso, però, la richiesta fosse malformata o il richiedente dovesse risultare non autorizzato alla lettura dei dati, i corrispondenti errori, identificati rispettivamente come \emph{Bad Request} e \emph{Unauthorized}, dovranno essere segnalati al richiedente.
+
+
+\section{Applicazione Android e Identificatori} \label{design_app}
+
+L'applicazione Android sul dispositivo dei soccorritori dovrà essere realizzata in modo che il suo utilizzo risulti il più facile ed intuitivo possibile, siccome ne è previsto l'uso anche in situazioni di emergenza. Per far ciò, sarà necessario guidare il soccorritore in tutti i passi necessari al recupero dei dati del paziente, in modo che ciò avvenga nel minor tempo possibile e nel rispetto dei vincoli di sicurezza imposti dai requisiti.
+
+In questa fase di progettazione, l'applicazione potrebbe essere modellata in termini di schermate, dove per schermata s'intende un componente dell'applicazione avente un compito ben preciso, in grado di gestire l'interazione con l'utente ed eventualmente guidarlo nell'utilizzo dell'applicazione stessa. In virtù di quanto detto, l'applicazione sarà quindi composta dalle seguenti schermate:
+\begin{itemize}
+	\item \textbf{Schermata iniziale}: schermata mostrata al soccorritore all'avvio dell'applicazione. Dovrà essere composta, sostanzialmente, da un bottone, che avrà il compito di iniziare o interrompere la ricerca degli identificatori quando premuto. Oltre al bottone, dovrà essere presente un messaggio guida per l'utente, che espliciti in maniera chiara e concisa lo scopo del bottone stesso. Inoltre, nel caso non sia possibile contattare l'infrastruttura \emph{Proxima}, il soccorritore dovrà essere avvisato tramite un apposito messaggio, in modo che non perda tempo cercando di utilizzare il servizio.
+	\item \textbf{Schermata d'autenticazione}: schermata nella quale il soccorritore sarà invitato, tramite un messaggio guida, ad avvicinare il dispositivo al proprio identificatore, in modo che possa autenticarsi nel sistema per poter accedere ai dati medici di un determinato paziente.
+	\item \textbf{Schermata del paziente}: schermata nella quale il soccorritore sarà invitato, tramite un messaggio guida, ad avvicinare il dispositivo all'identificatore del paziente, in modo che se ne possa conoscere l'identificativo, necessario al recupero dei dati.
+	\item \textbf{Schermata dati}: schermata dedita alla mera visualizzazione dei dati medici recuperati dalla banca dati. I dati in questione dovranno essere mostrati nel modo più conveniente per il soccorritore, in modo che questo non debba interagire con il dispositivo Android per visualizzarli (e.g.: \emph{touch}, \emph{swipe}, \dots) qualora non sia necessario.   
+\end{itemize}
+
+Oltre alle schermate elencate, l'applicazione sarà composta da due ulteriori componenti essenziali, sebbene non direttamente responsabili dell'interazione con il soccorritore:
+\begin{itemize}
+	\item \textbf{Lettore identificatori}: componente avente il solo scopo di effettuare la lettura degli identificatori NFC dopo l'avvio della ricerca da parte del soccorritore.
+	\item \textbf{Client HTTPS}: componente finalizzato alla gestione della comunicazione con il front server di \emph{Proxima}. Il suo compito sarà quindi quello di inviare richieste per il recupero dei dati medici qualora necessario e di ricevere le relative risposte.  
+\end{itemize}
+
+Essendo NFC una serie di protocolli estremamente corposa e ramificata, il componente dedito alla lettura degli identificatori merita una discussione nel dettaglio. In commercio è possibile reperire i più svariati tag NFC, ognuno dei quali si appoggia su una delle tecnologie derivanti dall'insieme di protocolli. Ogni tecnologia definisce quindi, in modo indipendente dalle altre, il formato con il quale i dati vengo letti o scritti da/su un certo tag. Per via della presenza di questa diversità, è necessario scegliere sin da subito su quale formato, e quindi su quale tecnologia, fare affidamento per la lettura degli identificativi.
+
+Dopo un'analisi delle tecnologie esistenti, è stato scelto di fare affidamento ad una che preveda il supporto per NDEF (\emph{NFC default exchange format}), un formato proposto da \emph{NFC forum}\footnote{\url{https://nfc-forum.org/}} per promuovere la standardizzazione delle tecnologie NFC, in modo da assicurare interoperabilità tra dispositivi e servizi. NDEF è stato scelto proprio per quanto appena detto e per il fatto che risulta essere un dei formati nativamente supportati da Android\footnote{\url{https://developer.android.com/guide/topics/connectivity/nfc/nfc.html}}.
+
+Sulla base di queste considerazioni, abbiamo scelto di adoperare dei tag Mifare Classic da 1KB di memoria, una quantità sufficiente per i nostri scopi.
+
 
 \chapter{Implementazione}
 
+\section{Servizio di autorizzazioni degli utenti}
+
+Il server HTTP, ovvero il servizio in questione, descritto in \autoref{users_authorizations_design} è stato sviluppato in \emph{Node}\footnote{\url{https://nodejs.org/it/}}, facendo affidamento al framework \emph{Espress}\footnote{\url{http://expressjs.com/it/}} ed al linguaggio \emph{Typescript}\footnote{\url{https://www.typescriptlang.org/}}. Oltre al fatto che le tecnologie citate risultano essere fortemente consolidate e supportate, questa scelta è stata fatta principalmente per due motivazioni, quali facilità di sviluppo e largo supporto per l'interazione con database non relazionali.
+
+Per il database finalizzato al contenimento delle autorizzazioni di ogni singolo utente è stato fatto affidamento a \emph{MongoDB}\footnote{\url{https://www.mongodb.com/it}}, essendo questa una delle tecnologie di punta per la creazione e gestione di database non relazionali. Più nel dettaglio, il database contiene una sola collezione, \emph{usersauthorizations}, nella quale ogni documento memorizza l'elenco dei servizi i quali un determinato utente ha autorizzato per l'utilizzo dei propri dati.   
+
+\section{Servizio DNS}
+L'implementazione del servizio DNS è completamente basata sulle direttive espresse nella fase di progettazione in \autoref{design-dns}. 
+
+Per lo sviluppo del sistema ad attori, si è fatto uso del
+framework \emph{Akka}\footnote{\url{https://akka.io/}}, e degli strumenti da esso forniti. Questa scelta è motivata sia dalle elevate performance (circa 50 milioni di messaggi processati al secondo, oltre alla possibilità di creare fino a 2.5 milioni di attori per GB di heap), sia dalle garanzie offerte dal framework in merito allo sviluppo di sistemi distribuiti e scalabili. In particolare si è fatto uso della libreria \emph{akka-actor} per la costruzione del sistema ad attori della gerarchia DNS, con l'ausilio di \emph{akka-http} (oltre ad \emph{akka-stream}) per implementare con semplicità ed efficacia il server HTTP del servizio. Per quanto riguarda il linguaggio di programmazione, si è scelto di utilizzare \emph{Scala}\footnote{\url{https://www.scala-lang.org/}}, in quanto è il linguaggio adottato per la maggiore nel processo di sviluppo del framework \emph{Akka}, e permette di sfruttarne tutto il 
+potenziale.
+
+Seguendo le scelte progettuali, descritte in \autoref{dns-actormodel}, si è deciso di procedere con la definizione dei trait \emph{DNSNodeActor} e \emph{DNSRouterActor}, attraverso la composizione dei quali è stato poi possibile definire le classi di attori \emph{DNSRootActor}, \emph{DNSInternalNodeActor} e \emph{DNSLeafNodeActor}. Il trait \emph{DNSNodeActor} rappresenta un nodo della gerarchia (nodo interno o foglia) e si contrappone alla radice, definita, invece, in maniera indipendente. Questa tipologia di attore, nel momento immediatamente successivo alla creazione, prevede l'inserimento nella gerarchia DNS preesistente, tramite l'invio di un messaggio di registrazione alla radice. Il trait \emph{DNSRouterActor} rappresenta un nodo in grado di svolgere una funzione di routing all'interno della gerarchia. Questa tipologia di attore è in grado di gestire la registrazione di un nuovo nodo all'interno della gerarchia, oltre ad instradare le richieste di indirizzi verso le foglie adibite.
+
+Sfruttando la definizione dei trait appena illustrati, le classi di attori corrispondenti ai nodi della gerarchia DNS sono state così composte:
+\begin{itemize}
+	\item \textbf{DNSRootActor}: specializzazione del trait \emph{DNSRouterActor}.
+	\item \textbf{DNSInternalNodeActor}: mixin dei trait \emph{DNSNodeActor} e \emph{DNSRouterActor}, in modo da ottenere un duplice comportamento all'interno della gerarchia.
+	\item \textbf{DNSLeafNodeActor}: specializzazione del trait \emph{DNSNodeActor}, dotato della logica di gestione di un indirizzo di un particolare componente del sistema Proxima.
+\end{itemize}
+
+L'implementazione del resto del sistema si è rivelata fluida e in linea rispetto a quanto proposto nella fase di progettazione. L'unica eccezione riguarda la creazione automatica dei nodi interni della gerarchia. Per garantire ciò si è rivelata necessaria la definizione di un attore \emph{DNSControllerActor}, che, periodicamente, possa controllare lo stato della gerarchia e, se necessario, ordinare la creazione di uno o più nodi interni al \emph{DNSNodesCreatorActor}.
+\section{Servizio di primo soccorso}
+Seguendo le direttive espresse in fase di progettazione, tra cui quella dell'utilizzo di un sistema ad eventi, è stato utilizzato \emph{Typescript} come linguaggio per l'implementazione del servizio. Tale linguaggio è totalmente ad eventi, difatti viene compilato in linguaggio \emph{javascript}. A differenza di quest'ultimo, \emph{Typescript} supporta nativamente tutte le astrazioni \emph{object-oriented}, come classi, interfacce ed ereditarietà tra esse. La sua natura modulare, inoltre, permette una naturale divisione dei componenti, allo stesso modo di \emph{package} Java. Il web server atto alla gestione dei messaggi descritti in \autoref{firstAidCom} è stato implementato tramite \emph{NodeJS} ed il framework \emph{Express}, disponibili anche per il linguaggio \emph{Typescript}.
+
+Uno degli aspetti più controversi di javascript è il cosiddetto \emph{callback hell}, ovvero il continuo innesto di \emph{callback} l'una all'interno dell'altra, con il risultato di produrre codice non facilmente leggibile e confuso. Per ovviare a tale problema si è optato per l'utilizzo di \emph{promise}. Una promise è un oggetto, il quale contiene al suo interno un risultato futuro, che potrà essere risolto o rifiutato in caso di errore. Solo quando il risultato di una promise è disponibile sarà possibile procedere con la computazione. Il risultato logico è identico a quello prodotto con le \emph{callback}, ma il codice risulta meglio strutturato e più chiaro, grazie alla possibilità di concatenazione tra \emph{promise}.
+
+L'interfacciamento con il database contenente i dati medici ed i turni dei soccorritori è stato attuato tramite la libreria \emph{mongoose}\footnote{\url{http://mongoosejs.com}}. Essa consente di costruire un modello dei dati, attraverso cui saranno svolte le interrogazione e gli inserimenti o aggiornamenti. In questo modo è possibile una validazione dei dati, non solitamente attuabile con sistemi non relazionali. 
+
+Le operazioni sulla firma digitale sono svolte attraverso la libreria \emph{crypto}\footnote{\url{https://nodejs.org/api/crypto.html}}. La generazione delle chiavi è fatta tramite \emph{openssl}\footnote{\url{https://www.openssl.org}}, producendo chiavi con lunghezza di 2048 bit.
+\section{Front server}
+L'implementazione del front server è stata effettuata mediante l'ausilio di \emph{Nodejs}\footnote{\url{https://nodejs.org}}, che in collaborazione con il framework \emph{express}\footnote{\url{http://expressjs.com}}, permette la creazione di un server in pochissimi passi. Inoltre si è considerato il modello ad eventi non bloccante di \emph{Nodejs} come un'ottima architettura per l'implementazione del front server, che dovrà dimostrarsi sempre reattivo, anche a fronte di un carico di richieste elevato. Il linguaggio scelto per la scrittura è \emph{Typescript}\footnote{\url{https://www.typescriptlang.org}}, che, rispetto a \emph{Javascript}, permette di utilizzare le astrazioni tipiche dei linguaggi ad oggetti.
+
+La gestione di una richiesta \texttt{GET} sul path \emph{data} è affidata alla classe \emph{RequestHandler}. Il punto cruciale risiede nel fatto che il front server non è in grado di elaborare e soddisfare la richiesta in totale autonomia, ma necessita della consulenza di altri tre servizi, come descritto in \autoref{frontserver-behaviour}. L'interrogazione dei servizi non può essere svolta in parallelo, in quanto è necessaria la risposta di uno di essi prima di poter contattare il servizio successivo. Un comportamento del genere in \emph{Nodejs} è supportato tramite l'assegnazione di una \emph{callback} ad ogni richiesta, in modo da specificare le azioni da eseguire nel momento in cui giungerà la corrispondente risposta. Per evitare di sprofondare nel cosiddetto \emph{callback hell}, si è deciso di sfruttare il meccanismo delle \emph{promises} e in particolare il \emph{promises chaining}. In questo modo è possibile ottenere un effetto di "appiattimento" del codice, definendo una catena di \emph{promises} e assegnando un \emph{handler} a ciascuna di esse, tramite il metodo \emph{then}.
+
+
+\section{Applicazione Android}
+
+In questa sezione verranno brevemente discusse le più rilevanti scelte implementative relative all'applicazione Android. In modo da soddisfare tutti i requisiti seguendo al contempo le \emph{guidelines} illustrate in \autoref{design_app}, l'applicazione è stata strutturata in 4 componenti principali:
+\begin{enumerate}
+	\item \textbf{MainActivity}: una delle due activity dell'applicazione, responsabile della gestione dell'interazione con l'utente. Più nel dettaglio, il suo scopo è quello di abilitare l'avvio e l'interruzione della ricerca di identificatori vicini al dispositivo e guidare il soccorritore nella procedura necessaria al recupero dei dati medici dalla banca dati (\autoref{design_app} - schermate 1, 2, 3). Inoltre, questa activity funge da \emph{listener} per i broadcast generati dal sistema Android alla rilevazione di un tag NFC. La lettura dei tag stessi è delegata ad un componente apposito, descritto in seguito.
+	\item \textbf{DataPrinterActivity}: activity avente il solo compito di visualizzare i dati medici una volta recuperati dalla banca dati (\autoref{design_app} - schermata 4). La visualizzazione dei dati medici stessi è stata strutturata cercando di sfruttare per intero il display del dispositivo, in modo che il soccorritore possa consultare ciò di cui più necessita nel minor tempo possibile. 
+	\item \textbf{NdefReaderTask}: AsyncTask dedito alla lettura del contenuto dei tag NFC rilevati dal dispositivo. Come accennato in precedenza, la lettura viene eseguita facendo riferimento al formato NDEF (\emph{NFC default exchange format}). Essendo tale operazione delegata a questo componente, l'activity in foreground risulta essere reattiva anche durante la lettura stessa.
+	\item \textbf{HTTPClientService}: servizio \emph{bounded} alla \emph{MainActivity}, responsabile dell'interazione con il front server. Il suo compito è quindi quello di inviare richieste ben formattate al server e di notificare la \emph{MainActivity} a fronte della ricezione di risposte. Il servizio in esame fa affidamento alla libreria \emph{Volley} per l'invio di richieste e la ricezione di risposte su HTTPS.
+\end{enumerate}
+
+Sia chiave pubblica del front server che chiave privata del soccorritore sono contenute all'interno della cartella \emph{assets} del progetto, e caricate a runtime di conseguenza. In una versione non prototipale dell'applicazione, sarebbe d'obbligo migliorare la gestione, perlomeno, della chiave privata, facendo in modo che non sia facilmente accessibile tramite \emph{tool} di de-compilazione. 
+
+Infine, siccome in ambiente Android non è nativamente possibile considerare le letture di tag NFC solo dopo, come nel nostro caso, la pressione di un pulsante, la \emph{MainActivity} è stata strutturata in modo da rendere possibile questo filtraggio.  
+
 \chapter{Testing} 
+I test del sistema \emph{Proxima} si sono principalmente concentrati sul test dei vari componenti in modo separato. Più nel dettaglio si fatto largo uso del cosiddetto \emph{unit testing}, il quale si concentra sulla verifica di singoli componenti software. Il test automatico del sistema nel complesso è stato tralasciato, in quanto presenta difficoltà realizzative, alla complessa integrazione tra i componenti.
+\section{Servizio DNS}
+L'implementazione del servizio DNS è stata accompagnata dalla costante definizione di test, finalizzati soprattutto alla verifica della correttezza dei singoli attori definiti. È stato adottato l'approccio di \emph{unit testing}, attraverso il quale ogni attore soggetto a test è stato isolato dal resto del sistema e testato singolarmente tramite dei meccanismi offerti dalla libreria \emph{akka-testkit}. Essa ha permesso di interrogare gli attori a tempo di esecuzione e definire delle asserzioni sulla base dei messaggi con essi scambiati, attraverso dei costrutti di libreria come \emph{expectMsg}, oltre ai classici \emph{assert}. 
 
-\chapter{Deployment (?)}
+Oltre agli attori del sistema, anche il server DNS è stato opportunamente testato mediante l'ausilio della libreria \emph{akka-http-testkit}, che ha permesso, in modo molto semplice e immediato, la simulazione di richieste HTTP, in modo da poter valutare la correttezza del comportamento del server in reazione ai messaggi esterni.
 
-\chapter{Manutenzione}
+In generale, ogni test è stato architettato grazie all'utilizzo della libreria \emph{scalatest}, che, tramite la composizione di trait diversi (ad esempio \emph{WordSpecLike} e \emph{Matchers}) ha dato la possibilità di utilizzare frasi di senso compiuto, unite a parole chiave (es: \emph{must} oppure \emph{in}), per costruire dei test facilmente
+leggibili e comprensibili, sia in fase di realizzazione che di esecuzione.
 
-\chapter{Restrospettiva}
+\section{Servizio di primo soccorso}
+Il test del servizio di primo soccorso si è limitato ai componenti totalmente sviluppati \emph{ex novo}. Non ha senso, infatti, testare codice che si appoggia in modo preponderante su librerie esterne, poiché si assume che il loro corretto funzionamento sia stato verificato dagli sviluppatori. In particolare non sono stati testati le query al database e tutto ciò che riguarda la rete.
+
+I test, per lo più sotto forma di \emph{unit test} sono stati implementati attraverso due librerie: \emph{mocha}\footnote{\url{https://mochajs.org}} e \emph{chai}\footnote{\url{http://www.chaijs.com}}. \emph{Mocha} è una libreria di unit testing, con una sintassi molto simile a \emph{ScalaTest}. Ciò consente una ``modalità descrittiva'' dei test stessi, che risultano così molto simili a frasi nel linguaggio naturale. \emph{Chai} è una ricca libreria di asserzioni, la quale consente di verificare numerose proprietà di ogni singola unità testata. 
+
+I test si trovano nel all'interno della directory \texttt{src/test}, e le sotto directory riflettono la composizione dei moduli in \texttt{src/main}. In Typescript è prassi includere i test nelle stesse directory dei sorgenti, differenziandoli tramite l'estensione \texttt{.test.ts}. Tale metodologia non ci è sembrata efficacie, e quindi abbiamo strutturato i test in una gerarchia separata, riflettendo quella dei sorgenti.
+\section{Applicazione Android}
+
+Per la quasi totalità delle componenti software dell'applicazione Android sono state sviluppate delle apposite classi di testing in modo da convalidarne il funzionamento. Più nello specifico, per le classi \emph{android-independent} è stato fatto affidamento al framework \emph{JUnit}\footnote{\url{https://junit.org/junit4/}} per la scrittura dei relativi test, situati all'interno della cartella \texttt{test}. Per quanto riguarda invece le classi \emph{android-related} (come \emph{Activities, Services, \dots}) è stato fatto ricorso alla scrittura di \emph{instrumented tests} attraverso la libreria \emph{Espresso}\footnote{\url{https://developer.android.com/training/testing/espresso/index.html}}, che ha comodamente permesso di verificare il corretto funzionamento delle interfacce utente così come il funzionamento delle componenti in background. Questa seconda categoria di test è situata all'interno della cartella \texttt{androidTest}. Purtroppo non è stato creato un test automatizzato per la classe \emph{org.gammf.proxima.NdefReaderTask} per via dell'impossibilità di simulare la lettura di un tag NFC.
+
+
+\chapter{Deployment} \label{deployment}
+
+In questo capitolo verrà trattato il \emph{deployment} del sistema nella sua interezza, considerando le varie alternative presenti per i vari componenti che lo compongono.
+
+\section{Microservizi}
+
+La suddivisione del sistema in microservizi apre diverse possibilità per il \emph{deployment} del sistema stesso:
+\begin{itemize}
+	\item \textbf{Distribuzione dei microservizi}: ogni microservizio può potenzialmente essere installato su di una macchina diversa, in modo da garantire il massimo disaccoppiamento tra i microservizi stessi. La gestione degli indirizzi delle macchine non sarebbe un problema, in quanto facilmente gestiti dal servizio DNS.
+	\item \textbf{Replicazione dei microservizi}: qualora necessario, si potrebbe decidere di replicare uno o più servizi, procedendo ad installarli sulla stessa macchina o su una macchina differente. Alla creazione, una replica, per entrare a far parte del sistema, dovrebbe semplicemente registrarsi (tramite una richiesta \texttt{POST}) al servizio DNS. Questo approccio porterebbe ad una migliore gestione delle richieste volte ai servizi di interesse, bilanciando il carico delle stesse. Inoltre, la presenza di repliche migliorerebbe notevolmente le caratteristiche di \emph{fault-tollerance} e \emph{availabilty} del sistema. Infatti, un malfunzionamento di un componente non inciderebbe sul funzionamento del sistema nel caso fosse presente almeno un altro componente che offrisse il medesimo servizio. Anche qui, l'utilizzo di questo approccio non creerebbe problemi per la gestione degli indirizzi, per via della presenza del servizio DNS.
+\end{itemize}
+
+In un'ottica più generale, l'aggiunta di nuovi servizi al sistema risulta essere facile ed immediata: come accennato in precedenza, il servizio appena creato dovrebbe solo registrarsi al servizio di DNS.
+
+Per garantire un maggior livello di sicurezza all'interno del sistema, è opportuno che solamente il \emph{front server} sia contattabile dall'esterno. I microservizi saranno quindi mantenuti all'interno dei confini di una rete privata non accessibile da Internet. In questo modo, un utente che desidera fruire del servizio sarà vincolato a contattare il \emph{front server}, il quale potrà invece interrogare i microservizi necessari per esaudire la richiesta dell'utente.
+
+Come ultima nota, la distribuzione del servizio DNS avverrà tramite un file JAR (\emph{Java ARchive}).
+
+\section{Front server}
+
+L'interfacciamento al sistema \emph{Proxima} può avvenire solamente per mezzo del componente \emph{front server}, al quale saranno indirizzate tutte le richieste provenienti dagli utenti. Esso può essere quindi visto come collo di bottiglia del sistema e avrà il duplice scopo di rimanere reattivo anche a fronte di un carico elevato di richieste e, allo stesso tempo, contattare i vari microservizi interni al sistema per elaborare le risposte corrispondenti. In condizioni reali d'utilizzo del sistema, è ragionevole presupporre che il carico di lavoro sul componente in questione sarà elevato, dato che il sistema sarà utilizzato a livello nazionale ed eventualmente esteso con ulteriori servizi. Sulla base di questa considerazione, si valuta come ideale una soluzione che prevede un deployment del componente su cloud. Questo approccio garantisce un servizio continuo ed elastico, con un'allocazione di risorse dinamica sulla base del carico di richieste. Inoltre, essa consente un risparmio economico notevole, in quanto non sarebbe necessario procedere all'acquisto di un server dedicato in grado di garantire prestazioni elevate.
+
+\section{Applicazione Android}
+
+L'applicazione Android verrà distribuita tramite un file in formato \emph{apk}. Idealmente essa dovrebbe essere fruibile ai soli soccorritori autorizzati. Quindi, la soluzione più intuitiva consiste nell'installazione manuale nell'\emph{apk} nei singoli dispositivi del personale autorizzato. Siccome da requisito è prevista anche la fornitura dei dispositivi, essi potrebbero essere distribuiti con l'applicazione preinstallata. Questo approccio presenta però il seguente problema: non essendo l'applicazione su sistemi di distribuzione di uso comune (come \emph{Google Play Store}\footnote{\url{https://play.google.com/store/apps?hl=it}}) viene reso non praticabile l'aggiornamento automatico dell'applicazione stessa.
+Ovviamente, un aggiornamento manuale dell'applicazione su tutti i dispositivi è da escludere. Per questo motivo si è deciso inizialmente di effettuare il deployment dell'applicazione su \emph{Google Play Store}. Nonostante l'applicazione, in questo modo, sia potenzialmente utilizzabile da chiunque, qualunque soggetto non autorizzato non sarebbe in grado di svolgere alcuna operazione di rilievo con essa. Per rendere l'applicazione effettivamente fruibile ai soli soccorritori autorizzati, si potrebbe creare un microservizio in grado di fornire la versione più aggiornata dell'applicazione ai quei dispositivi che la richiedono, a patto che su questi sia installata una versione precedente dell'applicazione stessa.
+
+L'unico problema di rilievo riguarda la chiave privata del soccorritore, che, al primo avvio dell'applicazione, dovrà essere inserita manualmente da un ente autorizzato. 
+
+
+\chapter{Manutenzione} \label{maintenance}
+In questo capitolo verrà eseguito uno studio sulla manutenibilità del sistema. Più nello specifico, saranno analizzati alcuni dei possibili cambiamenti che sarebbe ragionevole apportare al sistema in futuro, assieme a nuove eventuali direttive del committente che porterebbero alla modifica di determinati componenti del sistema stesso. Per ognuna di queste ne verrà indicato l'impatto e la relativa facilità di effettuazione.
+
+\section{Richieste del committente}
+
+Riuscire a prevedere tutte le possibili richieste che il committente potrebbe avanzare in futuro risulta essere un compito molto difficile. In questa sezione ci si limita quindi ad eseguire un'analisi di quelle principali, riportate di seguito:
+\begin{itemize}
+	\item \textbf{Cambiamento delle tecnologie}: è presumibile pensare che in futuro il committente possa richiedere di sostituire l'identificatore degli utenti con uno più evoluto. Questo potrebbe accadere se, ad esempio, venisse creata una tecnologia in grado di far comunicare lettore e identificatore in un raggio limitato di 3 metri (come da requisito iniziale). Il cambio di identificatore comporterebbe un cambio del protocollo di comunicazione tra i componenti citati. Per affrontare questo cambiamento, si potrebbe modificare l'applicazione Android, in termini di dipendenze e librerie utilizzate, in modo da affiancare al supporto per NFC quello per la nuova tecnologia, a patto che ciò sia possibile. In caso contrario, risulterebbe necessario sostituire l'applicazione Android con un lettore \emph{ad-hoc}, rendendo il cambiamento più costoso e complesso. Come alternativa, nel caso fosse possibile si potrebbero invece utilizzare degli identificatori \emph{ad-hoc} in grado di essere letti sia tramite NFC, sia tramite la nuova tecnologia; in questo modo si potrebbe perlomeno continuare ad utilizzare l'applicazione Android. Qualunque sia l'approccio scelto, ci si limiterebbe ad agire su lettori ed identificatori, senza apportare alcuna modifica alle componenti restanti del sistema, come \emph{front server} e microservizi.  
+	
+	\item \textbf{Metodo di autenticazione}: per garantire un maggior livello di sicurezza in relazione alla consultazione dei dati da parte di personale autorizzato, il committente potrebbe richiedere di apportare modifiche al metodo di autenticazione del personale stesso. Per esempio, al posto di utilizzare identificativo del soccorritore si potrebbe voler utilizzare una sua caratteristica biometrica (volto, voce, \dots). Innanzitutto, tale richiesta prevederebbe una modifica all'applicazione Android, in modo che sia possibile, con essa, effettuare il riconoscimento della caratteristica biometrica di interesse. In seguito, per minimizzare l'impatto del cambiamento sul sistema, basterebbe creare un servizio dedito al mapping da caratteristica biometrica ad identificativo. A questo punto, l'applicazione Android si limiterebbe ad interagire con il sistema al solito modo, inviando, in ogni richiesta, un pattern che descriva la caratteristica biometrica utilizzata al posto dell'identificativo utilizzato in precedenza. Il \emph{front server}, a seguito della ricezione di una richiesta così formattata, provvederà a contattare il nuovo servizio in modo da ottenere l'identificativo di interesse, per poi procedere al recupero dei dati medici. 
+	
+	Sulla base di quanto appena detto, non sarebbe quindi necessaria alcuna modifica alla struttura o ai servizi del sistema. Tuttavia, il cambiamento avrebbe impatto decisamente maggiore qualora il riconoscimento della caratteristica biometrica scelta dal committente non fosse supportato da Android. In tal caso, occorrerebbe sostituire l'applicazione con un lettore \emph{ad-hoc}, assicurandosi che questo sia in grado di leggere il contenuto degli identificatori degli utenti.
+	
+	\item \textbf{Interfaccia al sistema}: in futuro il committente potrebbe richiedere di sviluppare un'app iOS analoga a quella Android, o, più in generale, fornire vie alternative di interfacciamento al sistema, come \emph{web app} o sito web. L'unico costo derivante da questa richiesta starebbe nella realizzazione del nuovo componente; per fare in modo di integrare il componente stesso nel sistema, baserà infatti far sì che questo comunichi con il \emph{front server} inviando richieste \texttt{GET} opportunamente formattate. L'aggiunta di una nuova interfaccia al sistema non andrebbe quindi ad intaccare struttura del sistema stesso e/o microservizi.
+\end{itemize}
+
+\section{Evoluzione del sistema}
+
+Il punto di forza del sistema sta nella sua architettura a microservizi. Sebbene per poterla attuare sia stato fatto del lavoro aggiuntivo in fase di progettazione, questa architettura comporta una serie di vantaggi in termini di scalabilità, estensibilità e manutenibilità del sistema. Di seguito sono riportati ed analizzati alcuni cambiamenti facilmente applicabili in un'ottica di evoluzione del sistema:
+\begin{itemize}
+	\item \textbf{Replicazione/eliminazione microservizi}: qualora in futuro un determinato servizio del sistema \emph{Proxima} presentasse un aumento notevole del proprio utilizzo, si potrebbe semplicemente decidere di replicare i microservizi finalizzati all'erogazione del servizio di interesse. L'integrazione delle repliche all'interno del sistema sarebbe, come già accennato precedentemente in questo documento, a costo zero; basterebbe infatti che le repliche, a tempo di creazione, si registrassero al servizio DNS (con un'apposita richiesta \texttt{POST}) per poter poi essere contattate da chi ne necessita.
+	
+	Contrariamente, nel caso un determinato servizio del sistema presentasse un forte calo nel suo utilizzo, si potrebbe considerare di eliminare eventuali repliche dei microservizi finalizzati all'erogazione del servizio di interesse. Anche quest'operazione risulterebbe immediata, siccome sarebbe sufficiente che le repliche da eliminare venissero de-registrate dal servizio di DNS (con un'apposita richiesta \texttt{DELETE}).
+	
+	\item \textbf{Tecnologia dei microservizi}: qualora in futuro risultasse vantaggioso apportare modifiche ad un certo microservizio o, più in generale, utilizzare un'altra tecnologia per la sua implementazione, allora queste operazioni evolutive sarebbero limitate al solo microservizio di interesse, senza andare ad impattare sul sistema e sull'interazione tra i suoi componenti. Sarà sufficiente infatti che l'interfaccia del microservizio in esame rimanga la stessa, in modo che gli altri componenti del sistema possano continuare ad interagire con esso come in precedenza. Questo discorso relativo ai microservizi risulta valido anche per il \emph{front-server}.
+\end{itemize}
+
+
+\chapter{Retrospettiva}
+In questo capitolo verrà ripercorso il lavoro svolto nelle varie fasi del progetto, in modo da valutare l'adeguatezza del processo di sviluppo adottato. Inoltre, sarà possibile esaminare gli eventuali sviluppi futuri ed esprimere un giudizio sul prodotto finale.
+
+\section{Processo di sviluppo}
+Il processo di sviluppo adottato ha permesso un progresso continuo e lineare del sistema, fin dalle prime battute. A partire dai requisiti è stato formulato un primo modello del sistema, che è stato poi raffinato nel tempo in modo da sfociare nell'architettura definitiva, fino ad un livello di dettaglio tale da consentire l'implementazione dei vari componenti. 
+
+La fase più corposa del processo di sviluppo si è rivelata essere quella di analisi del problema. In questa fase si è cercato di affrontare tutte le possibili problematiche inerenti allo sviluppo del sistema, in modo da agevolare la fase di progettazione. In particolare si sono esaminate varie alternative percorribili per la risoluzione delle problematiche individuate, in modo da fornire alla fase successiva uno spettro ben definito delle scelte progettuali ritenute più adatte per il progetto. L'analisi del problema si è limitata alla trattazione dei requisiti assegnati dal committente, accennando solamente la possibilità di progettare un sistema che, oltre a rispondere pienamente ai requisiti, potesse anche dimostrarsi generale e pronto ad accogliere eventuali domini aggiuntivi all'interno del sistema \emph{Proxima}. 
+
+La sfida principale affrontata nella fase di progettazione è stata il design di un sistema il più generale possibile, in modo da minimizzare gli sforzi conseguenti a successivi innesti di servizi all'interno del mondo \emph{Proxima}. L'architettura logica prodotta nella fase di analisi si è, però, dimostrata un ottimo punto di partenza, facilitando notevolmente la progettazione. Lo stile architetturale a microservizi si è rivelato determinante per accorciare notevolmente i tempi di sviluppo, permettendo la completa suddivisione della fase di progettazione di dettaglio (oltre all'implementazione) fra i membri del team, parallelizzando il lavoro.
+
+L'accuratezza e la completezza delle fasi di analisi e progettazione ha permesso di minimizzare i costi del processo di implementazione. In questa fase è stato infatti possibile affidarsi completamente alle direttive prodotte durante la progettazione di dettaglio, senza incappare in alcun intoppo derivante da eventuali situazioni non previste. In definitiva, si conviene che il tempo investito nella fase di analisi del problema ha permesso di sviscerare tutte le principali problematiche in una fase ancora embrionale della progettazione, semplificando e snellendo notevolmente le fasi successive.
+
+\section{Sviluppi futuri} \label{future-work}
+L'alto grado di estensibilità del sistema permette la sua espansione a tempo di esecuzione. L'introduzione di nuovi domini applicativi nel sistema \emph{Proxima} (che si andranno ad aggiungere a quello del primo soccorso) può infatti essere gestita in maniera completamente dinamica, evitando una sospensione dell'attività del sistema che provocherebbe un disservizio momentaneo. L'architettura preesistente del sistema non verrebbe intaccata in alcun modo dall'aggiunta di nuovi ambiti di interesse. 
+
+In questa sezione sono descritte le operazioni necessarie per permettere l'aggiunta di un nuovo dominio applicativo al sistema.
+
+\subsection{Aggiunta di un servizio al sistema}
+L'aggiunta di un nuovo servizio al sistema prevede, innanzitutto, l'assegnamento di un identificativo al servizio, sotto forma di sequenza di domini separati da un punto (ad esempio \emph{proxima.example.ex}). Il passo successivo consiste nella progettazione e implementazione di un componente in grado di regolare l'accesso ai dati degli utenti relativi al servizio (così come il componente \emph{FirstAidService} per il primo soccorso). Esso dovrà essere in grado di gestire il meccanismo di autenticazione degli operatori autorizzati ai dati. Nell'ambito del primo soccorso si è ritenuto adeguato l'utilizzo di una combinazione tra identificativo del soccorritore e crittografia a chiave pubblica, ma tale meccanismo potrebbe non essere ideale per altri servizi. Si è, quindi, deciso di demandare l'autenticazione degli operatori ai servizi specifici, piuttosto che condensare il tutto in un servizio unico all'interno del sistema. 
+
+Il componente dovrà rispettare le seguenti condizioni per integrarsi con successo all'interno del sistema:
+\begin{itemize}
+	\item Eseguire la registrazione al servizio DNS. Il componente potrà essere reperibile all'interno del sistema dopo aver effettuato un'adeguata richiesta \texttt{POST} al DNS nel formato specificato.
+	\item Esporre una corretta interfaccia \emph{RESTful}. Il componente dovrà essere contattabile tramite una richiesta di tipo \texttt{GET} sul path \emph{/data}, in maniera analoga al \emph{FirstAidService}.
+\end{itemize}
+
+\subsection{Aggiornamento delle autorizzazioni degli utenti}
+Allo stato del deployment attualmente previsto, l'unico servizio erogato dal sistema \emph{Proxima} risulta essere quello del primo soccorso. Si è ampiamente discusso della possibilità di aggiungere altri servizi al sistema, lasciando agli utenti la decisione su quali dati condividere con il personale autorizzato e quali invece mantenere privati. Il microservizio \emph{UsersAuthorizationsService} si occupa proprio di controllare che l'utente abbia dato il consenso alla lettura dei dati relativi ad un certo servizio richiesto dagli operatori. In \autoref{general-analysis} si individua la necessità di mettere in condizione gli utenti di selezionare quali dati condividere all'interno del sistema, e quali negare. Ciò non è stato trattato in questo progetto, in quanto ci si è limitati al dominio del primo soccorso, nel quale i dati medici degli utenti devono sempre essere a disposizione dei soccorritori autorizzati.
+
+Nel caso dovesse essere aggiunto al sistema un dominio che richiede l'autorizzazione degli utenti per il trattamento dei dati, sarà necessario escogitare un modo per permettere agli utenti stessi di esprimere le proprie preferenze. Una possibile soluzione consiste nella realizzazione di una pagina Web, attraverso la quale gli utenti, opportunamente autenticati, possano consultare lo spettro completo dei servizi offerti da \emph{Proxima}, oltre ad accettare o meno il consenso alla trattazione dei dati. Per questioni legate a sicurezza e privacy, la politica dovrà essere \emph{default-deny}. Questo significa che il trattamento dei dati deve essere negato per ogni servizio, con l'eccezione dei soli servizi espressamente accettati dall'utente. Ovviamente questo discorso non vale per tutti quei servizi in cui la concessione dei dati è obbligatoria (ad esempio in ambito medico e giudiziario).
+
+L'ultimo tassello del processo consiste nell'integrazione della pagina Web con il componente \emph{UsersAuthorizationsService}, che può essere realizzata in diversi modi. Di seguito sono brevemente illustrate le due modalità ritenute più rilevanti.
+\begin{itemize}
+	\item Il servizio \emph{UsersAuthorizationsService} fa affidamento sulle informazioni contenute in un database per decretare l'autorizzazione o meno alla lettura dei dati. La soluzione più semplice consiste in un'aggiornamento diretto del database in questione ogni qual volta un utente modifichi le sue preferenze riguardo ai vari servizi del sistema. Si presuppone la presenza di un componente intermedio che, informato di una variazione, possa intervenire direttamente sul database. Questa opzione risulta molto comoda, in quanto il componente \emph{UsersAuthorizationsService} non subirebbe alcun cambiamento e si limiterebbe a continuare la sua normale interazione in lettura con il database. D'altra parte, però, in questo modo si andrebbe a realizzare un'interazione basata su un database condiviso, altamente sconsigliata nell'ottica dei microservizi\footnote{Sam Newman, {\em Building Microservices}, O'Reilly Media, 2014}.
+	\item La seconda soluzione consiste nel demandare al servizio \emph{UsersAuthorizationsService} il compito di aggiornare il database ad ogni variazione delle preferenze degli utenti. In questo modo si potrebbe perseguire l'integrazione \emph{RESTful}, utilizzata in ogni parte del sistema. In questo caso il componente \emph{UsersAuthorizationsService} dovrebbe essere modificato in modo da gestire delle richieste di tipo \texttt{POST}, \texttt{PUT} e \texttt{DELETE}, che presuppongono rispettivamente una creazione, modifica e cancellazione di un record del database. Inoltre il carico di lavoro del componente sarebbe notevolmente incrementato, portando ad un inevitabile deployment dello stesso sul \emph{cloud} o una sua distribuzione su componenti fisici separati. Questo approccio garantisce, però, un grado decisamente maggiore di disaccoppiamento dei servizi.
+\end{itemize}
+ 
 \section{Giudizio finale}
-\section{Sviluppi futuri}
+Il sistema \emph{Proxima} è stato realizzato in modo da aderire alla totalità dei requisti raccolti nella fase di analisi dei requisiti, in \autoref{requirements}, e rielaborati in quella di analisi del problema, in \autoref{problem-analysis}. Come ampiamente espresso nella fase di progettazione, in \autoref{design}, l'architettura del sistema è stata, però, costruita in modo da favorire caratteristiche come manutenibilità ed estensibilità. Il sistema ristretto all'ambito del primo soccorso può essere immediatamente distribuito e dislocato, facendo riferimento alle indicazioni di deployment, descritte in \autoref{deployment}. Inoltre risulta facilmente manutenibile ed estendibile, come rispettivamente illustrato in \autoref{maintenance} e \autoref{future-work}.
 
+In definitiva, possiamo ritenerci complessivamente soddisfatti del lavoro svolto. 
  
 \end{document}
