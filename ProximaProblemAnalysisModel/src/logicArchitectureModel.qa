@@ -1,0 +1,417 @@
+System proxima
+
+Dispatch identificationRequest : identificationRequest
+Dispatch identificationResponse : identificationResponse(ID)
+Dispatch interactionRequest : interactionRequest(REQUESTOR_ID, USER_ID, SERVICE)
+Dispatch domainInteractionRequest : domainInteractionRequest(REQUESTOR_ID, USER_ID)
+Dispatch interactionResponse : interactionResponse(PATIENT_ID, NAME, SURNAME, BLOOD_GROUP)
+Dispatch authorizationRequest : authorizationRequest(PATIENT_ID, SERVICE)
+Dispatch authorizationResponse : authorized 
+Dispatch dnsRequest : dnsRequest(SERVICE)
+Dispatch dnsResponse : dnsResponse(REFERENCE)
+Dispatch dnsRegistration : dnsRegistration(SERVICE, REFERENCE) 
+Dispatch unauthorized : unauthorized
+Dispatch getData: getData(PATIENT_ID)
+Dispatch data: data(PATIENT_ID, NAME, SURNAME, BLOOD_GROUP)
+
+Event local_start : start
+
+Context ctxArchitectureDebug ip[host="localhost" port=1406 ]
+
+QActor qpatient context ctxArchitectureDebug {
+	Rules {
+		identifier(patient1).
+	}
+	
+	Plan init normal
+	[
+		println("[qpatient] started!")
+	]
+	switchTo waitForRequest
+	
+	Plan waitForRequest 
+	[
+		println("[qpatient] waiting for request")
+	]
+	transition stopAfter 30000
+			   whenMsg identificationRequest -> handleIdentificationRequest
+			   finally repeatPlan
+	
+	Plan handleIdentificationRequest resumeLastPlan
+	[
+		println("[qpatient] handling identification request");
+		[!? identifier(ID)] replyToCaller -m identificationResponse : identificationResponse(ID)
+	]
+}
+
+QActor qpatient2 context ctxArchitectureDebug {
+	Rules {
+		identifier(patient2).
+	}
+	
+	Plan init normal
+	[
+		println("[qpatient2] started!")
+	]
+	switchTo waitForRequest
+	
+	Plan waitForRequest 
+	[
+		println("[qpatient2] waiting for request")
+	]
+	transition stopAfter 30000
+			   whenMsg identificationRequest -> handleIdentificationRequest
+			   finally repeatPlan
+	
+	Plan handleIdentificationRequest resumeLastPlan
+	[
+		println("[qpatient2] handling identification request");
+		[!? identifier(ID)] replyToCaller -m identificationResponse : identificationResponse(ID)
+	]
+}
+
+QActor qrescuer context ctxArchitectureDebug {
+	Rules {
+		identifier(rescuer1).
+		
+		connection(false).
+		connection(false).
+		connection(true).
+		connection(true).
+		connection(false).
+		connection(true).
+		connection(true).
+		connection(true).
+		
+		nearest(qpatient).
+		nearest(qpatient2).
+		nearest(qpatient2).
+		nearest(qpatient).
+	}
+	
+	Plan init normal
+	[
+		println("[qrescuer] started!");
+		demo consult("./src/it/unibo/qatheory/qRescuerTheory.pl");
+		actorOp buildCustomGui("rescuerGui")
+	]
+	switchTo checkConnection
+	
+	Plan checkConnection 
+	[
+		println("[qrescuer] check connection");
+		delay 500;
+		[?? connection(STATE)] addRule currentConnection(STATE);
+		[?? currentConnection(true)] 
+			addRule connectionEstablished(true);
+		[?? currentConnection(false)] 
+			actorOp showConnectionError
+	]
+	switchTo [?? connectionEstablished(true)] idle
+	finally repeatPlan
+	
+	Plan idle 
+	[
+		actorOp showConnectionEstablished;
+		println("[qrescuer] waiting for emergency")
+	]
+	transition stopAfter 30000
+			   whenEvent local_start -> requestPatientIdentifier
+	
+	Plan requestPatientIdentifier 
+	[
+		removeRule dataResponse(_,_,_,_);
+		removeRule unauthorized;
+		println("[qrescuer] sending identification request to patient");
+		[!? findNearest(NAME)] forward NAME -m identificationRequest : identificationRequest
+	]
+	transition stopAfter 2000
+			   whenMsg identificationResponse -> handlePatientIdentifierResponse
+			   
+    Plan handlePatientIdentifierResponse
+    [
+    	println("[qrescuer] patient identifier read");
+    	onMsg identificationResponse : identificationResponse(PATIENT_ID) ->
+			addRule patientid(PATIENT_ID)
+    ] 
+    switchTo sendDataRequest
+    
+    Plan sendDataRequest
+    [
+    	println("[qrescuer] sending data request to qdatacontrol");
+    	[!? identifiers(RESCUER_ID, PATIENT_ID)] 
+			forward qorchestrator -m interactionRequest : interactionRequest(RESCUER_ID, PATIENT_ID, firstAid)
+    ]
+    transition stopAfter 2000
+    	whenMsg interactionResponse -> handleDataResponse,
+    	whenMsg unauthorized -> handleUnauthrorizedResponse
+    
+    Plan handleDataResponse
+    [
+    	println("[qrescuer] patient data retrieved");
+    	onMsg interactionResponse : interactionResponse(PATIENT_ID, NAME, SURNAME, BLOOD_GROUP) -> 
+    		addRule dataResponse(PATIENT_ID, NAME, SURNAME, BLOOD_GROUP)
+    ] switchTo showPatientData
+    
+    Plan showPatientData
+    [
+    	println("[qrescuer] showing patient data");
+    	[!? dataResponse(_, NAME, SURNAME, BLOOD_GROUP)] actorOp showDataOnGUI(NAME, SURNAME, BLOOD_GROUP)
+    ] 
+    switchTo checkConnection
+    
+    Plan handleUnauthrorizedResponse 
+    [
+    	println("[qrescuer] unauthorized");
+    	addRule unauthorized
+    ]
+    switchTo showUnauthorizedMessage
+    
+    Plan showUnauthorizedMessage
+    [
+    	println("[qrescuer] showing unauthorized message");
+    	actorOp showUnauthorizedMessageOnGUI
+    ]
+    switchTo checkConnection
+}
+
+QActor qorchestrator context ctxArchitectureDebug {
+	Rules {
+		requestInfo(REFERENCE, REQUESTOR_ID, USER_ID) :- 
+			reference(REFERENCE), msg(interactionRequest, dispatch, SENDER, _, interactionRequest(REQUESTOR_ID, USER_ID, SERVICE), _).
+		responseInfo(SENDER, USER_ID, NAME, SURNAME, BLOOD_GROUP) :-
+			domainResponse(USER_ID, NAME, SURNAME, BLOOD_GROUP),
+			msg(interactionRequest, dispatch, SENDER, _, interactionRequest(REQUESTOR_ID, USER_ID, SERVICE), _). 
+	}
+	
+	Plan init normal 
+	[
+		println("[qorchestrator] started!")
+	]
+	switchTo waitForRequest
+	
+	Plan waitForRequest
+	[
+		println("[qorchestrator] waiting for request")
+	]
+	transition stopAfter 30000
+			   whenMsg interactionRequest -> handleRequest
+			   finally repeatPlan
+	
+	Plan handleRequest resumeLastPlan 
+    [
+		println("[qorchestrator] handling data request, sending request to quserauth");
+		memoCurrentMessage;
+		onMsg interactionRequest : interactionRequest(_, USER_ID, SERVICE) 
+			  -> forward qusersauth -m authorizationRequest : authorizationRequest(USER_ID, SERVICE)
+    ]
+    transition stopAfter 30000
+			   whenMsg authorizationResponse -> handleAuthorized,
+			   whenMsg unauthorized -> handleUnauthorized
+	
+	Plan handleAuthorized resumeLastPlan
+	[
+		println("[qorchestrator] handling quserauth response, sending request to qdns");
+		[!? msg(interactionRequest, dispatch, SENDER, _, interactionRequest(REQUESTOR_ID, USER_ID, SERVICE), _)]
+			forward qdns -m dnsRequest : dnsRequest(SERVICE)
+	]
+	transition stopAfter 30000
+			   whenMsg dnsResponse -> handleDnsResponse,
+			   whenMsg unauthorized -> handleUnauthorized
+			   
+	Plan handleDnsResponse resumeLastPlan
+	[
+		println("[qorchestrator] handling dns response, sending request to the correct domain");
+		onMsg dnsResponse : dnsResponse(REFERENCE) -> addRule reference(REFERENCE);
+		[!? requestInfo(REFERENCE, REQUESTOR_ID, USER_ID)] 
+			forward REFERENCE -m domainInteractionRequest : domainInteractionRequest(REQUESTOR_ID, USER_ID);
+		removeRule reference(REFERENCE)
+	]
+	transition stopAfter 30000
+			   whenMsg interactionResponse -> handleInteractionResponse,
+			   whenMsg unauthorized -> handleUnauthorized
+	
+	Plan handleInteractionResponse resumeLastPlan
+	[
+		println("[qorchestrator] handling domain response, sending response back to the original sender");
+		onMsg interactionResponse : interactionResponse(USER_ID, NAME, SURNAME, BLOOD_GROUP)
+			-> addRule domainResponse(USER_ID, NAME, SURNAME, BLOOD_GROUP);
+		[!? responseInfo(SENDER, USER_ID, NAME, SURNAME, BLOOD_GROUP)] 
+			forward SENDER -m interactionResponse : interactionResponse(USER_ID, NAME, SURNAME, BLOOD_GROUP);
+		removeRule domainResponse(USER_ID, NAME, SURNAME, BLOOD_GROUP);
+		removeRule msg(interactionRequest, dispatch, SENDER, _, interactionRequest(RESCUER_ID, PATIENT_ID, SERVICE), _)
+	]
+	
+	Plan handleUnauthorized resumeLastPlan 
+	[
+		println("[qorchestrator] sending unauthorized to the original sender");
+		[?? msg(interactionRequest, dispatch, SENDER, _, interactionRequest(RESCUER_ID, PATIENT_ID, SERVICE), _)]
+			forward SENDER -m unauthorized : unauthorized
+	]
+    
+}
+
+QActor qfirstaid context ctxArchitectureDebug {
+	Rules {
+		rescuer(rescuer1).
+		rescuer(rescuer2).
+	}
+	
+	Plan init normal 
+	[
+		demo consult("./src/it/unibo/qatheory/qDataControlTheory.pl");
+		println("[qfirstaid] started!")
+	]
+	switchTo registerToDns
+	
+	Plan registerToDns [
+		println("[qfirstaid] sending registration request to dns");
+		delay 500;
+		forward qdns -m dnsRegistration : dnsRegistration(firstAid, qfirstaid) 
+	]
+	switchTo waitForRequest
+	
+	Plan waitForRequest
+	[
+		println("[qfirstaid] waiting for request")
+	]
+	transition stopAfter 30000
+			   whenMsg domainInteractionRequest -> handleRequest
+			   finally repeatPlan
+			   
+    Plan handleRequest resumeLastPlan 
+    [
+		println("[qfirstaid] handling interaction request");
+		memoCurrentMessage;
+		[!? msg(domainInteractionRequest, dispatch, SENDER, _, domainInteractionRequest(RESCUER_ID, PATIENT_ID), _)] 
+			addRule request(SENDER, RESCUER_ID, PATIENT_ID);
+		[!? authorized(SENDER, RESCUER_ID, PATIENT_ID)]
+			addRule senderRequestData(SENDER, PATIENT_ID)
+		else
+			replyToCaller -m unauthorized: unauthorized;
+		removeRule request(_, _, _)
+    ]
+    switchTo [!? senderRequestData(_, _)] sendDataRequest
+    
+    Plan sendDataRequest
+    [
+    	println("[qfirstaid] sending data request to qdata");
+    	[!? senderRequestData(_, PATIENT_ID)] forward qdata -m getData : getData(PATIENT_ID)  	
+    ]
+    switchTo waitForResponse
+    
+    Plan waitForResponse 
+    [
+    	println("[qfirstaid] waiting for qdata response")
+    ]
+    transition stopAfter 2000
+    		   whenMsg data -> handleResponse
+    		   
+    Plan handleResponse
+    [
+    	println("[qfirstaid] handling data response");
+    	onMsg data : data(PATIENT_ID, NAME, SURNAME, BLOOD_GROUP) ->
+    		addRule data(PATIENT_ID, NAME, SURNAME, BLOOD_GROUP);
+    	[!? response(SENDER, PATIENT_ID, NAME, SURNAME, BLOOD_GROUP)] 
+    		forward SENDER -m interactionResponse : interactionResponse(PATIENT_ID, NAME, SURNAME, BLOOD_GROUP);
+    	removeRule data(_, _, _, _);
+    	removeRule senderRequestData(_, _)
+    ]
+    switchTo waitForRequest
+}
+
+QActor qdata context ctxArchitectureDebug {
+	Rules {
+		data(patient2, jane, doe, a_positive).
+		data(patient1, john, doe, ab_negative).
+	}
+	
+	Plan init normal
+	[
+		demo consult("./src/it/unibo/qatheory/qDataTheory.pl");
+		println("[qdata] started!")
+	]
+	switchTo waitForRequest
+	
+	Plan waitForRequest 
+	[
+		println("[qdata] waiting for request")
+	]
+	transition stopAfter 30000
+			   whenMsg getData -> handleRequest
+	finally repeatPlan
+			   
+	Plan handleRequest resumeLastPlan
+	[
+		println("[qdata] handling data request");
+		onMsg getData : getData(PATIENT_ID) -> addRule request(PATIENT_ID);
+		[!? fetchData(PATIENT_ID, NAME, SURNAME, BLOOD_GROUP)] 
+			replyToCaller -m data: data(PATIENT_ID, NAME, SURNAME, BLOOD_GROUP);
+		removeRule request(ID)
+	] 
+}
+
+QActor qusersauth context ctxArchitectureDebug {
+	Rules {
+		authorization(patient1, firstAid).
+		isAuthorized :- authorization(ID, SERVICE), request(ID, SERVICE). 
+	}
+	
+	Plan init normal
+	[
+		println("[quserauth] started!")
+	]
+	switchTo waitForRequest
+	
+	Plan waitForRequest 
+	[
+		println("[quserauth] waiting for request")
+	]
+	transition stopAfter 30000
+			   whenMsg authorizationRequest -> handleAuthorizationRequest
+			   finally repeatPlan
+	
+	Plan handleAuthorizationRequest resumeLastPlan
+	[
+		println("[quserauth] handling authorization request");
+		onMsg authorizationRequest : authorizationRequest(ID, SERVICE) -> addRule request(ID, SERVICE);
+		[!? isAuthorized] replyToCaller -m authorizationResponse : authorized 
+		             else replyToCaller -m unauthorized : unauthorized;
+		removeRule request(ID, SERVICE)
+	]
+}
+
+QActor qdns context ctxArchitectureDebug {
+	Rules {
+		getReference(REFERENCE) :- request(SERVICE), entry(SERVICE, REFERENCE).
+	}
+	
+	Plan init normal
+	[
+		println("[qdns] started!")
+	]
+	switchTo waitForRequest
+	
+	Plan waitForRequest 
+	[
+		println("[qdns] waiting for request")
+	]
+	transition stopAfter 30000
+			   whenMsg dnsRegistration -> handleDnsRegistration,
+			   whenMsg dnsRequest -> handleDnsRequest
+			   finally repeatPlan
+	
+	Plan handleDnsRegistration resumeLastPlan [
+		println("[qdns] handling dns registration");
+		onMsg dnsRegistration : dnsRegistration(SERVICE, REFERENCE) -> addRule entry(SERVICE, REFERENCE)
+	]
+	
+	Plan handleDnsRequest resumeLastPlan
+	[
+		println("[qdns] handling dns request");
+		onMsg dnsRequest : dnsRequest(SERVICE) -> addRule request(SERVICE);
+		[!? getReference(REFERENCE)] replyToCaller -m dnsResponse : dnsResponse(REFERENCE) 
+		             else replyToCaller -m unauthorized : unauthorized;
+		removeRule request(SERVICE)
+	]
+}
