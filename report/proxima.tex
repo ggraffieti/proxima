@@ -121,6 +121,63 @@ Attraverso il deployment del sistema proposto saranno aperti vari nuovi scenari,
 	\item Scambio di dati tra dispositivi computazionali, ad esempio nel caso di un ricovero in terapia intensiva, l'avatar virtuale del ricovero (ad esempio legato fisicamente al letto) potrà aggregare tutti i dati rilevati dai sensori vicini (ossigenazione del sangue, elettrocardiogramma, temperatura\dots) per condividerli con i medici o eseguire \emph{learning} sugli stessi, in modo da rilevare ed anticipare peggioramenti o miglioramenti del paziente.
 \end{itemize}
 
+\section{Metamodello} \label{meta-model}
+
+Nella sezione precedente è stata descritta l'idea di fondo di \emph{Proxima}. Si procede ora alla formalizzazione dei concetti chiave, attraverso la realizzazione di un metamodello. In questa fase verranno individuate e illustrate le astrazioni di prima classe, oltre alle interazioni ad alto livello tra i componenti principali del sistema. 
+
+In \autoref{meta-model-img} è riportata un'illustrazione grafica del metamodello del sistema.
+
+\begin{figure}[H]
+	\hspace*{-0.7in}
+	\centering
+	\includegraphics[width=160mm]{./img/meta_model.png}
+	\caption{Metamodello del sistema. \label{meta-model-img}}
+\end{figure}
+
+\subsection{Glossario}
+
+\begin{description}
+	\item[Entity] : s'intende un qualsiasi utilizzatore del servizio. Ogni entity è univocamente rappresentata, all'interno del sistema, da un ID. In base al contesto, un determinata \emph{entity} può rivestire il ruolo di: 
+	\begin{itemize}
+		\item \textbf{User} : individuo utilizzatore del sistema, al quale sono associati uno o più profili relativi ai domini del sistema. \'E in possesso di un \emph{identifier}. 
+		\item \textbf{Requestor} : persona o dispositivo che desidera interagire con uno \emph{user} in un determinato dominio. \'E in possesso di un \emph{reader}.
+	\end{itemize}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=50mm]{./img/entities.png}
+		\caption{In un determinato contesto, una \emph{entity} può assumere il ruolo di \emph{user} o \emph{requestor}.\label{entity-img}}
+	\end{figure}
+	\item[Proximity]: nell'ambito di questo progetto, i termini ``vicinanza'' e ``prossimità'' fanno entrambi riferimento ad una vicinanza fisica tra \emph{requestor} e \emph{user}.
+	\item[Identifier] : dispositivo contenente l'ID di un determinato \emph{user}. Abilita la lettura dell'ID da parte di un \emph{reader} in modo trasparente allo \emph{user}. Si presuppone che ogni \emph{user} abbia sempre con se il proprio \emph{identifier}. 
+	\item[Reader] : dispositivo in grado di recuperare l'ID di un certo \emph{user} da un \emph{identifier} qualora i due dispositivi siano vicini tra loro.
+	\item[Domain] : contesto applicativo, facente parte dello spazio virtuale. Ogni dominio è caratterizzato da un nome ed è responsabile della gestione dei profili relativi agli \emph{users} del sistema. Ogni interazione tra \emph{requestor} e \emph{user} avviene all'interno di un singolo dominio. 
+	\item[Profile] : insieme di informazioni relative ad un determinato \emph{user} all'interno di un singolo dominio. Le informazioni possono essere di varia natura: dati statici (nome, cognome, \dots) o dinamici (preferenze, conto corrente, \dots), in formato testuale e non (ad esempio file multimediali). Le informazioni contenute all'interno di un \emph{profile} possono essere create dallo \emph{user} stesso in fase di registrazione al dominio. La dinamicità delle informazioni impone la possibilità di una modifica del \emph{profile} anche a tempo di esecuzione del servizio. In qualsiasi momento, quindi, lo \emph{user} avrà accesso ai suoi dati in modo da mantenere il proprio \emph{profile} aggiornato in base alle sue necessità.
+	\item[Interaction rules] : insieme di vincoli propri del \emph{domain} che stabiliscono qualora una \emph{proxima interaction} possa avere luogo o meno, e in quale misura.
+	\item[Domain administrator] : l'addetto al governo di un \emph{domain}, incaricato di stabilire le \emph{interaction rules} più opportune per garantire una corretta gestione delle \emph{proxima interactions}. 
+	\item[Proxima interaction]: processo computazionale che è scatenato dalla prossimità del \emph{reader} di un \emph{requestor} e l'\emph{identifier} di uno \emph{user}. Esso avviene all'interno di un \emph{domain} e fa utilizzo delle informazioni contenute nel \emph{profile} dello \emph{user} in possesso dell'\emph{identifier} in questione. Ad ogni interazione segue una fase di \emph{reasoning} che può produrre risultati di varia natura a seconda del \emph{domain} in cui avviene, come acquisizione di dati da parte del \emph{requestor} o aggiornamento automatico del \emph{profile} dello \emph{user}. Inoltre, lo scopo della \emph{proxima interaction} potrebbe essere volto a fornire al \emph{requestor} delle informazioni che possano guidare lo svolgimento di un'azione nel mondo fisico. Ad esempio, qualora la \emph{proxima interaction} avvenga tra una auto (\emph{requestor}) e proprietario (\emph{user}) in condizioni di immediata vicinanza, il risultato potrebbe essere l'invio di un comando all'auto in modo che questa possa aprire le portiere nel mondo fisico.
+\end{description}
+
+\subsection{Interazione}
+
+In \autoref{interaction-img} è possibile consultare un rappresentazione grafica degli step principali che compongono l'interazione tra \emph{User} e \emph{Requestor}.
+
+Segue una descrizione dei vari step in ordine cronologico:
+\begin{enumerate}
+	\setcounter{enumi}{-1}
+	\item \textbf{Registration} : uno \emph{user} procede alla registrazione presso un determinato \emph{domain}, inserendo delle informazioni personali. Tali informazioni andranno a costituire il suo \emph{profile} all'interno del \emph{domain}. Come accennato in precedenza, il \emph{profile} sarà sempre consultabile e modificabile dallo \emph{user}.
+	\item \textbf{Identification request} : un \emph{requestor} si trova in prossimità di uno \emph{user}. A questo punto il \emph{reader} in possesso del \emph{requestor} richiede in modo automatico l'ID all'\emph{identifier} dello \emph{user}.
+	\item \textbf{Identification response} : l'\emph{identifier} dello \emph{user} invia l'ID contenuto al suo interno al \emph{reader} senza che lo \emph{user} debba intervenire in alcun modo.
+	\item \textbf{Interaction request} : una volta ricevuto l'ID, il \emph{reader} invia una richiesta ad un particolare dominio, che può essere vista come l'intenzione da parte del \emph{requestor} di interagire con lo \emph{user} all'interno del dominio di interesse.
+	\item \textbf{Interaction response/update} : a questo punto viene scatenata una \emph{proxima interaction}, descritta precedentemente. Come risultato potrebbe verificarsi uno scambio di informazioni tra \emph{domain} e \emph{reader} e/o un update da parte del \emph{domain}. Un update può riguardare l'aggiornamento del \emph{profile} dello \emph{user} coinvolto nell'interazione o la modifica delle \emph{interaction rules}. Da notare che queste operazioni, oltre ad essere opzionali, sono a totale discrezione del singolo dominio, che potrebbe decidere di eseguirle o meno sulla base delle singole interazioni.
+\end{enumerate} 
+
+\begin{figure}[H]
+	\hspace*{-0.3in}
+	\centering
+	\includegraphics[width=160mm]{./img/interaction.png}
+	\caption{Modello dell'interazione del sistema. \label{interaction-img}}
+\end{figure}
+
 \section{Goal} \label{goal}
 L'obiettivo di questo elaborato è la progettazione e l'implementazione del primo scheletro del sistema, in modo da creare l'infrastruttura generale, che sarà poi estesa in modo da implementare le funzionalità descritte in \autoref{vision}. Oltre a produrre la base del sistema ci si concentrerà su un caso concreto, in modo da mostrare fin da subito l'utilità dell'idea proposta. 
 
