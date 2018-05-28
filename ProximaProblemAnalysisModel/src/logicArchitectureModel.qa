@@ -13,6 +13,7 @@ Dispatch dnsRegistration : dnsRegistration(SERVICE, REFERENCE)
 Dispatch unauthorized : unauthorized
 Dispatch getData: getData(PATIENT_ID)
 Dispatch data: data(PATIENT_ID, NAME, SURNAME, BLOOD_GROUP)
+Dispatch logInteraction : logInteraction(REQUESTOR_ID, USER_ID, DESCRIPTION)
 
 Event local_start : start
 
@@ -283,20 +284,20 @@ QActor qfirstaid context ctxArchitectureDebug {
     [
 		println("[qfirstaid] handling interaction request");
 		memoCurrentMessage;
-		[!? msg(domainInteractionRequest, dispatch, SENDER, _, domainInteractionRequest(RESCUER_ID, PATIENT_ID), _)] 
+		[?? msg(domainInteractionRequest, dispatch, SENDER, _, domainInteractionRequest(RESCUER_ID, PATIENT_ID), _)] 
 			addRule request(SENDER, RESCUER_ID, PATIENT_ID);
 		[!? authorized(SENDER, RESCUER_ID, PATIENT_ID)]
-			addRule senderRequestData(SENDER, PATIENT_ID)
+			addRule senderRequestData(SENDER, RESCUER_ID, PATIENT_ID)
 		else
 			replyToCaller -m unauthorized: unauthorized;
 		removeRule request(_, _, _)
     ]
-    switchTo [!? senderRequestData(_, _)] sendDataRequest
+    switchTo [!? senderRequestData(_, _, _)] sendDataRequest
     
     Plan sendDataRequest
     [
     	println("[qfirstaid] sending data request to qdata");
-    	[!? senderRequestData(_, PATIENT_ID)] forward qdata -m getData : getData(PATIENT_ID)  	
+    	[!? senderRequestData(_, _, PATIENT_ID)] forward qdata -m getData : getData(PATIENT_ID)  	
     ]
     switchTo waitForResponse
     
@@ -314,8 +315,9 @@ QActor qfirstaid context ctxArchitectureDebug {
     		addRule data(PATIENT_ID, NAME, SURNAME, BLOOD_GROUP);
     	[!? response(SENDER, PATIENT_ID, NAME, SURNAME, BLOOD_GROUP)] 
     		forward SENDER -m interactionResponse : interactionResponse(PATIENT_ID, NAME, SURNAME, BLOOD_GROUP);
-    	removeRule data(_, _, _, _);
-    	removeRule senderRequestData(_, _)
+    	[?? senderRequestData(_, RESCUER_ID, PATIENT_ID)] 
+    		forward qlogger -m logInteraction : logInteraction(RESCUER_ID, PATIENT_ID, authorized);
+    	removeRule data(_, _, _, _)
     ]
     switchTo waitForRequest
 }
@@ -413,5 +415,27 @@ QActor qdns context ctxArchitectureDebug {
 		[!? getReference(REFERENCE)] replyToCaller -m dnsResponse : dnsResponse(REFERENCE) 
 		             else replyToCaller -m unauthorized : unauthorized;
 		removeRule request(SERVICE)
+	]
+}
+
+QActor qlogger context ctxArchitectureDebug {
+	Plan init normal
+	[
+		println("[qlogger] started!")
+	]
+	switchTo waitForRequest
+	
+	Plan waitForRequest 
+	[
+		println("[qlogger] waiting for request")
+	]
+	transition stopAfter 30000
+			   whenMsg logInteraction -> handleLogInteraction
+			   finally repeatPlan
+	
+	Plan handleLogInteraction resumeLastPlan
+	[
+		println("[qlogger] handling log request");
+		onMsg logInteraction : logInteraction(REQUESTOR_ID, USER_ID, DESCRIPTION) -> addRule log(REQUESTOR_ID, USER_ID, DESCRIPTION)
 	]
 }
