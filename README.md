@@ -5,7 +5,7 @@ Like the star, which is near but invisible, our goal is to offer a location-base
 
 The increasing diffusion of low cost computational devices, and the spread of _Internet of Things_ technologies have split the computation into single small devices with low computational power. The interaction between these devices and humans have become a pervasive issue in the field of computer science.
 
-Nowadays humans still play an active role in these interactions: the humans have to do an explicit action to start the interaction. That needs to change.
+Nowadays humans still play an active role in these interactions: humans have to do an explicit action to start the interaction. That needs to change.
 
 With Proxima every interaction can be performed in an automatic way and in a virtual space. In a pervasive scenario, devices have low computational power, so they can't perform complex tasks. In Proxima the role of devices is restricted to the discovery of near devices, and the activation of an interaction with them. The computation is performed in a virtual space, and results are returned to devices.
 
