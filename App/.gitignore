@@ -35,6 +35,3 @@ proguard/
 
 # Android Studio captures folder
 captures/
-
-
-**/ServerParameters.java

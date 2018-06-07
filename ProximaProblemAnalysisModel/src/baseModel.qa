@@ -16,7 +16,6 @@ QActor qpatient context ctxBaseDebug {
 	Rules {
 		identifier(patient1).
 	}
-	
 	Plan init normal
 	[
 		println("[qpatient] started!")
