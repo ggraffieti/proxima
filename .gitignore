@@ -33,3 +33,6 @@ it.unibo.iss.libs/*
 
 node_modules
 build
+
+.vscode
+slides/*

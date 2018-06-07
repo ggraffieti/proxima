@@ -1,6 +1,6 @@
 {
   "name": "first_aid_service",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "The server that manages the access to medical data. It manages the authorization system (base on digital signature) and the physical access to medical databases.",
   "main": "build/main.js",
   "scripts": {
