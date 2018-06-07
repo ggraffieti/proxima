@@ -1,6 +1,6 @@
 {
   "name": "frontserver",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "HTTP front server of the Proxima system",
   "main": "index.js",
   "scripts": {

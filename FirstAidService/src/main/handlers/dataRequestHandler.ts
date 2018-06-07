@@ -35,7 +35,7 @@ export class DataRequestHandler extends RequestHandler {
     let targetID: string = req.query.targetID;
     let signature: string = req.query.signature;
 
-    this.consoleLogger.logInConsole("New medical data request");
+    DataRequestHandler.consoleLogger.logInConsole("New medical data request");
 
     if (operatorID && targetID && signature) {
 
@@ -57,32 +57,32 @@ export class DataRequestHandler extends RequestHandler {
       .then((data) => {
         res.send(data);
         DataRequestHandler.logger.logDataAccess(operatorID, targetID);
-        this.consoleLogger.logInConsole("Rescuer " + operatorID + " autorized to read medical data of patient " + targetID);
+        DataRequestHandler.consoleLogger.logInConsole("Rescuer " + operatorID + " autorized to read medical data of patient " + targetID);
       })
       .catch(error => {
         if (error instanceof DatabaseError) {
           DataRequestHandler.sendServerError(res);
-          this.consoleLogger.logInConsole("An internal error occurred");
+          DataRequestHandler.consoleLogger.logInConsole("An internal error occurred");
         } 
         else if ((error instanceof WrongDigitalSignatureError) || (error instanceof RescuerShiftError)) {
           DataRequestHandler.sendUnauthorizedError(res);
           if (error instanceof WrongDigitalSignatureError) {
-            this.consoleLogger.logInConsole("Wrong digital signature, rescuer " + operatorID);
+            DataRequestHandler.consoleLogger.logInConsole("Wrong digital signature, rescuer " + operatorID);
           } 
           else {
-            this.consoleLogger.logInConsole("Rescuer " + operatorID + " tried to access data outside work hours");
+            DataRequestHandler.consoleLogger.logInConsole("Rescuer " + operatorID + " tried to access data outside work hours");
           }
         }
         else {
           DataRequestHandler.sendServerError(res);
-          this.consoleLogger.logInConsole("An internal error occurred");
+          DataRequestHandler.consoleLogger.logInConsole("An internal error occurred");
         }
         DataRequestHandler.logger.logDataAccessDenied(operatorID, targetID);
       });
     }
     else {
       DataRequestHandler.sendBadRequestError(res);
-      this.consoleLogger.logInConsole("Bad Request...dropped");
+      DataRequestHandler.consoleLogger.logInConsole("Bad Request...dropped");
     }
   }
 
