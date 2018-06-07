@@ -64,7 +64,7 @@ Every contribution to this project is very welcome! If you want to contribute to
 :warning:  please, follow the order below for a  smooth deployment.
 
 #### DNS
-1. Download the `proximaDNS.jar` from [here](https://github.com/ggraffieti/proxima/releases/download/v1.0/proximaDNS.jar).
+1. Download the `proximaDNS.jar` from [here](https://github.com/ggraffieti/proxima/releases/download/v1.0.1/proximaDNS.jar).
 2. Download the `address.json` file from `proxima/DnsService` and put it in the same directory of the jar file.
 3. Open the file and substitute the IP field with your machine IP address.
 4. Pull up a terminal and type `java -jar proximaDNS.jar`. The DNS service should start, and listen on port 1406.
@@ -124,7 +124,7 @@ Every contribution to this project is very welcome! If you want to contribute to
 
 #### Add a new patient
 Once you have the identifier for the patient you have to create their medical profile and update the User Authorization Service.
-1. Update the collection `medicalrecords` inside the database `proximaFirstAid`, and insert patient medical data following the format specified in the report.
+1. Update the collection `medicalrecords` inside the database `proximaFirstAid`, and insert patient medical data following the format specified in the [report](https://github.com/ggraffieti/proxima/releases/download/v1.0.1/proxima.pdf).
 2. Add an entry for the patient in the `usersauthorization` collection inside the database `proximaUsersAuthorization`. Make sure to authorize the patient for the service `proxima.medical.firstAid`.
 
 #### Add a new rescuer
@@ -134,4 +134,4 @@ Once you have the identifier for the rescuer you have to create their private ke
   - In the same shell type `openssl rsa -in rsa_2048_priv.pem -out rsa_2048_pub.pem -outform PEM -pubout` for creating the public key (in PEM format).
 2. Insert the public key in the collection `keys` inside the database `proximaRescuersKeys`. Make sure to associate it with the correct rescuer. If you have the First Aid Service running you can also add the key dynamically, with a request formatted as described in [this page](https://app.swaggerhub.com/apis/gmp/ProximaFirstAidService/1.0.0) (keyManagement `/addKey`).
 3. Include the private key in the app that will be ran in the rescuer device. Put the key in `App/app/src/main/assets/`, and rename it `private_key.der`. If another private key is present overwrite it.
-4. Add an entry for the rescuer in the collection `rescuersworkschedules` in the database `proximaFirstAid`, following the forma specified in the report.
+4. Add an entry for the rescuer in the collection `rescuersworkschedules` in the database `proximaFirstAid`, following the forma specified in the [report](https://github.com/ggraffieti/proxima/releases/download/v1.0.1/proxima.pdf).
